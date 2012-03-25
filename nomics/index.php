@@ -6,19 +6,31 @@
 <title>The Idea Factory, Where Not All Ideas Are Good.</title>
 
 <?php
- include "functions.php"
+ include "functions/functions.inc.php"
 ?>
+<?php
+ if ($_POST['create_ideas']) {
+ $idea_varriables = $_POST[''];
+ 
+ create_idea ($idea_varriables);
+ 
+ }
+?>
+
 </head>
 <body>
 <h1>Create An Idea</h1>
 <div class="main">
 <form method="POST" action="#">
 	<input type="text" name="idea_title" value="" /><br />
-	<textarea name="idea_description" value="">   </textarea>
+	<textarea name="idea_description" value="">   </textarea> <br />
 	<input type="submit" name="create_idea" value="Create Idea!" />
 </form>
 </div>
+<div class="existing_ideas">
 
+
+</div>
 </body>
 
 </html>
