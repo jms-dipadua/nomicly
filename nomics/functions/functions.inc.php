@@ -84,8 +84,8 @@ function get_recent_ideas() {
 	$recent_idea_details = $query_results['details'];
 	$recent_idea_id = $query_results['idea_id'];
 //setup the feed of ideas (title, details, vote capablities)
-	$recent_ideas .="<h3>$recent_idea_title</h3>"."<p>$recent_idea_details</p>";
-	$recent_ideas .="<p><a href='#' id='$recent_idea_id' onClick='vote()';>Agree</a> &nbsp;<a href='#' id='$recent_idea_id' onClick='vote()'>Disagree</a></p>";
+	$recent_ideas .="<div class='idea'><h3>$recent_idea_title</h3>"."<p>$recent_idea_details</p>";
+	$recent_ideas .="<p><a href='#' class='agree' onclick='vote($recent_idea_id)';>Agree</a> &nbsp;<a href='#'  onclick='vote($recent_idea_id)'>Disagree</a></p></div>";
 	}
     return $recent_ideas;
 }

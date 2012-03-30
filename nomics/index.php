@@ -9,8 +9,10 @@ $_SESSION['current_user'];
 <meta description="Idea Factory is devoted to bringing the best ideas to the forefront for discussion and evaluation." />
 <title>The Idea Factory, Create, Find and Share Good Ideas.</title>
 <?php
+ 	require_once "functions/functions.inc.js";
 	require_once "functions/functions.inc.php";
  	require_once "functions/database.inc.php";
+ 	
 ?>
 <?php
  if(isset($_POST['create_ideas'])) {
@@ -52,6 +54,16 @@ $_SESSION['current_user'];
 ?>
 
 </div>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+ <script>
+ $(function(){ 
+ 	$('.idea').click(function(){
+ 		/*ajax stuff goes here
+ 		this.getElementByTags('a')*/
+ 		});
+ 		
+ });
+ </script>
 </body>
 <?php
  mysql_close();
