@@ -24,7 +24,7 @@ $_SESSION['current_user'];
 
 	$idea_title = $_POST['idea_title'];
 	$idea_description = $_POST['idea_description'];
-	$creation_message = create_idea($idea_array);
+	$creation_message = create_idea($idea_array, $parent);
 	}
 ?>
 </head>
@@ -48,7 +48,7 @@ $_SESSION['current_user'];
 <h2>Recent Ideas &mdash; What do you think of these recent ideas?</h2>
 <?php
 	$recent_ideas = get_recent_ideas();
-
+	echo $recent_ideas;
 ?>
 
 </div>

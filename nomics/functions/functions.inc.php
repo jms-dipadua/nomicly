@@ -1,8 +1,9 @@
 <?php 
 /* ERROR FUNCTIONS */
 function log_errors ($message) {
+//ERROR LOGS DO'NT SEEM TO BE WORKING FOR SELECTS...(get_recent_ideas for example)
     $error_message = $message;
-    $log = "INSERT INTO error_logs (message) VALUES ('$message')";
+    $log = "INSERT INTO error_logs (message) VALUES ('$error_message')";
     $log_query = mysql_query ($log);
     
     if (!$log_query) {
@@ -12,15 +13,27 @@ function log_errors ($message) {
 
 
 /*IDEA FUNCTIONS */
-function create_idea($idea_array) {
+function create_idea($idea_array, $parent) {
 	global $idea_title;
 		$idea_title = $idea_array[idea_title];
+		$idea_title = mysql_real_escape_string($idea_title);
 	global $idea_description;
 		$idea_description=$idea_array[idea_description];
-
+		$idea_description = mysql_real_escape_string($idea_description);
+	    //we have to determine what the parent idea of the created idea is.
+	    //all ideas (right now) originate from the original idea: create an idea
+	    //but we're not passing anything in through $parent, so we'll set it to 1 (the original idea)
+	global $parent_idea;
+	    if(strlen($parent)<=0) {
+	    $parent_idea = 1;
+	    }
+	    else {
+	    $parent_idea = $parent;
+		}
+		
 	//MAY need to further genralize the insert_queries such that there is only one insert but a type of insert that is passed along and used to determine the table to insert into. But that may be a bit overkill on the modularization. It does setup better for ObjOrient since "ideas" can only insert into the ideas table, etc. Needs more thought...
 
-	$insert = generate_insert_ideas_query($idea_title, $idea_description);
+	$insert = generate_insert_ideas_query($idea_title, $idea_description, $parent_idea);
 	$insert_query = mysql_query($insert);
 
 		if(!$insert_query) {
@@ -40,15 +53,16 @@ function create_idea($idea_array) {
 
 /* DATABASE QUERIES */
 //INSERT IDEAS
-function generate_insert_ideas_query($title, $description) {
+function generate_insert_ideas_query($title, $description, $parent_idea) {
 	$current_idea_title = $title;
 		$current_idea_title = strip_tags($current_idea_title);
 	$current_idea_description = $description;
 		$current_idea_description = strip_tags($current_idea_description);
 //	$ref_code = generate_ref_code($idea_some_var);
+    $current_idea_parent = $parent_idea;
 	
-	$insert_query = "INSERT INTO ideas (title, details) VALUES (";
-	$insert_query .= "'$current_idea_title', '$current_idea_description')";
+	$insert_query = "INSERT INTO ideas (title, details, parent_idea_ids) VALUES (";
+	$insert_query .= "'$current_idea_title', '$current_idea_description', '$parent_idea')";
 	return $insert_query;
 }
 
@@ -56,35 +70,24 @@ function generate_insert_ideas_query($title, $description) {
 function get_recent_ideas() {
     $tomorrow = generate_tomorrow_date();
     $yesterday = generate_yesterday_date();
-    
-    $recent_ideas = "SELECT * from ideas WHERE created_at BETWEEN '$yesterday' AND '$tomorrow'";
-    $recent_ideas_query = mysql_query($recent_ideas);
+
+    $select_recent_ideas = "SELECT * from ideas WHERE created_at BETWEEN '$yesterday' AND '$tomorrow' ORDER BY idea_id DESC LIMIT 10";
+    $recent_ideas_query = mysql_query($select_recent_ideas);
         if (!$recent_ideas_query){
         	echo mysql_error();
 			$message = "Failed to query:  $recent_ideas";
 			log_errors($message);
             }
-    $recent_ideas_array = mysql_fetch_array($recent_ideas_query, MYSQL_ASSOC);
-//////
-//WHERE I LEFT OFF
-/////
-//I WASN'T ABLE TO RETURN THIS ARRAY CORRECTLY.
-//I WANT TO RETURN {SOMETHING} THAT I CAN IETHER DISPLAY IMMEIDATELY, OR ITERATE THROUGH
-//I NEED THIS INFO SO I CAN PRESENT IDEAS TO USERS FOR VOTING.
-
-    $int = 0;
-    foreach ($recent_idea_results as $recent_idea_result) {
-	$recent_idea_title[$int] = $recent_ideas_results['title'];
-	$recent_idea_details[$int] = $recent_ideas_results['details'];
-	//$recent_idea_tags = $recent_ideas_results['tags'];
-	//$recent_idea_sentiment = $recent_ideas_results['sentiment'];
-	$recent_idea[$int] ="<h3>$recent_idea_title</h3>"."<p>$recent_idea_details</p>";
-	$int++;
+    while ($query_results= mysql_fetch_array($recent_ideas_query, MYSQL_ASSOC)) {
+//get all the deets from the query (title, details, id's, etc)
+	$recent_idea_title = $query_results['title'];
+	$recent_idea_details = $query_results['details'];
+	$recent_idea_id = $query_results['idea_id'];
+//setup the feed of ideas (title, details, vote capablities)
+	$recent_ideas .="<h3>$recent_idea_title</h3>"."<p>$recent_idea_details</p>";
+	$recent_ideas .="<p><a href='#' id='$recent_idea_id' onClick='vote()';>Agree</a> &nbsp;<a href='#' id='$recent_idea_id' onClick='vote()'>Disagree</a></p>";
 	}
-
-
     return $recent_ideas;
-
 }
 /*URL Functions */
 
@@ -105,7 +108,7 @@ function generate_ref_code ($some_id) {
 		
 	$ref_code = generate_date_time();
 	$ref_code .= " ".$element_to_create_ref;
-	$ref_code = sha($ref_code);
+	$ref_code = md5($ref_code);
 	return $ref_code;
 }
 
