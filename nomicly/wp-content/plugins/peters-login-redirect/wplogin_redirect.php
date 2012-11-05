@@ -183,7 +183,8 @@ class rulRedirectFunctionCollection
                         }
                         else
                         {
-                            $variable_value = '';
+                        // THIS MAY BE WHERE YOU CAN MOD THE REDIRECT...
+                            $variable_value = '../index.php';
                         }
                         break;
                     default:

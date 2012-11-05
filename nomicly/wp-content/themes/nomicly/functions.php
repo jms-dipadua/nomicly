@@ -7,6 +7,33 @@ function my_get_posts( $query ) {
 		$query->set( 'post_type', array( 'post', 'ideas' ) );
 	return $query;
 }
+
+/* 
+	helper code to mod the redirect after registration/login
+	// adding a redirect to index.php...?
+	else {
+	$ref = "../index.php";
+	return $ref;
+	}
+	
+	to modify:
+	
+	function wp_get_referer() {
+	$ref = false;
+	if ( ! empty( $_REQUEST['_wp_http_referer'] ) )
+		$ref = $_REQUEST['_wp_http_referer'];
+	else if ( ! empty( $_SERVER['HTTP_REFERER'] ) )
+		$ref = $_SERVER['HTTP_REFERER'];
+
+	if ( $ref && $ref !== $_SERVER['REQUEST_URI'] )
+		return $ref;
+	else {
+	$ref = "../index.php";
+	return $ref;
+	}
+}
+*/
+
 /**
  * Twenty Eleven functions and definitions
  *
