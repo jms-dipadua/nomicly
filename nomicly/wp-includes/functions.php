@@ -1262,11 +1262,7 @@ function wp_get_referer() {
 
 	if ( $ref && $ref !== $_SERVER['REQUEST_URI'] )
 		return $ref;
-// adding a redirect to index.php...?
-	else {
-	$ref = "../index.php";
-	return $ref;
-	}
+	return false;
 }
 
 /**
