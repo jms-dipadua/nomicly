@@ -7,6 +7,13 @@ Version: 0.1
 Author: James DiPadua
 Author URI: http://jamesdipadua.com/
 License: GPLv2
+Detailed Overview:
+	This plugin will help create the consensus building functions.
+	That will largely translate to a handful of cron jobs
+	Also makes Reputation adjustments, Consensus Counts and Consensus Resolution Possible	
+	Other nomicly features may include
+		Special Graphical Treatment of Interactions
+		Social Network/Graph Analysis
 */
 ?>
 <?php
@@ -16,6 +23,19 @@ add_action( 'init', 'jadalm_nomicly_activation' );
 
 //register_deactivation_hook(__FILE__, 'jadalm_nomicly_deactivation');
 
+function jadalm_nomicly_activation () {
+
+}
+
+
+function jadalm_nomicly_deactivation() {
+#nothing for now. 
+#delete custom post type?
+#convert all nomicly custom post types to normal posts?
+}
+
+/* 
+// what i was using when i was making a custom post-type
 function jadalm_nomicly_activation () {
 #create the custom-post-type
   $labels = array(
@@ -49,12 +69,7 @@ function jadalm_nomicly_activation () {
    register_post_type( 'ideas', $arguments);
 }
 
-
-function jadalm_nomicly_deactivation() {
-#nothing for now. 
-#delete custom post type?
-#convert all nomicly custom post types to normal posts?
-}
+*/
 
 
 ?>
