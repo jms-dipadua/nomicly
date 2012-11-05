@@ -10,7 +10,8 @@ License: GPLv2
 Detailed Overview:
 	This plugin will help create the consensus building functions.
 	That will largely translate to a handful of cron jobs
-	Also makes Reputation adjustments, Consensus Counts and Consensus Resolution Possible	
+	Also makes Reputation adjustments, Consensus Counts and Consensus Resolution Possible
+	Support-DB Initialization and Deletion w/ dump
 	Other nomicly features may include
 		Special Graphical Treatment of Interactions
 		Social Network/Graph Analysis
