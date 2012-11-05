@@ -1,4 +1,14 @@
 <?php 
+///
+//	BESURE TO INCLUDE THE IP SNIFFER:
+/*
+<?php
+$ip = gethostbyname('www.example.com');
+
+echo $ip;
+?>
+*/
+
 /* ERROR FUNCTIONS */
 function log_errors ($message) {
 //ERROR LOGS DO'NT SEEM TO BE WORKING FOR SELECTS...(get_recent_ideas for example)
@@ -84,8 +94,8 @@ function get_recent_ideas() {
 	$recent_idea_details = $query_results['details'];
 	$recent_idea_id = $query_results['idea_id'];
 //setup the feed of ideas (title, details, vote capablities)
-	$recent_ideas .="<div class='idea'><h3>$recent_idea_title</h3>"."<p>$recent_idea_details</p>";
-	$recent_ideas .="<p><a href='#' class='agree' onclick='vote($recent_idea_id)';>Agree</a> &nbsp;<a href='#'  onclick='vote($recent_idea_id)'>Disagree</a></p></div>";
+	$recent_ideas .="<div class='idea' id='idea-$recent_idea_id'><h3>$recent_idea_title</h3>"."<p>$recent_idea_details</p>";
+	$recent_ideas .="<p class='vote'><a href='#' class='vote-1'>Agree</a> &nbsp;<a href='#' class='vote-0'>Disagree</a></p></div>";
 	}
     return $recent_ideas;
 }
