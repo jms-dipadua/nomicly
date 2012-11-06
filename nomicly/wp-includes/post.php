@@ -243,6 +243,9 @@ function _wp_relative_upload_path( $path ) {
  * does not mean that it won't work on posts. It is recommended that you know
  * what context you wish to retrieve the children of.
  *
+ 		** NOMICLY NOTE:
+ 		** this is where you'll want to create the concept of ancestry
+ 		** when a user 'modifies' an idea, they create a new child post
  * Attachments may also be made the child of a post, so if that is an accurate
  * statement (which needs to be verified), it would then be possible to get
  * all of the attachments for a post. Attachments have since changed since

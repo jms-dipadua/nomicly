@@ -30,31 +30,28 @@ function process_new_idea () {
 // BUG
 // hardcoded for main feed
 	$post_parent = 0;
-	$category_id = array(1);	
-	//make the title safe
+	$category_id = $_POST['category'];	//left this as such to use default behavior and make it easier to port to other uses later
+	//make the title safe for mysql
 	$post_title = wp_strip_all_tags($_POST['post_title']);	
 	//create the slug
-	$post_title = sanitize_title( $post_title, $fallback_title ) ?>
-	// $post_name = wp_unique_post_slug($post_name, $post_ID, $post_status, $post_type, $post_parent);
+	$post_name = sanitize_title( $post_title, $fallback_title ) ?>
 
 	//still need to configure/verify all these
 	$post = array(
 	  'comment_status' => [ 'open' ] // 'closed' means no comments.
 	  'ping_status'    => [ 'closed' ] // 'closed' means pingbacks or trackbacks turned off
 	  'post_author'    => [ $userID ] //from above. changed from <user ID> - user ID of  author.
-	  'post_category'  => [ $category_id ] 
-	  //post_category no longer exists, try wp_set_post_terms() for setting a post's categories
+	  'post_category'  => [ $category_id ] // wp_set_category() maybe useful for future features
 	  'post_date'      => [ $post_date ] //The time post was made.
 	  'post_date_gmt'  => [ $post_date ] //The time post was made, in GMT. (just using same time)
-	  'post_name'      => [ <the name> ] // The name (slug) for your post
+	  'post_name'      => [ $post_name ] // The name (slug) for your post
 	  'post_parent'    => [ $post_parent ] //Sets the parent of the new post. 
 	  'post_status'    => [  'publish' ] //Set the status of the new post.
 	  'post_title'     => [ $post_title] //The title of your post.
 	  'post_type'      => [ 'post' ] //You may want to insert a regular post, page, link, a menu item or some custom post type
 	  'tax_input'      => [ array( 'taxonomy_name' => array( 'term', 'term2', 'term3' ) ) ] // support for custom taxonomies. 
 );  
-	
-	
+	// call wp's normal post-insertion function	
 	wp_insert_post( $post, $wp_error );
 }
 
@@ -99,10 +96,17 @@ function process_new_topic () {
   'to_ping'        => [ ? ] //?
   'tax_input'      => [ array( 'taxonomy_name' => array( 'term', 'term2', 'term3' ) ) ] // support for custom taxonomies. 
 );  
-	
-	
+
 	wp_insert_post( $post, $wp_error );
 }
+	*/
+
+/*
+* THIS IS FOR ANCESTRY INFORMATION AND FOR MAKING CHILD IDEAS FROM ANOTHER IDEA
+function get_children_posts() {
+
+}
+/*
 
 /**
  * Twenty Eleven functions and definitions
