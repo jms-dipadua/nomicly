@@ -17,7 +17,7 @@ function my_get_posts( $query ) {
 /*
 ///this is for processing new ideas (via post from custom form)
 */
-
+/*
 function nomicly_new_idea () {
 
 //need to get user info to connect the topic/idea to the user 
@@ -56,7 +56,7 @@ function nomicly_new_idea () {
 	wp_insert_post( $post, $wp_error );
 }
 
-
+*/
 
 /*
 ///this is for processing new topics (via post from custom form)
