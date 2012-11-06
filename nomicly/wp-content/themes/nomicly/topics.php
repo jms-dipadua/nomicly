@@ -15,6 +15,14 @@
 
 get_header(); ?>
 
+<?php
+if ( is_user_logged_in() ) {
+    //CREATE FORM LOGIC HERE
+} else {
+    echo '<a href="wp-login.php?action=register">Register</a> or <a href="wp-login.php">Login</a> to Create New Ideas';
+}
+?>
+
 		<div id="primary" class="showcase">
 			<div id="content" role="main">
 				<?php
