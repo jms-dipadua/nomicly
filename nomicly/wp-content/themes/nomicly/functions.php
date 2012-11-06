@@ -1,5 +1,11 @@
 <?php
 
+
+/*
+// this is for getting custom post types
+// and displaying them on the home page
+// DEPRECATION CANDIDATE
+*/
 add_filter( 'pre_get_posts', 'my_get_posts' );
 
 function my_get_posts( $query ) {
@@ -8,7 +14,50 @@ function my_get_posts( $query ) {
 	return $query;
 }
 
-
+/*
+///this is for processing new ideas (via post from custom form)
+/*
+function process_new_topic () {
+	
+//need to get user info to connect the topic/idea to the user 
+//potentially redundant but using wp-core functions to reduce impact
+	$userID = get_current_user_id();
+	$user_data = get_userdata( $userID );
+	
+	
+// setup post meta
+	$post_date = date('Y-m-d H:i:s');
+// BUG
+// hardcoded for topics
+	$post_parent = 29;
+	
+	//still need to configure/verify all these
+	$post = array(
+ // 'ID'             => [ <post id> ] //Are you updating an existing post?
+ // 'menu_order'     => [ <order> ] //If new post is a page, it sets the order in which it should appear in the tabs.
+  'comment_status' => [ 'open' ] // 'closed' means no comments.
+  'ping_status'    => [ 'closed' ] // 'closed' means pingbacks or trackbacks turned off
+ // 'pinged'         => [ ? ] //?
+  'post_author'    => [ $userID ] //from above. changed from <user ID> - user ID of  author.
+  'post_category'  => [ array(<category id>, <...>) ] //post_category no longer exists, try wp_set_post_terms() for setting a post's categories
+  'post_content'   => [ <the text of the post> ] //The full text of the post.
+  'post_date'      => [ $post_date ] //The time post was made.
+  'post_date_gmt'  => [ $post_date ] //The time post was made, in GMT. (just using same time)
+//  'post_excerpt'   => [ <an excerpt> ] //For all your post excerpt needs.
+  'post_name'      => [ <the name> ] // The name (slug) for your post
+  'post_parent'    => [ $post_parent ] //Sets the parent of the new post. 
+//  'post_password'  => [ ? ] //password for post?
+  'post_status'    => [  'publish' ] //Set the status of the new post.
+  'post_title'     => [ <the title> ] //The title of your post.
+  'post_type'      => [ 'post' ] //You may want to insert a regular post, page, link, a menu item or some custom post type
+  'tags_input'     => [ '<tag>, <tag>, <...>' ] //For tags.
+  'to_ping'        => [ ? ] //?
+  'tax_input'      => [ array( 'taxonomy_name' => array( 'term', 'term2', 'term3' ) ) ] // support for custom taxonomies. 
+);  
+	
+	
+	wp_insert_post( $post, $wp_error );
+}
 
 /**
  * Twenty Eleven functions and definitions

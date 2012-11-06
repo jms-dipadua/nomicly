@@ -13,18 +13,23 @@
 // Enqueue showcase script for the slider
 //wp_enqueue_script( 'twentyeleven-showcase', get_template_directory_uri() . '/js/showcase.js', array( 'jquery' ), '2011-04-28' );
 
-get_header(); ?>
+get_header(); 
+/* if (isset($_POST['new_topic']) {
+	process_new_topic();
+	}
+*/
+?>
 
+
+		<div id="primary" class="showcase">
+			<div id="content" role="main">
 <?php
 if ( is_user_logged_in() ) {
     //CREATE FORM LOGIC HERE
 } else {
-    echo '<a href="wp-login.php?action=register">Register</a> or <a href="wp-login.php">Login</a> to Create New Ideas';
+    echo '<h1><a href="wp-login.php?action=register">Register</a> or <a href="wp-login.php">Login</a> to Create New Ideas</h1>';
 }
 ?>
-
-		<div id="primary" class="showcase">
-			<div id="content" role="main">
 				<?php
 				$args=array(
 				  'orderby' => 'name',
