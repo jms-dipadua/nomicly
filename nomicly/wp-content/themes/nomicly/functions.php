@@ -17,7 +17,7 @@ function my_get_posts( $query ) {
 /*
 ///this is for processing new ideas (via post from custom form)
 /*
-function process_new_idea () {
+function nomicly_new_idea () {
 
 //need to get user info to connect the topic/idea to the user 
 //potentially redundant but using wp-core functions to reduce impact

@@ -17,7 +17,7 @@ get_header();
 
 // process topic posting 
 /* if (isset($_POST['new_topic']) {
-	process_new_topic();
+	nomicly_new_topic();
 	}
 */
 ?>

@@ -16,7 +16,7 @@ get_header();
 
 // process new idea posting 
 /* if (isset($_POST['new_idea']) {
-	process_new_idea();
+	nomicly_new_idea();
 	}
 */
 ?>
