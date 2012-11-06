@@ -15,10 +15,9 @@
 get_header(); 
 
 // process new idea posting 
-/* if (isset($_POST['new_idea']) {
+ if (isset($_POST['new_idea'])) {
 	nomicly_new_idea();
 	}
-*/
 ?>
 
 		<div id="primary">
