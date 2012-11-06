@@ -17,13 +17,13 @@ function my_get_posts( $query ) {
 /*
 ///this is for processing new ideas (via post from custom form)
 */
-/*
+
 function nomicly_new_idea () {
 
 //need to get user info to connect the topic/idea to the user 
 //potentially redundant but using wp-core functions to reduce impact
 	$userID = get_current_user_id();
-	$user_data = get_userdata( $userID );
+	//$user_data = get_userdata( $userID );
 	
 // setup post meta
 	$post_date = date('Y-m-d H:i:s');
@@ -35,7 +35,7 @@ function nomicly_new_idea () {
 	//make the title safe for mysql
 	$post_title = wp_strip_all_tags($_POST['post_title']);	
 	//create the slug
-	$post_name = sanitize_title( $post_title, $fallback_title ) ?>
+	$post_name = sanitize_title( $post_title, $fallback_title );
 
 	//CREATE NEW POST
 	$post = array(
@@ -50,13 +50,13 @@ function nomicly_new_idea () {
 	  'post_status'    => [  'publish' ] //Set the status of the new post.
 	  'post_title'     => [ $post_title] //The title of your post.
 	  'post_type'      => [ 'post' ] //You may want to insert a regular post, page, link, a menu item or some custom post type
-	  'tax_input'      => [ array( 'taxonomy_name' => array( 'term', 'term2', 'term3' ) ) ] // support for custom taxonomies. 
+	 // 'tax_input'      => [ array( 'taxonomy_name' => array( 'term', 'term2', 'term3' ) ) ] // support for custom taxonomies. 
 );  
 	// INSERT POST
 	wp_insert_post( $post, $wp_error );
 }
 
-*/
+
 
 /*
 ///this is for processing new topics (via post from custom form)
