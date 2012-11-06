@@ -31,9 +31,11 @@ function process_new_idea () {
 // hardcoded for main feed
 	$post_parent = 0;
 	$category_id = array(1);	
-
+	//make the title safe
 	$post_title = wp_strip_all_tags($_POST['post_title']);	
-	$post_name = wp_unique_post_slug($post_name, $post_ID, $post_status, $post_type, $post_parent);
+	//create the slug
+	$post_title = sanitize_title( $post_title, $fallback_title ) ?>
+	// $post_name = wp_unique_post_slug($post_name, $post_ID, $post_status, $post_type, $post_parent);
 
 	//still need to configure/verify all these
 	$post = array(
