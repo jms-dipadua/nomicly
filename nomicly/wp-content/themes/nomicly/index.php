@@ -27,8 +27,18 @@ get_header();
 			<?php if ( have_posts() ) : ?>
 
 				<?php twentyeleven_content_nav( 'nav-above' ); ?>
-
+		<?php
+	// check for login to present reg/login links
+			if ( is_user_logged_in() ) {
+    //CREATE FORM LOGIC HERE
+			} else {
+	    echo '<h1><a href="wp-login.php?action=register">Register</a> or <a href="wp-login.php">Login</a> to Create New Ideas</h1>';
+	    echo 'PUT THE FORM HERE<br />';
+			}
+		?>		
+		
 				<?php /* Start the Loop */ ?>
+		
 				<?php while ( have_posts() ) : the_post(); ?>
 
 					<?php get_template_part( 'content', get_post_format() ); ?>

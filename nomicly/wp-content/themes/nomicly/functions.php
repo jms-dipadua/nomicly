@@ -16,7 +16,8 @@ function my_get_posts( $query ) {
 
 /*
 ///this is for processing new ideas (via post from custom form)
-/*
+*/
+
 function nomicly_new_idea () {
 
 //need to get user info to connect the topic/idea to the user 
@@ -24,10 +25,10 @@ function nomicly_new_idea () {
 	$userID = get_current_user_id();
 	$user_data = get_userdata( $userID );
 	
-	
 // setup post meta
 	$post_date = date('Y-m-d H:i:s');
-// BUG
+
+// POTENTIAL BUG
 // hardcoded for main feed
 	$post_parent = 0;
 	$category_id = $_POST['category'];	//left this as such to use default behavior and make it easier to port to other uses later
@@ -36,7 +37,7 @@ function nomicly_new_idea () {
 	//create the slug
 	$post_name = sanitize_title( $post_title, $fallback_title ) ?>
 
-	//still need to configure/verify all these
+	//CREATE NEW POST
 	$post = array(
 	  'comment_status' => [ 'open' ] // 'closed' means no comments.
 	  'ping_status'    => [ 'closed' ] // 'closed' means pingbacks or trackbacks turned off
@@ -51,9 +52,10 @@ function nomicly_new_idea () {
 	  'post_type'      => [ 'post' ] //You may want to insert a regular post, page, link, a menu item or some custom post type
 	  'tax_input'      => [ array( 'taxonomy_name' => array( 'term', 'term2', 'term3' ) ) ] // support for custom taxonomies. 
 );  
-	// call wp's normal post-insertion function	
+	// INSERT POST
 	wp_insert_post( $post, $wp_error );
 }
+
 
 
 /*
