@@ -36,24 +36,24 @@ function nomicly_new_idea () {
 	$post_title = wp_strip_all_tags($_POST['post_title']);	
 	//create the slug
 	$post_name = sanitize_title( $post_title, $fallback_title );
-/*
+
 	//CREATE NEW POST
 	$post = array(
-	  'comment_status' => [ 'open' ] // 'closed' means no comments.
-	  'ping_status'    => [ 'closed' ] // 'closed' means pingbacks or trackbacks turned off
-	  'post_author'    => [ $userID ] //from above. changed from <user ID> - user ID of  author.
-	  'post_category'  => [ $category_id ] // wp_set_category() maybe useful for future features
-	  'post_date'      => [ $post_date ] //The time post was made.
-	  'post_date_gmt'  => [ $post_date ] //The time post was made, in GMT. (just using same time)
-	  'post_name'      => [ $post_name ] // The name (slug) for your post
-	  'post_parent'    => [ $post_parent ] //Sets the parent of the new post. 
-	  'post_status'    => [  'publish' ] //Set the status of the new post.
-	  'post_title'     => [ $post_title] //The title of your post.
-	  'post_type'      => [ 'post' ] //You may want to insert a regular post, page, link, a menu item or some custom post type
+	  'comment_status' => 'open',  // 'closed' means no comments.
+	  'ping_status'    => 'closed',  // 'closed' means pingbacks or trackbacks turned off
+	  'post_author'    => $userID , //from above. changed from <user ID> - user ID of  author.
+	  'post_category'  => $category_id, // wp_set_category() maybe useful for future features
+	  'post_date'      => $post_date,  //The time post was made.
+	  'post_date_gmt'  => $post_date , //The time post was made, in GMT. (just using same time)
+	  'post_name'      => $post_name, // The name (slug) for your post
+	  'post_parent'    => $post_parent, //Sets the parent of the new post. 
+	  'post_status'    => 'publish', //Set the status of the new post.
+	  'post_title'     =>  $post_title, //The title of your post.
+	  'post_type'      => 'post', //You may want to insert a regular post, page, link, a menu item or some custom post type
 	 // 'tax_input'      => [ array( 'taxonomy_name' => array( 'term', 'term2', 'term3' ) ) ] // support for custom taxonomies. 
 			);  //END POST ARRAY
 	// INSERT POST
-	wp_insert_post( $post, $wp_error ); */
+	wp_insert_post( $post, $wp_error ); 
 }
 
 
