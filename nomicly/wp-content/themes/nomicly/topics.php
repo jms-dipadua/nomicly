@@ -14,6 +14,8 @@
 //wp_enqueue_script( 'twentyeleven-showcase', get_template_directory_uri() . '/js/showcase.js', array( 'jquery' ), '2011-04-28' );
 
 get_header(); 
+
+// process topic posting 
 /* if (isset($_POST['new_topic']) {
 	process_new_topic();
 	}

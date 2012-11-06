@@ -12,7 +12,14 @@
  * @subpackage Twenty_Eleven
  */
 
-get_header(); ?>
+get_header(); 
+
+// process new idea posting 
+/* if (isset($_POST['new_idea']) {
+	process_new_idea();
+	}
+*/
+?>
 
 		<div id="primary">
 			<div id="content" role="main">
