@@ -36,7 +36,7 @@ function nomicly_new_idea () {
 	$post_title = wp_strip_all_tags($_POST['post_title']);	
 	//create the slug
 	$post_name = sanitize_title( $post_title, $fallback_title );
-
+/*
 	//CREATE NEW POST
 	$post = array(
 	  'comment_status' => [ 'open' ] // 'closed' means no comments.
@@ -51,9 +51,9 @@ function nomicly_new_idea () {
 	  'post_title'     => [ $post_title] //The title of your post.
 	  'post_type'      => [ 'post' ] //You may want to insert a regular post, page, link, a menu item or some custom post type
 	 // 'tax_input'      => [ array( 'taxonomy_name' => array( 'term', 'term2', 'term3' ) ) ] // support for custom taxonomies. 
-);  
+			);  //END POST ARRAY
 	// INSERT POST
-	wp_insert_post( $post, $wp_error );
+	wp_insert_post( $post, $wp_error ); */
 }
 
 
