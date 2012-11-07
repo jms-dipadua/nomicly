@@ -53,7 +53,7 @@ function nomicly_new_idea () {
 	  'comment_status' => 'open',  // 'closed' means no comments.
 	  'ping_status'    => 'closed',  // 'closed' means pingbacks or trackbacks turned off
 	  'post_author'    => $userID , //from above. changed from <user ID> - user ID of  author.
-//	  'post_category'  => $category_id, // wp_set_category() maybe useful for future features
+	  'post_category'  => $category_id, // wp_set_category() maybe useful for future features
 	  'post_date'      => $post_date,  //The time post was made.
 	  'post_date_gmt'  => $post_date , //The time post was made, in GMT. (just using same time)
 	  'post_name'      => $post_name, // The name (slug) for your post
@@ -64,16 +64,23 @@ function nomicly_new_idea () {
 //	  'tax_input'      => array( 'term_taxonomy_id' => $category_id ) ]
 			);  //END POST ARRAY
 	// INSERT POST and get id to insert into taxonomy
-//	wp_insert_post( $post, $wp_error ); 
-
-	$post_id = wp_insert_post( $post, $wp_error ); 
-	wp_set_post_terms($post_id, $category_id);
+	wp_insert_post( $post, $wp_error ); 
 	// empty post array by redirecting to fresh version of page
 //	header('Location: http://www.jamesdipadua.com/experimental/nomicly/index.php');
 }
 
 
-
+/*
+** THE FOLLOWING IS FOR THE HOT OR NOT GAME
+*/
+function nomicly_record_vote() {
+ print_r ($_POST);
+ $idea_1 = $_POST['0'];
+ $idea_2 = $_POST['1'];
+ $chosen_idea = $_POST['chosen_idea'];
+ 
+ 
+ 
 /*
 ///this is for processing new topics (via post from custom form)
 /*

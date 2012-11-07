@@ -43,7 +43,7 @@ get_header();
 		//get category information
 		global $post;
 		$categories = get_the_category($post->ID);
-	print_r($categories);
+	//print_r($categories);
 		$category_id = $categories[0] -> term_taxonomy_id;
 		
 		echo 
@@ -54,7 +54,7 @@ get_header();
 		<input type="submit" name="create" value="Create" />
 		</form>'; 
 	} else {
-	    echo '<h1><a href="wp-login.php?action=register">Register</a> or <a href="wp-login.php">Login</a> to Create New Ideas</h1>';
+	    echo '<h1><a href="../wp-login.php?action=register">Register</a> or <a href="../wp-login.php">Login</a> to Create New Ideas</h1>';
 			}
 		?>		
 

@@ -29,7 +29,7 @@ get_header();
 if ( is_user_logged_in() ) {
     //CREATE FORM LOGIC HERE
 } else {
-    echo '<h1><a href="wp-login.php?action=register">Register</a> or <a href="wp-login.php">Login</a> to Create New Ideas</h1>';
+    echo '<h1><a href="../wp-login.php?action=register">Register</a> or <a href="../wp-login.php">Login</a> to Create New Ideas</h1>';
 }
 ?>
 				<?php

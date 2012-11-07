@@ -13,29 +13,45 @@
 // Enqueue showcase script for the slider
 //wp_enqueue_script( 'twentyeleven-showcase', get_template_directory_uri() . '/js/showcase.js', array( 'jquery' ), '2011-04-28' );
 
-get_header(); ?>
+get_header(); 
+if (isset($_POST['vote'])) {
+	nomicly_record_vote();
+}
+?>
 
 		<div id="primary" class="showcase">
 			<div id="content" role="main">
-				<form action="" method="GET">
-				<?php 
-				query_posts( 'posts_per_page=2&orderby=rand' );
-				while ( have_posts() ) : the_post(); ?>
-
-				
-					<article id="post-<?php the_ID(); ?>" <?php post_class( 'compare-ideas' ); ?>>
+			
+	<?php
+	// check for login to present idea form or reg/login links
+	if ( is_user_logged_in() ) { ?>
+			<form action="#" method="post">
+			<?php 
+			query_posts( 'posts_per_page=2&orderby=rand' );
+			$nomicly_int = 0;
+			while ( have_posts() ) : the_post(); ?>	
+				<article id="<?php the_ID(); ?>">
 					<header class="entry-header">
-						<h2 class="entry-title"><?php the_title(); ?></h2>
+				<h2 class="entry-title"><?php the_title(); ?></h2>
 					</header><!-- .entry-header -->
 					
-					<input type="hidden" value="vote-<?php the_ID(); ?>" />
-					<input type="submit" value="vote-<?php the_ID(); ?>" />
-					</article><!-- #post-<?php the_ID(); ?> -->
-								
+				<input type="hidden" name ="<?php echo "$nomicly_int"; ?>" value="<?php the_ID(); ?>" />
+				<a href="" id="<?php the_ID(); ?>">Vote</a>
+				</article>					
 
-				<?php endwhile; ?>
-					
+				<?php 
+				$nomicly_int++;
+				endwhile;
+				?>
+				<input type="hidden" name="chosen_idea" value="" />
+				<input type="submit" name="vote" value="Vote" />					
 				</form>
+		<?php 
+		} else {
+	    echo '<h1><a href="../wp-login.php?action=register">Register</a> or <a href="../wp-login.php">Login</a> to Create New Ideas</h1>';
+			}
+		?>				
+			
 			</div><!-- #content -->
 		</div><!-- #primary -->
 
