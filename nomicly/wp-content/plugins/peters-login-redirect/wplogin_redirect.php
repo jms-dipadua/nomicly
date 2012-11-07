@@ -183,6 +183,8 @@ class rulRedirectFunctionCollection
                         }
                         else
                         {
+                        // THIS MAY BE WHERE YOU CAN MOD THE REDIRECT...
+                        //DOESN'T WORK.. :(
                             $variable_value = '';
                         }
                         break;

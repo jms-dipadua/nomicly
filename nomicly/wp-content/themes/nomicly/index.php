@@ -12,16 +12,34 @@
  * @subpackage Twenty_Eleven
  */
 
-get_header(); ?>
+get_header(); 
+
+// process new idea posting 
+ if (isset($_POST['create'])) {
+	nomicly_new_idea();
+	}
+?>
 
 		<div id="primary">
 			<div id="content" role="main">
-
-			<?php if ( have_posts() ) : ?>
+	<?php if ( have_posts() ) : ?>
 
 				<?php twentyeleven_content_nav( 'nav-above' ); ?>
-
+		<?php
+	// check for login to present idea form or reg/login links
+	if ( is_user_logged_in() ) { ?>
+		<form method ="post" action ="#">
+		<h2>Create A New Idea</h2>
+		<input type="text" name="new_idea" value="" />
+		<input type="submit" name="create" value="Create" />
+		</form>    
+		<?php	} else {
+	    echo '<h1><a href="wp-login.php?action=register">Register</a> or <a href="wp-login.php">Login</a> to Create New Ideas</h1>';
+			}
+		?>		
+		
 				<?php /* Start the Loop */ ?>
+		
 				<?php while ( have_posts() ) : the_post(); ?>
 
 					<?php get_template_part( 'content', get_post_format() ); ?>

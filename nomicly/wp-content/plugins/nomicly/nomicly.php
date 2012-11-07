@@ -10,7 +10,8 @@ License: GPLv2
 Detailed Overview:
 	This plugin will help create the consensus building functions.
 	That will largely translate to a handful of cron jobs
-	Also makes Reputation adjustments, Consensus Counts and Consensus Resolution Possible	
+	Also makes Reputation adjustments, Consensus Counts and Consensus Resolution Possible
+	Support-DB Initialization and Deletion w/ dump
 	Other nomicly features may include
 		Special Graphical Treatment of Interactions
 		Social Network/Graph Analysis
@@ -25,7 +26,32 @@ add_action( 'init', 'jadalm_nomicly_activation' );
 
 function jadalm_nomicly_activation () {
 
+/* 
+	helper code to mod the redirect after registration/login
+	// adding a redirect to index.php...?
+	else {
+	$ref = "../index.php";
+	return $ref;
+	}
+	
+	to modify:
+
+	function wp_get_referer() {
+	$ref = false;
+	if ( ! empty( $_REQUEST['_wp_http_referer'] ) )
+		$ref = $_REQUEST['_wp_http_referer'];
+	else if ( ! empty( $_SERVER['HTTP_REFERER'] ) )
+		$ref = $_SERVER['HTTP_REFERER'];
+
+	if ( $ref && $ref !== $_SERVER['REQUEST_URI'] )
+		return $ref;
+	else {
+	$ref = "../index.php";
+	return $ref;
+	}
 }
+*/
+
 
 
 function jadalm_nomicly_deactivation() {
