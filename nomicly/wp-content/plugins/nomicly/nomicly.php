@@ -24,7 +24,68 @@ add_action( 'init', 'jadalm_nomicly_activation' );
 
 //register_deactivation_hook(__FILE__, 'jadalm_nomicly_deactivation');
 
-function jadalm_nomicly_activation () {
+function nomicly_activation () {
+global $wpdb;
+// DB: hot or not
+$table_votes = $wpdb->prefix."hot_not_votes";
+$table_pairs = $wpdb->prefix."hot_not_pairs";
+
+//check to see if DBs exists, if not, creates
+ $check_db = "show tables like $table_votes";
+ $check_db_query = mysql_query($check_db);
+ if (!$check_db_query){
+		nomicly_create_hot_not_votes_db();
+ 	}
+$check_db = "show tables like $table_pairs";
+ $check_db_query = mysql_query($check_db);
+ if (!$check_db_query){
+		nomicly_create_hot_not_pairs_db();
+ }	
+//having verified the tables exist and data is all in place
+// get the functions needed to power the hot or not game
+
+
+}//end of nomicly_activiation
+
+
+function nomicly_create_hot_not_votes_db() {
+require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+global $wpdb;
+$table_votes = $wpdb->prefix."hot_not_votes";
+
+$sql = "CREATE TABLE $table_votes (
+  vote_id int NOT NULL AUTO_INCREMENT,
+  chosen_id int NOT NULL,
+  user_id int NOT NULL,
+  time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+  UNIQUE KEY vote_id (vote_id)
+);";
+
+dbDelta($sql);
+	
+} // end nomicly_create_hot_or_not_votes
+
+
+function nomicly_create_hot_not_pairs_db() {
+require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+global $wpdb;
+$table_votes = $wpdb->prefix."hot_not_votes";
+
+$sql = "CREATE TABLE $table_votes (
+  pair_id int NOT NULL AUTO_INCREMENT,
+  idea_1_count int NOT NULL,
+  idea_2_count int NOT NULL,
+  updated_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+  UNIQUE KEY pair_id (pair_id)
+);";
+dbDelta($sql);
+	
+} // end nomicly_create_hot_not_pairs_db
+
+
+
+
+//
 
 /* 
 	helper code to mod the redirect after registration/login

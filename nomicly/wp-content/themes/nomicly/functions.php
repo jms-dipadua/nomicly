@@ -76,15 +76,11 @@ function nomicly_new_idea () {
 function nomicly_record_vote() {
  print_r ($_POST);
  $idea_1 = $_POST['0'];
-// echo "idea 1 = $idea_1 <br />";
  $idea_2 = $_POST['1'];
-// echo "idea 2 = $idea_2 <br />";
  $chosen_idea = $_POST['chosen_idea'];
  
  $idea_pairs = array ($idea_1, $idea_2);
-// print_r($idea_pairs);
  sort($idea_pairs, SORT_NUMERIC);
-// print_r($idea_pairs);
  
 /* 
  $find_pairs = "select * from hot-or-not where idea_pairs = '$idea_pairs'";
