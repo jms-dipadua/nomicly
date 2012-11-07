@@ -25,7 +25,7 @@ if (isset($_POST['vote'])) {
 	<?php
 	// check for login to present idea form or reg/login links
 	if ( is_user_logged_in() ) { ?>
-			<form action="#" method="post">
+			<form action="#" method="post" id="compare-ideas-form">
 			<?php 
 			query_posts( 'posts_per_page=2&orderby=rand' );
 			$nomicly_int = 0;
@@ -36,15 +36,15 @@ if (isset($_POST['vote'])) {
 					</header><!-- .entry-header -->
 					
 				<input type="hidden" name ="<?php echo "$nomicly_int"; ?>" value="<?php the_ID(); ?>" />
-				<a href="" id="<?php the_ID(); ?>">Vote</a>
+				<a href="" id="<?php the_ID(); ?>" class="vote-link">Vote</a>
 				</article>					
 
 				<?php 
 				$nomicly_int++;
 				endwhile;
 				?>
-				<input type="hidden" name="chosen_idea" value="" />
-				<input type="submit" name="vote" value="Vote" />					
+				<input type="hidden" name="chosen_idea" id="chosen_idea" value="" />
+				<input id="compare-ideas-submit" type="submit" name="vote" value="Vote" style="display:none" />					
 				</form>
 		<?php 
 		} else {

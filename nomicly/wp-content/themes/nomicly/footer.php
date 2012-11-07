@@ -28,7 +28,7 @@
 			</div>
 	</footer><!-- #colophon -->
 </div><!-- #page -->
-
+<script type='text/javascript' src='<?php bloginfo('template_directory');?>/js/nomicly.js'></script>
 <?php wp_footer(); ?>
 
 </body>
