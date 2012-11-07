@@ -76,6 +76,7 @@ $table_pairs = $wpdb->prefix."hot_not_pairs";
 
 $sql = "CREATE TABLE $table_pairs (
   pair_id int NOT NULL AUTO_INCREMENT,
+  idea_pair VARCHAR(100) DEFAULT '' NOT NULL,
   idea_1_count int NOT NULL,
   idea_2_count int NOT NULL,
   updated_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,

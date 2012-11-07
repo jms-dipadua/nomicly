@@ -73,17 +73,62 @@ function nomicly_new_idea () {
 /*
 ** THE FOLLOWING IS FOR THE HOT OR NOT GAME
 */
+
 function nomicly_record_vote() {
+ global $wpdb;
+$table_votes = $wpdb->prefix."hot_not_votes";
+$table_pairs = $wpdb->prefix."hot_not_pairs"; 
+
  print_r ($_POST);
  $idea_1 = $_POST['0'];
  $idea_2 = $_POST['1'];
  $chosen_idea = $_POST['chosen_idea'];
  
- $idea_pairs = array ($idea_1, $idea_2);
- sort($idea_pairs, SORT_NUMERIC);
+ $idea_array = array ($idea_1, $idea_2);
+ sort($idea_array, SORT_NUMERIC);
  
-/* 
- $myrows = $wpdb->get_results( "SELECT id, name FROM mytable" );
+ $idea_pair = implode(",", $idea_array);
+
+//get the pair_id to process the insert correctly 
+	$pair_id = $wpdb->get_row("SELECT pair_id FROM $table_pairs WHERE pair" );
+	if (empty($pair_id)) {
+		$new_pair_id = insert_new_pair ($idea_pair);
+		insert_vote();
+		update_pair();
+	 }
+	else if (!empty($pair_id)) {
+		insert_vote();
+		update_pair();	
+	}
+
+}// END NOMICLY_RECORD_VOTE()
+
+function insert_new_pair($pair) {
+	$idea_pair = $pair;
+	$table_pairs = $wpdb->prefix."hot_not_pairs"; 
+	$date = date('Y-m-d H:i:s');
+	$pair_data = array (
+			'idea_pair' => $idea_pair,
+			'idea_1_count' => '0',
+			'idea_2_count' => '0',
+			'update_at' => $date	
+	);
+	
+	$wpdb->insert( $table_pairs, $pair_data);
+	//now get the ID for the newly inserted pair
+	$pair_id = $wpdb->get_row("SELECT pair_id FROM $table_pairs WHERE pair" );
+	return $pair_id;
+}
+
+/*
+function insert_vote($pair, $chosen) {
+	$userID = get_current_user_id();
+
+
+} //END INSERT_VOTE
+
+function update_pairs ($pair) {
+ $does_exist = $wpdb->get_results( "SELECT * FROM mytable" );
  $find_pairs = "select * from hot-or-not where idea_pairs = '$idea_pairs'";
  $find_pairs_query = mysql_query($find_pairs);
  	if (!$find_pairs_query)
@@ -95,18 +140,10 @@ function nomicly_record_vote() {
  	else if ($does_exist > 0) {
  		update_vote($idea_pairs_sorted, $chosen_idea); 	
  	}
- */	
-}// END NOMICLY_RECORD_VOTE()
-
-function insert_vote($pair, $chosen) {
 
 
-}
-
-function update_vote ($pair, $chosen) {
-
-
-}
+} //END UPDATE_PAIRS
+*/
 
 /*
 ///this is for processing new topics (via post from custom form)
