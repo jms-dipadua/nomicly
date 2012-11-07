@@ -7,7 +7,12 @@
  * @since Twenty Eleven 1.0
  */
 
-get_header(); ?>
+get_header(); 
+// process new idea posting 
+ if (isset($_POST['create'])) {
+	nomicly_new_idea();
+	}
+?>
 
 		<section id="primary">
 			<div id="content" role="main">
@@ -25,8 +30,34 @@ get_header(); ?>
 							echo apply_filters( 'category_archive_meta', '<div class="category-archive-meta">' . $category_description . '</div>' );
 					?>
 				</header>
-
 				<?php twentyeleven_content_nav( 'nav-above' ); ?>
+
+<?php
+/* THIS IS WHERE YOU'LL PUT THE TOPIC-RESPONSE FORM 
+// WILL NEED TO GET THE CATEGORY DATA
+// THEN POPULATE THE FORM
+// AND OF COURSE, CHECK FOR LOGIN
+*/
+	// check for login to present idea form or reg/login links
+	if ( is_user_logged_in() ) { 
+		//get category information
+		global $post;
+		$categories = get_the_category($post->ID);
+//	print_r($categories);
+		$category_id = $categories[0] -> term_id;
+		
+		echo 
+		'<form method ="post" action ="#">
+		<h2>Create A New Idea</h2>
+		<input type="text" name="new_idea" value="" />
+		<input type="hidden" name="category_id" value="'.$category_id.'" />
+		<input type="submit" name="create" value="Create" />
+		</form>'; 
+	} else {
+	    echo '<h1><a href="wp-login.php?action=register">Register</a> or <a href="wp-login.php">Login</a> to Create New Ideas</h1>';
+			}
+		?>		
+
 
 				<?php /* Start the Loop */ ?>
 				<?php while ( have_posts() ) : the_post(); ?>

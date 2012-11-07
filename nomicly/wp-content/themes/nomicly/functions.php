@@ -30,8 +30,12 @@ function nomicly_new_idea () {
 
 // POTENTIAL BUG
 // hardcoded for main feed
+	if (!empty($_POST['category_id'])) {
+		$post_parent = $_POST['category_id'];
+		}
+	else {
 	$post_parent = 0;
-//	$category_id = $_POST['category'];	//left this as such to use default behavior and make it easier to port to other uses later
+	}
 	//make the title safe for mysql
 	$post_title = wp_strip_all_tags($_POST['new_idea']);	
 	//create the slug
@@ -55,7 +59,7 @@ function nomicly_new_idea () {
 	// INSERT POST
 	wp_insert_post( $post, $wp_error ); 
 	// empty post array by redirecting to fresh version of page
-	header('Location: http://www.jamesdipadua.com/experimental/nomicly/index.php');
+//	header('Location: http://www.jamesdipadua.com/experimental/nomicly/index.php');
 }
 
 
