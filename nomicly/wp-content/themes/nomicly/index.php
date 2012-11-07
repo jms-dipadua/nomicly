@@ -27,12 +27,15 @@ get_header();
 
 				<?php twentyeleven_content_nav( 'nav-above' ); ?>
 		<?php
-	// check for login to present reg/login links
-			if ( is_user_logged_in() ) {
-    //CREATE FORM LOGIC HERE
-			} else {
+	// check for login to present idea form or reg/login links
+	if ( is_user_logged_in() ) { ?>
+		<form method ="post" action ="#">
+		<h2>Create A New Idea</h2>
+		<input type="text" name="new_idea" value="" />
+		<input type="submit" name="create" value="Create" />
+		</form>    
+		<?php	} else {
 	    echo '<h1><a href="wp-login.php?action=register">Register</a> or <a href="wp-login.php">Login</a> to Create New Ideas</h1>';
-	    echo 'PUT THE FORM HERE<br />';
 			}
 		?>		
 		
