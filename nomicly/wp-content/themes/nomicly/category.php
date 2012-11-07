@@ -43,8 +43,8 @@ get_header();
 		//get category information
 		global $post;
 		$categories = get_the_category($post->ID);
-//	print_r($categories);
-		$category_id = $categories[0] -> term_id;
+	print_r($categories);
+		$category_id = $categories[0] -> term_taxonomy_id;
 		
 		echo 
 		'<form method ="post" action ="#">

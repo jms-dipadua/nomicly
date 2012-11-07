@@ -30,12 +30,19 @@ function nomicly_new_idea () {
 
 // POTENTIAL BUG
 // hardcoded for main feed
-	if (!empty($_POST['category_id'])) {
-		$post_parent = $_POST['category_id'];
+	if (!empty($_POST['post_parent'])) {
+		$post_parent = $_POST['post_parent'];
 		}
 	else {
 	$post_parent = 0;
 	}
+//setup category stuff
+	if (!empty($_POST['category_id'])) {
+		$category_id = array($_POST['category_id']);
+		}
+
+	
+	
 	//make the title safe for mysql
 	$post_title = wp_strip_all_tags($_POST['new_idea']);	
 	//create the slug
@@ -54,10 +61,13 @@ function nomicly_new_idea () {
 	  'post_status'    => 'publish', //Set the status of the new post.
 	  'post_title'     =>  $post_title, //The title of your post.
 	  'post_type'      => 'post', //You may want to insert a regular post, page, link, a menu item or some custom post type
-	 // 'tax_input'      => [ array( 'taxonomy_name' => array( 'term', 'term2', 'term3' ) ) ] // support for custom taxonomies. 
+//	  'tax_input'      => array( 'term_taxonomy_id' => $category_id ) ]
 			);  //END POST ARRAY
-	// INSERT POST
-	wp_insert_post( $post, $wp_error ); 
+	// INSERT POST and get id to insert into taxonomy
+//	wp_insert_post( $post, $wp_error ); 
+
+	$post_id = wp_insert_post( $post, $wp_error ); 
+	wp_set_post_terms($post_id, $category_id);
 	// empty post array by redirecting to fresh version of page
 //	header('Location: http://www.jamesdipadua.com/experimental/nomicly/index.php');
 }
