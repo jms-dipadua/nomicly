@@ -76,11 +76,41 @@ function nomicly_new_idea () {
 function nomicly_record_vote() {
  print_r ($_POST);
  $idea_1 = $_POST['0'];
+// echo "idea 1 = $idea_1 <br />";
  $idea_2 = $_POST['1'];
+// echo "idea 2 = $idea_2 <br />";
  $chosen_idea = $_POST['chosen_idea'];
  
+ $idea_pairs = array ($idea_1, $idea_2);
+// print_r($idea_pairs);
+ sort($idea_pairs, SORT_NUMERIC);
+// print_r($idea_pairs);
  
- 
+/* 
+ $find_pairs = "select * from hot-or-not where idea_pairs = '$idea_pairs'";
+ $find_pairs_query = mysql_query($find_pairs);
+ 	if (!$find_pairs_query)
+ 		echo mysql_error();
+
+ $does_exist = mysql_num_rows($find_pairs_query);
+ 	if ($does_exist < 0)
+ 		insert_vote($idea_pairs_sorted, $chosen_idea);
+ 	else if ($does_exist > 0) {
+ 		update_vote($idea_pairs_sorted, $chosen_idea); 	
+ 	}
+ */	
+}// END NOMICLY_RECORD_VOTE()
+
+function insert_vote($pair, $chosen) {
+
+
+}
+
+function update_vote ($pair, $chosen) {
+
+
+}
+
 /*
 ///this is for processing new topics (via post from custom form)
 /*
