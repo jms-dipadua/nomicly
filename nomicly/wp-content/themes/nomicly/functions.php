@@ -83,6 +83,7 @@ function nomicly_record_vote() {
  sort($idea_pairs, SORT_NUMERIC);
  
 /* 
+ $myrows = $wpdb->get_results( "SELECT id, name FROM mytable" );
  $find_pairs = "select * from hot-or-not where idea_pairs = '$idea_pairs'";
  $find_pairs_query = mysql_query($find_pairs);
  	if (!$find_pairs_query)

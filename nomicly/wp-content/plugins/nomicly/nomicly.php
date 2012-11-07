@@ -19,10 +19,10 @@ Detailed Overview:
 ?>
 <?php
 
-//register_activation_hook(__FILE__, 'jadalm_nomicly_activation');
-add_action( 'init', 'jadalm_nomicly_activation' );
+register_activation_hook(__FILE__, 'nomicly_activation');
+//add_action( 'init', 'nomicly_activation' );
 
-//register_deactivation_hook(__FILE__, 'jadalm_nomicly_deactivation');
+register_deactivation_hook(__FILE__, 'nomicly_deactivation');
 
 function nomicly_activation () {
 global $wpdb;
@@ -31,12 +31,14 @@ $table_votes = $wpdb->prefix."hot_not_votes";
 $table_pairs = $wpdb->prefix."hot_not_pairs";
 
 //check to see if DBs exists, if not, creates
+// VOTES
  $check_db = "show tables like $table_votes";
  $check_db_query = mysql_query($check_db);
  if (!$check_db_query){
 		nomicly_create_hot_not_votes_db();
  	}
-$check_db = "show tables like $table_pairs";
+// PAIRS
+ $check_db = "show tables like $table_pairs";
  $check_db_query = mysql_query($check_db);
  if (!$check_db_query){
 		nomicly_create_hot_not_pairs_db();
@@ -56,6 +58,7 @@ $table_votes = $wpdb->prefix."hot_not_votes";
 $sql = "CREATE TABLE $table_votes (
   vote_id int NOT NULL AUTO_INCREMENT,
   chosen_id int NOT NULL,
+  pair_id int NOT NULL,
   user_id int NOT NULL,
   time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
   UNIQUE KEY vote_id (vote_id)
@@ -69,9 +72,9 @@ dbDelta($sql);
 function nomicly_create_hot_not_pairs_db() {
 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 global $wpdb;
-$table_votes = $wpdb->prefix."hot_not_votes";
+$table_pairs = $wpdb->prefix."hot_not_pairs";
 
-$sql = "CREATE TABLE $table_votes (
+$sql = "CREATE TABLE $table_pairs (
   pair_id int NOT NULL AUTO_INCREMENT,
   idea_1_count int NOT NULL,
   idea_2_count int NOT NULL,
@@ -113,13 +116,16 @@ dbDelta($sql);
 }
 */
 
-
-
-function jadalm_nomicly_deactivation() {
-#nothing for now. 
-#delete custom post type?
-#convert all nomicly custom post types to normal posts?
-}
+function nomicly_deactivation() {
+//will need to write a db dump later
+//for now, just drop the tables
+global $wpdb;
+// DB: hot or not
+$table_votes = $wpdb->prefix."hot_not_votes";
+$table_pairs = $wpdb->prefix."hot_not_pairs"; 
+	$wpdb->query("DROP TABLE IF EXISTS $table_votes");
+	$wpdb->query("DROP TABLE IF EXISTS $table_pairs");
+}//END DEACTIVATION 
 
 /* 
 // what i was using when i was making a custom post-type
