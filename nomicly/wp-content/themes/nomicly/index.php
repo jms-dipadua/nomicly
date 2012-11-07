@@ -15,15 +15,14 @@
 get_header(); 
 
 // process new idea posting 
- if (isset($_POST['new_idea'])) {
+ if (isset($_POST['create'])) {
 	nomicly_new_idea();
 	}
 ?>
 
 		<div id="primary">
 			<div id="content" role="main">
-
-			<?php if ( have_posts() ) : ?>
+	<?php if ( have_posts() ) : ?>
 
 				<?php twentyeleven_content_nav( 'nav-above' ); ?>
 		<?php

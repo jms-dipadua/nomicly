@@ -31,9 +31,9 @@ function nomicly_new_idea () {
 // POTENTIAL BUG
 // hardcoded for main feed
 	$post_parent = 0;
-	$category_id = $_POST['category'];	//left this as such to use default behavior and make it easier to port to other uses later
+//	$category_id = $_POST['category'];	//left this as such to use default behavior and make it easier to port to other uses later
 	//make the title safe for mysql
-	$post_title = wp_strip_all_tags($_POST['post_title']);	
+	$post_title = wp_strip_all_tags($_POST['new_idea']);	
 	//create the slug
 	$post_name = sanitize_title( $post_title, $fallback_title );
 
@@ -42,7 +42,7 @@ function nomicly_new_idea () {
 	  'comment_status' => 'open',  // 'closed' means no comments.
 	  'ping_status'    => 'closed',  // 'closed' means pingbacks or trackbacks turned off
 	  'post_author'    => $userID , //from above. changed from <user ID> - user ID of  author.
-	  'post_category'  => $category_id, // wp_set_category() maybe useful for future features
+//	  'post_category'  => $category_id, // wp_set_category() maybe useful for future features
 	  'post_date'      => $post_date,  //The time post was made.
 	  'post_date_gmt'  => $post_date , //The time post was made, in GMT. (just using same time)
 	  'post_name'      => $post_name, // The name (slug) for your post
@@ -54,6 +54,8 @@ function nomicly_new_idea () {
 			);  //END POST ARRAY
 	// INSERT POST
 	wp_insert_post( $post, $wp_error ); 
+	// empty post array by redirecting to fresh version of page
+	header('Location: http://www.jamesdipadua.com/experimental/nomicly/index.php');
 }
 
 
