@@ -1,5 +1,5 @@
 <?php
-
+// require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 /*
 // this is for getting custom post types
@@ -63,9 +63,10 @@ function nomicly_new_idea () {
 	  'post_type'      => 'post', //You may want to insert a regular post, page, link, a menu item or some custom post type
 //	  'tax_input'      => array( 'term_taxonomy_id' => $category_id ) ]
 			);  //END POST ARRAY
-	// INSERT POST and get id to insert into taxonomy
+	// INSERT POST 
 	wp_insert_post( $post, $wp_error ); 
-	// empty post array by redirecting to fresh version of page
+// BUG
+// empty post array by redirecting to fresh version of page
 //	header('Location: http://www.jamesdipadua.com/experimental/nomicly/index.php');
 }
 
@@ -83,48 +84,54 @@ $table_pairs = $wpdb->prefix."hot_not_pairs";
  $idea_1 = $_POST['0'];
  $idea_2 = $_POST['1'];
  $chosen_idea = $_POST['chosen_idea'];
- 
+//Finess the ideas for db stuff 
  $idea_array = array ($idea_1, $idea_2);
  sort($idea_array, SORT_NUMERIC);
- 
  $idea_pair = implode(",", $idea_array);
 
 //get the pair_id to process the insert correctly 
-	$pair_id = $wpdb->get_row("SELECT pair_id FROM $table_pairs WHERE pair" );
+	$pair_id = $wpdb->get_row("SELECT pair_id FROM $table_pairs WHERE idea_pair = '$idea_pair'");
 	if (empty($pair_id)) {
-		$new_pair_id = insert_new_pair ($idea_pair);
-		insert_vote();
-		update_pair();
+		$new_pair_id = insert_new_pair ($idea_pair); }
+/*		$vote_id = insert_vote($new_pair_id);
+		update_pair($vote_id, $new_pair_id);
 	 }
 	else if (!empty($pair_id)) {
-		insert_vote();
-		update_pair();	
+		$vote_id= insert_vote($pair_id, $chosen_idea);
+		update_pair($vote_id, $pair_id);	
 	}
-
+*/
 }// END NOMICLY_RECORD_VOTE()
 
 function insert_new_pair($pair) {
+	global $wpdb;
 	$idea_pair = $pair;
 	$table_pairs = $wpdb->prefix."hot_not_pairs"; 
 	$date = date('Y-m-d H:i:s');
 	$pair_data = array (
 			'idea_pair' => $idea_pair,
-			'idea_1_count' => '0',
-			'idea_2_count' => '0',
-			'update_at' => $date	
+			'idea_1_count' => 0,
+			'idea_2_count' => 0,
+			'updated_at' => $date	
 	);
-	
-	$wpdb->insert( $table_pairs, $pair_data);
+	$wpdb->insert( $table_pairs, $pair_data );
 	//now get the ID for the newly inserted pair
-	$pair_id = $wpdb->get_row("SELECT pair_id FROM $table_pairs WHERE pair" );
+	//$pair_id = $wpdb->get_row("SELECT pair_id FROM $table_pairs WHERE idea_pair = '$idea_pair'");
+	$pair_id = $wpdb->insert_id;
+	echo "Pair ID = $pair_id <br />";
 	return $pair_id;
 }
 
 /*
 function insert_vote($pair, $chosen) {
 	$userID = get_current_user_id();
+	$date = date('Y-m-d H:i:s');
+	$idea_pair = $pair;
+	$chosen_idea = $chosen;
 
-
+	$vote_id = $wpdb->get_row("SELECT vote_id FROM $table_votes WHERE idea_pair ='$idea_pair' and time ='$date'" );
+	return $vote_id;
+	
 } //END INSERT_VOTE
 
 function update_pairs ($pair) {
