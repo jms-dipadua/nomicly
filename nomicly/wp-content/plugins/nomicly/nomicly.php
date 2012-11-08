@@ -119,6 +119,7 @@ dbDelta($sql);
 
 function nomicly_deactivation() {
 //will need to write a db dump later
+// back up may be lame because the pairings will all be fucked.
 //for now, just drop the tables
 global $wpdb;
 // DB: hot or not

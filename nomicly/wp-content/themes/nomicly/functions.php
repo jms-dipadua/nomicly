@@ -77,10 +77,10 @@ function nomicly_new_idea () {
 
 function nomicly_record_vote() {
  global $wpdb;
+
 $table_votes = $wpdb->prefix."hot_not_votes";
 $table_pairs = $wpdb->prefix."hot_not_pairs"; 
 
- print_r ($_POST);
  $idea_1 = $_POST['0'];
  $idea_2 = $_POST['1'];
  $chosen_idea = $_POST['chosen_idea'];
@@ -88,19 +88,20 @@ $table_pairs = $wpdb->prefix."hot_not_pairs";
  $idea_array = array ($idea_1, $idea_2);
  sort($idea_array, SORT_NUMERIC);
  $idea_pair = implode(",", $idea_array);
-
+ 
+ $winning_idea = determine_winner ($idea_1, $idea_2, $chosen_idea);
 //get the pair_id to process the insert correctly 
 	$pair_id = $wpdb->get_row("SELECT pair_id FROM $table_pairs WHERE idea_pair = '$idea_pair'");
 	if (empty($pair_id)) {
-		$new_pair_id = insert_new_pair ($idea_pair); }
-/*		$vote_id = insert_vote($new_pair_id);
-		update_pair($vote_id, $new_pair_id);
+		$new_pair_id = insert_new_pair ($idea_pair); 
+		$vote_id = insert_vote($new_pair_id, $chosen_idea);
+//		update_pair($new_pair_id, $winning_idea);
 	 }
 	else if (!empty($pair_id)) {
-		$vote_id= insert_vote($pair_id, $chosen_idea);
-		update_pair($vote_id, $pair_id);	
+		$vote_id = insert_vote($pair_id, $chosen_idea);
+//		update_pair($pair_id, $winning_idea);	
 	}
-*/
+
 }// END NOMICLY_RECORD_VOTE()
 
 function insert_new_pair($pair) {
@@ -116,41 +117,103 @@ function insert_new_pair($pair) {
 	);
 	$wpdb->insert( $table_pairs, $pair_data );
 	//now get the ID for the newly inserted pair
-	//$pair_id = $wpdb->get_row("SELECT pair_id FROM $table_pairs WHERE idea_pair = '$idea_pair'");
 	$pair_id = $wpdb->insert_id;
-	echo "Pair ID = $pair_id <br />";
 	return $pair_id;
-}
+}// END INSERT_NEW_PAIR
 
-/*
+
 function insert_vote($pair, $chosen) {
-	$userID = get_current_user_id();
+	global $wpdb;
+	$user_id = get_current_user_id();
 	$date = date('Y-m-d H:i:s');
-	$idea_pair = $pair;
+	$pair_id = $pair;
 	$chosen_idea = $chosen;
 
-	$vote_id = $wpdb->get_row("SELECT vote_id FROM $table_votes WHERE idea_pair ='$idea_pair' and time ='$date'" );
+	$table_votes = $wpdb -> prefix.'hot_not_votes';
+
+//prep data for insert
+	$vote_data = array (
+		'chosen_id' => $chosen_idea,
+		'pair_id' => $pair_id,
+		'user_id' => $user_id,
+		'time' => $date
+	);
+	// insert vote data into db
+	$wpdb->insert( $table_votes, $vote_data );
+	// get vote_id and return for update_pairs function
+	$vote_id = $wpdb -> insert_id;
 	return $vote_id;
 	
 } //END INSERT_VOTE
 
-function update_pairs ($pair) {
- $does_exist = $wpdb->get_results( "SELECT * FROM mytable" );
- $find_pairs = "select * from hot-or-not where idea_pairs = '$idea_pairs'";
- $find_pairs_query = mysql_query($find_pairs);
- 	if (!$find_pairs_query)
- 		echo mysql_error();
 
- $does_exist = mysql_num_rows($find_pairs_query);
- 	if ($does_exist < 0)
- 		insert_vote($idea_pairs_sorted, $chosen_idea);
- 	else if ($does_exist > 0) {
- 		update_vote($idea_pairs_sorted, $chosen_idea); 	
- 	}
+function update_pairs ($pair, $winning) {
+	global $wpdb;
+	$pair_id = $pair;
+	$winning_idea = $winning;
+	$table_pairs = $wpdb->prefix."hot_not_pairs"; 
+	$date = date('Y-m-d H:i:s');
+
+ $idea_1 = $_POST['0'];
+ $idea_2 = $_POST['1'];
+ $chosen_idea = $_POST['chosen_idea'];
+
+switch ($chosen_idea) {
+		case $idea_1:
+			// because of sort, have to do an integer comparison
+			if ($idea_1 < $idea_2)
+				$winning_idea = 'idea_1_count';
+			else 
+				$winning_idea = 'idea_2_count';
+			break;
+			case $idea_2:
+			if ($idea_2 < $idea_1)
+				$winning_idea = 'idea_1_count';
+			else 
+				$winning_idea = 'idea_2_count';
+			break;
+			}// END SWITCH
 
 
+// CUSTOM UPDATE QUERY
+// since i want to do a bit more magicary than the normal wp functions support
+// STOPPING HERE FOR NOW. THIS IS WHERE IT BREAKS. 
+/*
+//figure out winning choice and then do the insert specific to that winner
+// can make it more elegant later...
+
+$wpdb->query( 
+	$wpdb->prepare( 
+		"UPDATE $table_pairs 
+         SET (
+        	$winning_idea = $winning_idea+1,
+ 	       	updated_at = '$date'
+ 	       	 )
+		  WHERE pair_id = '$pair_id'"
+		)
+	); */
 } //END UPDATE_PAIRS
-*/
+
+function determine_winner ($idea_1, $idea_2, $chosen_idea) {
+	switch ($chosen_idea) {
+		case $idea_1:
+			// because of sort, have to do an integer comparison
+			if ($idea_1 < $idea_2)
+				$winning_idea = 'idea_1_count';
+			else 
+				$winning_idea = 'idea_2_count';
+			break;
+			case $idea_2:
+			if ($idea_2 < $idea_1)
+				$winning_idea = 'idea_1_count';
+			else 
+				$winning_idea = 'idea_2_count';
+			break;
+			}// END SWITCH
+		
+		return $winning_idea;
+}// END DETERMINE_WINNER
+
 
 /*
 ///this is for processing new topics (via post from custom form)
