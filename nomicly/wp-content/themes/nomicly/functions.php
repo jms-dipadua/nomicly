@@ -89,17 +89,21 @@ $table_pairs = $wpdb->prefix."hot_not_pairs";
  sort($idea_array, SORT_NUMERIC);
  $idea_pair = implode(",", $idea_array);
  
- $winning_idea = determine_winner ($idea_1, $idea_2, $chosen_idea);
 //get the pair_id to process the insert correctly 
 	$pair_id = $wpdb->get_row("SELECT pair_id FROM $table_pairs WHERE idea_pair = '$idea_pair'");
+	//$pair_id = $wpdb->get_result($pair_id);
 	if (empty($pair_id)) {
 		$new_pair_id = insert_new_pair ($idea_pair); 
 		$vote_id = insert_vote($new_pair_id, $chosen_idea);
-//		update_pair($new_pair_id, $winning_idea);
+		echo "new pair id = $new_pair_id <br />";
+		print_r ($idea_array);
+		update_pairs($new_pair_id, $idea_array, $chosen_idea);
 	 }
-	else if (!empty($pair_id)) {
-		$vote_id = insert_vote($pair_id, $chosen_idea);
-//		update_pair($pair_id, $winning_idea);	
+	else {
+		echo "pair id = $pair_id <br />";
+//		$vote_id = insert_vote($pair_id, $chosen_idea);
+		print_r ($idea_array);
+//		update_pairs($pair_id, $idea_array, $chosen_idea);	
 	}
 
 }// END NOMICLY_RECORD_VOTE()
@@ -128,7 +132,6 @@ function insert_vote($pair, $chosen) {
 	$date = date('Y-m-d H:i:s');
 	$pair_id = $pair;
 	$chosen_idea = $chosen;
-
 	$table_votes = $wpdb -> prefix.'hot_not_votes';
 
 //prep data for insert
@@ -147,118 +150,105 @@ function insert_vote($pair, $chosen) {
 } //END INSERT_VOTE
 
 
-function update_pairs ($pair, $winning) {
+function update_pairs($pair, $ideas, $chosen_idea) {
 	global $wpdb;
+	echo "inside update_pairs<br />";
 	$pair_id = $pair;
-	$winning_idea = $winning;
+	$idea_array = $ideas;
+	$winning_idea = $chosen_idea;
 	$table_pairs = $wpdb->prefix."hot_not_pairs"; 
 	$date = date('Y-m-d H:i:s');
 
- $idea_1 = $_POST['0'];
- $idea_2 = $_POST['1'];
- $chosen_idea = $_POST['chosen_idea'];
+	echo "chosen idea = $chosen_idea <br />";
+	print_r ($idea_array);
 
-switch ($chosen_idea) {
-		case $idea_1:
-			// because of sort, have to do an integer comparison
-			if ($idea_1 < $idea_2)
-				$winning_idea = 'idea_1_count';
+ $winner = determine_winner ($idea_array, $winning_idea);
+ $winner = intval($winner);
+ echo "winning idea == $winner <br />";
+ 
+ //NOTE THIS SHOULD  be using wp query
+ // BUT IT WASN'T LETTING ME DO THE UPDATE THE WAY I WANTED
+ // THAT IS, WITH COL = COL+1... 
+	if ($winner == 1) {
+		$query = "UPDATE nomicly_hot_not_pairs 
+			SET idea_1_count = idea_1_count+1 
+			WHERE pair_id = '$pair_id'";
+		$update_query = mysql_query($query);
+			if (!$update_query ) {
+				echo mysql_error();
+				}
 			else 
-				$winning_idea = 'idea_2_count';
-			break;
-			case $idea_2:
-			if ($idea_2 < $idea_1)
-				$winning_idea = 'idea_1_count';
+				echo "UPDATE SUCCESSFUL FOR<br /> $update<br />";		
+			/*	 $wpdb->query( 
+			$wpdb->prepare( 
+				"UPDATE $table_pairs 
+         		SET (
+        		idea_1_count = idea_1_count+1,
+ 	       		updated_at = '$date'
+ 	       		)
+		  		WHERE pair_id = '$pair_id'"
+			) 
+		);  */
+	} //END IDEA 1 COUNT
+	else if ($winner == 2) {
+			$query = "UPDATE nomicly_hot_not_pairs 
+			SET idea_2_count = idea_2_count+1 
+			WHERE pair_id = '$pair_id'";
+		$update_query = mysql_query($query);
+			if (!$update_query ) {
+				echo mysql_error();
+				}
 			else 
-				$winning_idea = 'idea_2_count';
-			break;
-			}// END SWITCH
+				echo "UPDATE SUCCESSFUL FOR<br /> $update<br />";		
 
+	/*	 $wpdb->query( 
+			$wpdb->prepare( 
+				"UPDATE $table_pairs 
+         		SET (
+        		idea_2_count = idea_2_count+1,
+ 	       		updated_at = '$date'
+ 	       		)
+		  		WHERE pair_id = '$pair_id'"
+			) 
+		); */  
+	}//END IDEA 2 COUNT
+
+}// END UPDATE PAIRS
 
 // CUSTOM UPDATE QUERY
 // since i want to do a bit more magicary than the normal wp functions support
 // STOPPING HERE FOR NOW. THIS IS WHERE IT BREAKS. 
-/*
+
 //figure out winning choice and then do the insert specific to that winner
 // can make it more elegant later...
 
-$wpdb->query( 
-	$wpdb->prepare( 
-		"UPDATE $table_pairs 
-         SET (
-        	$winning_idea = $winning_idea+1,
- 	       	updated_at = '$date'
- 	       	 )
-		  WHERE pair_id = '$pair_id'"
-		)
-	); */
-} //END UPDATE_PAIRS
+function determine_winner ($ideas, $chosen_idea) {
+	$idea_array = $ideas;
+	echo " <br /> inside determine winner <br />";
+	print_r ($idea_array);
+	$winner = $chosen_idea;
+	echo "winner pre-intval = $winner <br />";
+	$winner = intval($winner);
+	echo "winner POST-intval = $winner <br />";
 
-function determine_winner ($idea_1, $idea_2, $chosen_idea) {
-	switch ($chosen_idea) {
-		case $idea_1:
-			// because of sort, have to do an integer comparison
-			if ($idea_1 < $idea_2)
-				$winning_idea = 'idea_1_count';
-			else 
-				$winning_idea = 'idea_2_count';
-			break;
-			case $idea_2:
-			if ($idea_2 < $idea_1)
-				$winning_idea = 'idea_1_count';
-			else 
-				$winning_idea = 'idea_2_count';
-			break;
-			}// END SWITCH
-		
-		return $winning_idea;
+// going to loop through this. 
+// better ways to do this but i was futzing before
+// and don't want to optimize now...	
+	$counter = 0;	
+	$count = count($idea_array);
+	while ($counter < $count) {
+		if ($idea_array[$counter] == $winner) {
+			$winning_idea = $counter;
+		}
+	$counter++;
+	} // END WHILE
+	// fix the count on winning idea (add 1)
+	// it's an easier human number to work with (at least for me)
+	$winning_idea++;	
+	return $winning_idea;
 }// END DETERMINE_WINNER
 
 
-/*
-///this is for processing new topics (via post from custom form)
-/*
-function process_new_topic () {
-	
-//need to get user info to connect the topic/idea to the user 
-//potentially redundant but using wp-core functions to reduce impact
-	$userID = get_current_user_id();
-	$user_data = get_userdata( $userID );
-	
-	
-// setup post meta
-	$post_date = date('Y-m-d H:i:s');
-// BUG
-// hardcoded for topics
-	$post_parent = 0;
-	
-	//still need to configure/verify all these
-	$post = array(
- // 'ID'             => [ <post id> ] //Are you updating an existing post?
- // 'menu_order'     => [ <order> ] //If new post is a page, it sets the order in which it should appear in the tabs.
-  'comment_status' => [ 'open' ] // 'closed' means no comments.
-  'ping_status'    => [ 'closed' ] // 'closed' means pingbacks or trackbacks turned off
- // 'pinged'         => [ ? ] //?
-  'post_author'    => [ $userID ] //from above. changed from <user ID> - user ID of  author.
-  'post_category'  => [ array(<category id>, <...>) ] //post_category no longer exists, try wp_set_post_terms() for setting a post's categories
-  'post_content'   => [ <the text of the post> ] //The full text of the post.
-  'post_date'      => [ $post_date ] //The time post was made.
-  'post_date_gmt'  => [ $post_date ] //The time post was made, in GMT. (just using same time)
-//  'post_excerpt'   => [ <an excerpt> ] //For all your post excerpt needs.
-  'post_name'      => [ <the name> ] // The name (slug) for your post
-  'post_parent'    => [ $post_parent ] //Sets the parent of the new post. 
-//  'post_password'  => [ ? ] //password for post?
-  'post_status'    => [  'publish' ] //Set the status of the new post.
-  'post_title'     => [ <the title> ] //The title of your post.
-  'post_type'      => [ 'post' ] //You may want to insert a regular post, page, link, a menu item or some custom post type
-  'tags_input'     => [ '<tag>, <tag>, <...>' ] //For tags.
-  'to_ping'        => [ ? ] //?
-  'tax_input'      => [ array( 'taxonomy_name' => array( 'term', 'term2', 'term3' ) ) ] // support for custom taxonomies. 
-);  
-
-	wp_insert_post( $post, $wp_error );
-}
-	*/
 
 /*
 * THIS IS FOR ANCESTRY INFORMATION AND FOR MAKING CHILD IDEAS FROM ANOTHER IDEA
