@@ -40,9 +40,7 @@ function nomicly_new_idea () {
 	if (!empty($_POST['category_id'])) {
 		$category_id = array($_POST['category_id']);
 		}
-
-	
-	
+		
 	//make the title safe for mysql
 	$post_title = wp_strip_all_tags($_POST['new_idea']);	
 	//create the slug
@@ -90,20 +88,16 @@ $table_pairs = $wpdb->prefix."hot_not_pairs";
  $idea_pair = implode(",", $idea_array);
  
 //get the pair_id to process the insert correctly 
-	$pair_id = $wpdb->get_row("SELECT pair_id FROM $table_pairs WHERE idea_pair = '$idea_pair'");
+	$pair_id = $wpdb->get_var("SELECT pair_id FROM $table_pairs WHERE idea_pair = '$idea_pair'");
 	//$pair_id = $wpdb->get_result($pair_id);
 	if (empty($pair_id)) {
 		$new_pair_id = insert_new_pair ($idea_pair); 
 		$vote_id = insert_vote($new_pair_id, $chosen_idea);
-		echo "new pair id = $new_pair_id <br />";
-		print_r ($idea_array);
 		update_pairs($new_pair_id, $idea_array, $chosen_idea);
 	 }
 	else {
-		echo "pair id = $pair_id <br />";
-//		$vote_id = insert_vote($pair_id, $chosen_idea);
-		print_r ($idea_array);
-//		update_pairs($pair_id, $idea_array, $chosen_idea);	
+		$vote_id = insert_vote($pair_id, $chosen_idea);
+		update_pairs($pair_id, $idea_array, $chosen_idea);	
 	}
 
 }// END NOMICLY_RECORD_VOTE()
@@ -152,19 +146,14 @@ function insert_vote($pair, $chosen) {
 
 function update_pairs($pair, $ideas, $chosen_idea) {
 	global $wpdb;
-	echo "inside update_pairs<br />";
 	$pair_id = $pair;
 	$idea_array = $ideas;
 	$winning_idea = $chosen_idea;
 	$table_pairs = $wpdb->prefix."hot_not_pairs"; 
 	$date = date('Y-m-d H:i:s');
 
-	echo "chosen idea = $chosen_idea <br />";
-	print_r ($idea_array);
-
  $winner = determine_winner ($idea_array, $winning_idea);
  $winner = intval($winner);
- echo "winning idea == $winner <br />";
  
  //NOTE THIS SHOULD  be using wp query
  // BUT IT WASN'T LETTING ME DO THE UPDATE THE WAY I WANTED
@@ -195,24 +184,11 @@ function update_pairs($pair, $ideas, $chosen_idea) {
 			SET idea_2_count = idea_2_count+1 
 			WHERE pair_id = '$pair_id'";
 		$update_query = mysql_query($query);
+// NEED BETTER ERROR HANDLING THAN THIS...
 			if (!$update_query ) {
 				echo mysql_error();
 				}
-			else 
-				echo "UPDATE SUCCESSFUL FOR<br /> $update<br />";		
-
-	/*	 $wpdb->query( 
-			$wpdb->prepare( 
-				"UPDATE $table_pairs 
-         		SET (
-        		idea_2_count = idea_2_count+1,
- 	       		updated_at = '$date'
- 	       		)
-		  		WHERE pair_id = '$pair_id'"
-			) 
-		); */  
-	}//END IDEA 2 COUNT
-
+		}//END IDEA 2 COUNT
 }// END UPDATE PAIRS
 
 // CUSTOM UPDATE QUERY
