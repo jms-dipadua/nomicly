@@ -160,14 +160,12 @@ function update_pairs($pair, $ideas, $chosen_idea) {
  // THAT IS, WITH COL = COL+1... 
 	if ($winner == 1) {
 		$query = "UPDATE nomicly_hot_not_pairs 
-			SET idea_1_count = idea_1_count+1 
+			SET idea_1_count = idea_1_count+1, updated_at = '$date' 
 			WHERE pair_id = '$pair_id'";
 		$update_query = mysql_query($query);
 			if (!$update_query ) {
 				echo mysql_error();
-				}
-			else 
-				echo "UPDATE SUCCESSFUL FOR<br /> $update<br />";		
+				}	
 			/*	 $wpdb->query( 
 			$wpdb->prepare( 
 				"UPDATE $table_pairs 
@@ -181,7 +179,7 @@ function update_pairs($pair, $ideas, $chosen_idea) {
 	} //END IDEA 1 COUNT
 	else if ($winner == 2) {
 			$query = "UPDATE nomicly_hot_not_pairs 
-			SET idea_2_count = idea_2_count+1 
+			SET idea_2_count = idea_2_count+1, updated_at = '$date' 
 			WHERE pair_id = '$pair_id'";
 		$update_query = mysql_query($query);
 // NEED BETTER ERROR HANDLING THAN THIS...
@@ -200,12 +198,8 @@ function update_pairs($pair, $ideas, $chosen_idea) {
 
 function determine_winner ($ideas, $chosen_idea) {
 	$idea_array = $ideas;
-	echo " <br /> inside determine winner <br />";
-	print_r ($idea_array);
 	$winner = $chosen_idea;
-	echo "winner pre-intval = $winner <br />";
 	$winner = intval($winner);
-	echo "winner POST-intval = $winner <br />";
 
 // going to loop through this. 
 // better ways to do this but i was futzing before
