@@ -189,13 +189,10 @@ function update_pairs($pair, $ideas, $chosen_idea) {
 		}//END IDEA 2 COUNT
 }// END UPDATE PAIRS
 
-// CUSTOM UPDATE QUERY
-// since i want to do a bit more magicary than the normal wp functions support
-// STOPPING HERE FOR NOW. THIS IS WHERE IT BREAKS. 
+
 
 //figure out winning choice and then do the insert specific to that winner
 // can make it more elegant later...
-
 function determine_winner ($ideas, $chosen_idea) {
 	$idea_array = $ideas;
 	$winner = $chosen_idea;
@@ -218,7 +215,64 @@ function determine_winner ($ideas, $chosen_idea) {
 	return $winning_idea;
 }// END DETERMINE_WINNER
 
+/* 
+** hot or not player statistics
+*/
+function get_hot_not_stats($pair) {
+	$pair_id = $pair;
+	$table_pairs = $wpdb -> prefix.'hot_not_pairs';
 
+	$pair_data = $wpdb->get_row("SELECT * FROM $table_pairs WHERE pair_id = '$pair_id'");
+
+	$idea_1_count = $wpdb -> idea_1_count;
+	$idea_2_count = $wpdb -> idea_2_count;
+	$total_votes = $idea_1_count + $idea_2_count;
+	$current_consensus; // = $idea_1_count / $idea_2_count; 
+	
+	$pair_vote_history = array (
+		'pair_id' => $pair_id,
+		'idea_1_count' => $idea_1_count,
+		'idea_2_count' => $idea_2_count,
+		'total_votes' => $total_votes,
+		'current_consensus' => $current_consensus
+	);
+	return $pair_vote_history;
+}
+
+/* 
+//  CREATE NEW TOPICS FROM WITHIN NOMICLY
+//	on the topics page, allow people create new topics automatically
+*/
+
+function create_new_topic() {
+// get the post data
+// make a new terms insert query
+// return the term_id 
+// make a new term_taxonomy insert query
+
+	$table_terms = $wpdb -> prefix.'terms';
+	$table_term_taxonomy = $wpdb -> prefix.'term_taxonomy';
+	//prep data for insert
+	$term_data = array (
+		
+	);
+
+
+	// insert new term data into db
+	$wpdb->insert( $table_terms, $term_data );
+	// get vote_id and return for update_pairs function
+	$term_id = $wpdb -> insert_id;  // MAY need to return this as an array...?
+
+	$taxonomy_data = array (
+		'term_id' => $term_id,
+		'something_else' => $something_else
+	);
+	$wpdb->insert( $table_term_taxonomy, $taxonomy_data );
+
+
+}
+
+// MAYBE CREATE AN 'APPEND USER-ID TO USER-PAGE' FUNCTION?
 
 /*
 * THIS IS FOR ANCESTRY INFORMATION AND FOR MAKING CHILD IDEAS FROM ANOTHER IDEA

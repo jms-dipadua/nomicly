@@ -1,12 +1,13 @@
 <?php
 /**
+ * Template Name: Authors Template
+ * Description: A Page Template for show a user's profile on Nomicly
  * The template for displaying Author Archive pages.
  *
  * @package WordPress
  * @subpackage Twenty_Eleven
  * @since Twenty Eleven 1.0
  */
-
 get_header(); ?>
 
 		<section id="primary">
