@@ -1,7 +1,7 @@
 <?php
 /**
  * Template Name: Topics Template
- * Description: A Page Template for list of categories
+ * Description: A Page Template for listing all categories and topics in Nomicly
  *
  * We are creating two queries to fetch the proper posts and a custom widget for the sidebar.
  *
