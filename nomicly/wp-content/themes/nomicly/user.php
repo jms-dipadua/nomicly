@@ -52,17 +52,23 @@ if (isset($_POST['create_topic'])) {
 		?>	
 				
 			<?php 
+			/* GUTS OF USER PROFILE PAGE
+			// verify user is logged in
+			// then get ideas and topics from that person
+			// note that voting and sharing come from the_content();
+			// if we don't have anything from this person, we prompt them for ideas
+			*/
 			if ( is_user_logged_in() ) {
 			$user_id = get_current_user_id();
-				$query_args = array(
-					'post_author' => $user_id,
+			// only get posts from this author and exclude the user profile page
+			$query_args = array(
+					'author' => $user_id,
+					'exclude' => 59
 					);
 				query_posts( $query_args ); 
 				global $wpdb;
-					echo "<br /><h2>My Ideas</h2>";
-				?>
-			
-			<?php while ( have_posts() ) : the_post();  ?>
+					echo "<br /><h2>My Ideas</h2>";			
+				 while ( have_posts() ) : the_post();  ?>
 				<h2> <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a> </h2>
 
 				<?php the_content(); ?>
@@ -75,6 +81,7 @@ if (isset($_POST['create_topic'])) {
 					?>
 					
 				<?php
+				echo "<br /> <h2>My Topics:</h2>";
 				///GET THE TOPICS FROM THIS UER
 				// QUERY USER_TOPICS
 				// GET THE TOPIC_IDS (ARRAY)
@@ -83,9 +90,9 @@ if (isset($_POST['create_topic'])) {
 				$table_user_topics = $wpdb->prefix."user_topics";
 				$topic_query_results = $wpdb->get_results("SELECT topic_id from $table_user_topics WHERE user_id = '$user_id'", 'ARRAY_N'); 
 				// collapse the results for the next query
+			if (!empty($topic_query_results)) {
 				$user_topics = $topic_query_results[0];
 				$user_topics = implode(",", $user_topics);
-				
 				$args=array(
 				  'orderby' => 'name',
 				  'order' => 'ASC',
@@ -93,10 +100,16 @@ if (isset($_POST['create_topic'])) {
  			  	  'include' => $user_topics
  			  	);
 				$categories=get_categories($args);
-				echo "<br /> <h2>My Topics:</h2>";
+
 				foreach($categories as $category) { 
 					echo '<p>Topic: <a href="' . get_category_link( $category->term_id ) . '" title="' . sprintf( __( "View %s" ), $category->name ) . '" ' . '>' . $category->description.'</a> </p> '; }
 					//echo '<p> Description:'. $category->description . '</p>';  
+
+					}// END USER TOPIC DISPLAY
+				else {
+					echo "You haven't created any topics. <br /> 
+				 		  See how Nomicly can help solve problems by creating a discussion topic.";
+				 	}// END NO TOPICS BY USER
 				?>
 		
 					
