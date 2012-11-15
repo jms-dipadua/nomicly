@@ -49,7 +49,8 @@ get_header();
 		echo 
 		'<form method ="post" action ="#">
 		<h2>Create A New Idea</h2>
-		<input type="text" name="new_idea" value="" />
+		<textarea rows="2" cols="20" name="new_idea" value="">
+		</textarea>		
 		<input type="hidden" name="category_id" value="'.$category_id.'" />
 		<input type="submit" name="create" value="Create" />
 		</form>'; 
@@ -61,7 +62,7 @@ get_header();
 
 				<?php /* Start the Loop */ ?>
 				<?php while ( have_posts() ) : the_post(); ?>
-
+						
 					<?php
 						/* Include the Post-Format-specific template for the content.
 						 * If you want to overload this in a child theme then include a file

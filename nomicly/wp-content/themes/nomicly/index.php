@@ -30,7 +30,8 @@ get_header();
 	if ( is_user_logged_in() ) { ?>
 		<form method ="post" action ="#">
 		<h2>Create A New Idea</h2>
-		<input type="text" name="new_idea" value="" />
+		<textarea rows="2" cols="20" name="new_idea" value="">
+		</textarea>
 		<input type="submit" name="create" value="Create" />
 		</form>    
 		<?php	} else {
@@ -41,8 +42,10 @@ get_header();
 				<?php /* Start the Loop */ ?>
 		
 				<?php while ( have_posts() ) : the_post(); ?>
-
-					<?php get_template_part( 'content', get_post_format() ); ?>
+				<!-- APPEND THE MODIFY FUNCTIONALITY IF USER IS LOGGED IN --> 
+				
+				<?php get_template_part( 'content', get_post_format() ); ?>
+			
 
 				<?php endwhile; ?>
 

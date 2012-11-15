@@ -6,13 +6,22 @@
 // and displaying them on the home page
 // DEPRECATION CANDIDATE
 */
-add_filter( 'pre_get_posts', 'my_get_posts' );
+//add_filter( 'pre_get_posts', 'my_get_posts' );
 
 function my_get_posts( $query ) {
 	if ( is_home() && false == $query->query_vars['suppress_filters'] )
 		$query->set( 'post_type', array( 'post', 'ideas' ) );
 	return $query;
 }
+
+add_filter('query_vars', 'add_query_vars' );
+
+function add_query_vars( $query_variables)
+{
+$query_variables[] = 'idea';
+return $query_variables;
+}
+
 
 /*
 ///this is for processing new ideas (via post from custom form)
@@ -89,7 +98,6 @@ $table_pairs = $wpdb->prefix."hot_not_pairs";
  
 //get the pair_id to process the insert correctly 
 	$pair_id = $wpdb->get_var("SELECT pair_id FROM $table_pairs WHERE idea_pair = '$idea_pair'");
-	//$pair_id = $wpdb->get_result($pair_id);
 	if (empty($pair_id)) {
 		$new_pair_id = insert_new_pair ($idea_pair); 
 		$vote_id = insert_vote($new_pair_id, $chosen_idea);
@@ -245,18 +253,24 @@ function get_hot_not_stats($pair) {
 */
 
 function create_new_topic() {
-// get the post data
-// make a new terms insert query
-// return the term_id 
-// make a new term_taxonomy insert query
-
+	global $wpdb;
+	$user_id = get_current_user_id();
+	$date = date('Y-m-d H:i:s');
+	$new_topic_name = wp_strip_all_tags($_POST['new_topic_name']);	
+	$new_topic = wp_strip_all_tags($_POST['new_topic']);	
+	//create the slug
+	$new_topic_slug = sanitize_title( $new_topic, $fallback_title );
+	
 	$table_terms = $wpdb -> prefix.'terms';
 	$table_term_taxonomy = $wpdb -> prefix.'term_taxonomy';
+	$table_user_topics = $wpdb -> prefix.'user_topics';
+	
 	//prep data for insert
 	$term_data = array (
-		
+		'name' => $new_topic_name,
+    	'slug' => $new_topic_slug,
+		'term_group' => 0
 	);
-
 
 	// insert new term data into db
 	$wpdb->insert( $table_terms, $term_data );
@@ -265,14 +279,51 @@ function create_new_topic() {
 
 	$taxonomy_data = array (
 		'term_id' => $term_id,
-		'something_else' => $something_else
+		'taxonomy' => "category",
+		'description' => $new_topic,
+		'parent' => 0,
+		'count' => 0		
 	);
 	$wpdb->insert( $table_term_taxonomy, $taxonomy_data );
 
+// CONNECT TOPIC TO USER WHO CREATED IT
+	$user_topic_data = array (
+		'user_id' => $user_id,
+		'topic_id' => $term_id,
+		'created_at' => $date
+	);
+	$wpdb->insert( $table_user_topics, $user_topic_data);
+}// END CREATE NEW TOPIC
+
+
+/*
+// MODIFY IDEAS
+*/
+function nomicly_modify_idea ()  {
+	$parent_id = $_POST['post_id'];
+	if (empty($parent_id))
+		$partent_id = 0;
+	$category_id = $_POST['category'];
+	if (empty($category_id))
+		$category_id = 0;
+	$user_id = get_current_user_id();		
+	// verify if in category, if so, then pass that along too
+	
+	// note that term_relationships (tbl) has an 'object_id' 
+	// object_id corresponds to POST-ID!! (wtf?)
+	// review how you did all this before (above) as a refresher...
+	// see: http://www.dagondesign.com/articles/wordpress-23-database-structure-for-categories/
+	
+	
+// populate a textarea w/ said post
+// allow user to edit text
+// submit the text
+// do a quick regex to verify uniqueness (??)
+// insert the idea into the posts 
+	// if in category/topic, then add to that category/topic
 
 }
 
-// MAYBE CREATE AN 'APPEND USER-ID TO USER-PAGE' FUNCTION?
 
 /*
 * THIS IS FOR ANCESTRY INFORMATION AND FOR MAKING CHILD IDEAS FROM ANOTHER IDEA

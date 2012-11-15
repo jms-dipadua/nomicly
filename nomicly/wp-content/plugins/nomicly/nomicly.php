@@ -24,28 +24,20 @@ register_activation_hook(__FILE__, 'nomicly_activation');
 
 register_deactivation_hook(__FILE__, 'nomicly_deactivation');
 
-function nomicly_activation () {
+function nomicly_activation() {
 global $wpdb;
 // DB: hot or not
 $table_votes = $wpdb->prefix."hot_not_votes";
 $table_pairs = $wpdb->prefix."hot_not_pairs";
+$table_user_topics = $wpdb->prefix."user_topics";
 
 //check to see if DBs exists, if not, creates
 // VOTES
- $check_db = "show tables like $table_votes";
- $check_db_query = mysql_query($check_db);
- if (!$check_db_query){
 		nomicly_create_hot_not_votes_db();
- 	}
 // PAIRS
- $check_db = "show tables like $table_pairs";
- $check_db_query = mysql_query($check_db);
- if (!$check_db_query){
 		nomicly_create_hot_not_pairs_db();
- }	
-//having verified the tables exist and data is all in place
-// get the functions needed to power the hot or not game
-
+// USER TOPICS
+ 		nomicly_create_user_topics_db();
 
 }//end of nomicly_activiation
 
@@ -55,7 +47,7 @@ require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 global $wpdb;
 $table_votes = $wpdb->prefix."hot_not_votes";
 
-$sql = "CREATE TABLE $table_votes (
+$sql = "CREATE TABLE IF NOT EXISTS $table_votes (
   vote_id int NOT NULL AUTO_INCREMENT,
   chosen_id int NOT NULL,
   pair_id int NOT NULL,
@@ -74,7 +66,7 @@ require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 global $wpdb;
 $table_pairs = $wpdb->prefix."hot_not_pairs";
 
-$sql = "CREATE TABLE $table_pairs (
+$sql = "CREATE TABLE IF NOT EXISTS $table_pairs (
   pair_id int NOT NULL AUTO_INCREMENT,
   idea_pair VARCHAR(100) DEFAULT '' NOT NULL,
   idea_1_count int NOT NULL,
@@ -87,7 +79,23 @@ dbDelta($sql);
 } // end nomicly_create_hot_not_pairs_db
 
 
+function nomicly_create_user_topics_db () {
+require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+global $wpdb;
+$table_user_topics = $wpdb->prefix."user_topics";
 
+$sql = "CREATE TABLE IF NOT EXISTS $table_user_topics (
+  user_topic_id int NOT NULL AUTO_INCREMENT,
+  user_id int NOT NULL,
+  topic_id int NOT NULL,
+  created_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+  updated_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+  UNIQUE KEY user_topic_id (user_topic_id)
+);";
+
+dbDelta($sql);
+
+}// END CREATE USER_TOPICS_DB
 
 //
 
@@ -125,8 +133,12 @@ global $wpdb;
 // DB: hot or not
 $table_votes = $wpdb->prefix."hot_not_votes";
 $table_pairs = $wpdb->prefix."hot_not_pairs"; 
-	$wpdb->query("DROP TABLE IF EXISTS $table_votes");
-	$wpdb->query("DROP TABLE IF EXISTS $table_pairs");
+$table_user_topics = $wpdb->prefix."user_topics";
+
+//	$wpdb->query("DROP TABLE IF EXISTS $table_votes");
+//	$wpdb->query("DROP TABLE IF EXISTS $table_pairs");
+//  $wpdb ->query("DROP TABLE IF EXISTS $table_user_topics");
+
 }//END DEACTIVATION 
 
 /* 

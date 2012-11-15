@@ -16,27 +16,38 @@
 get_header(); 
 
 // process topic posting 
-/* if (isset($_POST['new_topic'])) {
-	nomicly_new_topic();
+ if (isset($_POST['create_topic'])) {
+	create_new_topic();
 	}
-*/
+
 ?>
 
 
 		<div id="primary" class="showcase">
 			<div id="content" role="main">
 <?php
-if ( is_user_logged_in() ) {
-    //CREATE FORM LOGIC HERE
-} else {
-    echo '<h1><a href="../wp-login.php?action=register">Register</a> or <a href="../wp-login.php">Login</a> to Create New Ideas</h1>';
-}
+	if ( is_user_logged_in() ) { ?>
+		<form method ="post" action ="#">
+		<!-- should make this a drop down to select 'idea' or 'topic' -->
+		<h2>Create A New Topic</h2>
+		Topic Name: <input type="text" name="new_topic_name" value="" /> <br />
+		Topic Description: 
+		<textarea rows="2" cols="20" name="new_topic" value="">
+		</textarea>
+		<!-- maybe include a dropdown of all the topics too? -->
+		<input type="submit" name="create_topic" value="New Topic" />
+		</form>    
+		<?php	} else {
+	    echo '<h1><a href="../wp-login.php?action=register">Register</a> or <a href="../wp-login.php">Login</a> to Create New Ideas</h1>';
+			}
 ?>
-				<?php
+			<?php
 				$args=array(
 				  'orderby' => 'name',
-				  'order' => 'ASC'
-				  );
+				  'order' => 'ASC',
+ 			  	  'hide_empty' => 0,
+ 			  	  'exclude' => 1
+ 			  	);
 				$categories=get_categories($args);
 				  foreach($categories as $category) { 
 					echo '<p>Topic: <a href="' . get_category_link( $category->term_id ) . '" title="' . sprintf( __( "View %s" ), $category->name ) . '" ' . '>' . $category->description.'</a> </p> '; }
