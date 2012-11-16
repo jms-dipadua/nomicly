@@ -25,7 +25,13 @@ if(isset($_POST['modify_idea'])) {
 				$post_id = $_GET['idea'];
 				$post_id = intval($post_id);
 				$category = get_the_category($post_id);
-				$category_id = $category[0] -> term_taxonomy_id;
+				print_r ($category);
+				$int = 0;
+				foreach ($category as $categories) {
+					$category_id[$int] = $category[$int] -> term_taxonomy_id;
+					$int++;
+					} // END FOREACH
+				$category_id = implode (",", $category_id);
 			}// END GET
 			else {
 				$logged_in = false;
@@ -44,7 +50,7 @@ if(isset($_POST['modify_idea'])) {
 		<?php the_title();?>
 		</textarea>
 		<!-- maybe include a dropdown of all the topics too? -->
-		<input type="hidden" name="cateogry_id" value="<?php echo "$category_id"; ?>" />
+		<input type="hidden" name="category_id" value="<?php echo "$category_id"; ?>" />
 		<input type="hidden" name="post_parent" value="<?php the_ID(); ?>" />
 		<input type="submit" name="modify_idea" value="Modify" />
 		</form>

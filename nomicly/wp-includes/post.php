@@ -246,6 +246,7 @@ function _wp_relative_upload_path( $path ) {
  		** NOMICLY NOTE:
  		** this is where you'll want to create the concept of ancestry
  		** when a user 'modifies' an idea, they create a new child post
+ 		** see line 431..
  * Attachments may also be made the child of a post, so if that is an accurate
  * statement (which needs to be verified), it would then be possible to get
  * all of the attachments for a post. Attachments have since changed since

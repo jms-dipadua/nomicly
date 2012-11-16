@@ -46,12 +46,6 @@ function nomicly_new_idea () {
 	else {
 	$post_parent = 0;
 	}
-//setup category stuff
-	if (!empty($_POST['category_id'])) {
-	//	$category_id = array($_POST['category_id']);
-	//	$category_id = implode(",",$category_id);
-	$category_id = $_POST['category_id'];
-		}
 		
 	//make the title safe for mysql
 	$post_title = wp_strip_all_tags($_POST['new_idea']);	
@@ -63,7 +57,6 @@ function nomicly_new_idea () {
 	  'comment_status' => 'open',  // 'closed' means no comments.
 	  'ping_status'    => 'closed',  // 'closed' means pingbacks or trackbacks turned off
 	  'post_author'    => $userID , // user ID of  author.
-	  'post_category'  => $category_id, // wp_set_category() maybe useful for future features
 	  'post_date'      => $post_date,  //The time post was made.
 	  'post_date_gmt'  => $post_date , //The time post was made, in GMT. (just using same time)
 	  'post_name'      => $post_name, // The name (slug) for your post
@@ -73,9 +66,24 @@ function nomicly_new_idea () {
 	  'post_type'      => 'post', //You may want to insert a regular post, page, link, a menu item or some custom post type
 //	  'tax_input'      => array( 'term_taxonomy_id' => $category_id ) ]
 			);  //END POST ARRAY
- print_r ($post);
 	// INSERT POST 
 	$new_post_id = wp_insert_post( $post, $wp_error ); 
+	// set category terms
+	//setup category stuff
+	if (!empty($_POST['category_id'])) {
+	// get the right categories to put this post into
+		$category_id = $_POST['category_id'];
+	}
+	else {
+	// even stuff in "main" need to have the category assigned
+	// category_id = 0 is "uncategorized"
+	// 1 = 'main'
+		$category_id = 1;
+	}
+	// UPDATE POST TERMS
+	wp_set_post_terms($new_post_id, $category_id, 'category', FALSE);
+
+	
 	echo "<br /> from within create new post, new post id = $new_post_id<br />";
 	return $new_post_id;
 // BUG
@@ -304,22 +312,10 @@ function create_new_topic() {
 
 /*
 // MODIFY IDEAS
-// after looking over the create_new_idea function
-// modify ideas feels very similar to that process (maybe no new code)
-// the key is to then use some of what was used for hot or not
-// to get the most recent post_id (returned from wp_insert_post) 
-// then, if applicable, update the term_relationships tbl w/ the new idea
-
-	// this function looks like it will just call two OTHER functions
-	// create_new_idea
-	// update_category
-
+// to modify an idea, you just have to create a post
+// the create idea function handles all ancestry and category stuff
 	// note that term_relationships (tbl) has an 'object_id' 
 	// object_id corresponds to POST-ID!! (wtf?)
-	// will need to do an update to the _term_relationships table w/ new post id
-	// if (!empty($catetory_id)) then update term_relationships w/ the post id
-		// note THAT requires querying the post tbl for the new id!
-
 	// review how you did all this before (above) as a refresher...
 	// see: http://www.dagondesign.com/articles/wordpress-23-database-structure-for-categories/
 	
@@ -327,11 +323,11 @@ function create_new_topic() {
 	// populate a textarea w/ said post
 	// allow user to edit text
 	// submit the text
-	// do a quick regex to verify uniqueness (??)
+	// do a quick regex to verify uniqueness (NOT DONE)
 	// insert the idea into the posts 
 	// if in category/topic, then add to that category/topic
 	
-	// probably then want to redirect the user to that new idea
+	// then want to redirect the user to that new idea (NOT DONE)
 	// will use a header redirect
 	// get the new slug from the post
 	// do a query to the db for a slug == to new slug
@@ -343,11 +339,6 @@ function create_new_topic() {
 
 function nomicly_modify_idea ()  {
 	$new_post_id = nomicly_new_idea();
-	echo "<br />new post id from within modify_idea = $new_post_id<br />";
-	if (!empty($_POST['category_id'])) {
-		$category_id = $_POST['category_id'];
-		nomicly_update_term_relationships($new_post_id, $category_id);
-		}
 }  // END MODIFY IDEAS
 
 

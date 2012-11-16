@@ -42,10 +42,24 @@ get_header();
 	if ( is_user_logged_in() ) { 
 		//get category information
 		global $post;
-		$categories = get_the_category($post->ID);
+		$category = get_the_category($post->ID);
 	//print_r($categories);
-		$category_id = $categories[0] -> term_taxonomy_id;
-		
+			$int = 0;
+			foreach ($category as $categories) {
+				$category_id[$int] = $category[$int] -> term_taxonomy_id;
+				$int++;
+				} // END FOREACH
+				// may be just a corner-case bug
+				// but WP was appending the main category to every post
+				// didn't want that SO
+				// before writing the form, check the category
+				// if the first entry is = 1 (main category0-
+				// then unset that variable 
+			if ($category_id[0] = 1) {
+				unset($category_id[0]);
+				}
+			$category_id = implode (",", $category_id);		
+			
 		echo 
 		'<form method ="post" action ="#">
 		<h2>Create A New Idea</h2>
