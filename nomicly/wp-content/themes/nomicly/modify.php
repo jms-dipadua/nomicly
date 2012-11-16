@@ -26,6 +26,10 @@ if(isset($_POST['modify_idea'])) {
 				$post_id = intval($post_id);
 				$category_id = get_the_category($post_id);
 				$category_id = implode(",", $category_id);
+				/* 
+				// LOOK HOW YOU DO THIS IN TOPICS...
+				*/
+				
 				echo "category_id = $category_id<br />";
 				}// END GET
 				else {
