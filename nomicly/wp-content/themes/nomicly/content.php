@@ -30,7 +30,8 @@
 				<?php comments_popup_link( '<span class="leave-reply">' . __( 'Reply', 'twentyeleven' ) . '</span>', _x( '1', 'comments number', 'twentyeleven' ), _x( '%', 'comments number', 'twentyeleven' ) ); ?>
 			</div>
 				<? if (is_user_logged_in()) { ?>
-			<a href="modify/?idea=<?php the_ID(); ?>" class="modify-link">Modify Idea</a>
+				 <?php $wpurl = get_bloginfo ( 'wpurl' );  ?>
+			<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="modify-link">Modify Idea</a>
 					<?php }//END IF LOGGED IN  ?>
 			<?php endif; ?>
 		</header><!-- .entry-header -->

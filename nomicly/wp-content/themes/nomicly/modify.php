@@ -21,20 +21,15 @@ if(isset($_POST['modify_idea'])) {
 		if (is_user_logged_in()) {						
 				//global $wpdb;	
 				$logged_in = true;
-				if(isset($_GET['idea'])) {
+			if (isset($_GET['idea'])) {
 				$post_id = $_GET['idea'];
 				$post_id = intval($post_id);
-				$category_id = get_the_category($post_id);
-				$category_id = implode(",", $category_id);
-				/* 
-				// LOOK HOW YOU DO THIS IN TOPICS...
-				*/
-				
-				echo "category_id = $category_id<br />";
-				}// END GET
-				else {
+				$category = get_the_category($post_id);
+				$category_id = $category[0] -> term_taxonomy_id;
+			}// END GET
+			else {
 				$logged_in = false;
-				$message = "I'm sorry. The idea you were looking for could not be found.  :(<br />";
+				$message = "Sorry. The idea you were looking for could not be found.<br />";
 				}
 
 				$query_args = array(
@@ -49,7 +44,7 @@ if(isset($_POST['modify_idea'])) {
 		<?php the_title();?>
 		</textarea>
 		<!-- maybe include a dropdown of all the topics too? -->
-		<input type="hidden" name="category_id" value="<?php echo "$category_id"; ?>" />
+		<input type="hidden" name="cateogry_id" value="<?php echo "$category_id"; ?>" />
 		<input type="hidden" name="post_parent" value="<?php the_ID(); ?>" />
 		<input type="submit" name="modify_idea" value="Modify" />
 		</form>
