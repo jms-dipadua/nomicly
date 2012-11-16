@@ -9,7 +9,7 @@
  */
 
 get_header(); 
-if(isset($_POST['modify'])) {
+if(isset($_POST['modify_idea'])) {
 	nomicly_modify_idea();
 	}
 ?>
@@ -23,10 +23,14 @@ if(isset($_POST['modify'])) {
 				$logged_in = true;
 				if(isset($_GET['idea'])) {
 				$post_id = $_GET['idea'];
+				$post_id = intval($post_id);
+				$category_id = get_the_category($post_id);
+				$category_id = implode(",", $category_id);
+				echo "category_id = $category_id<br />";
 				}// END GET
 				else {
 				$logged_in = false;
-				$message = "I'm sorry. The idea you were looking for could not be found. Maybe click back and try again?<br />";
+				$message = "I'm sorry. The idea you were looking for could not be found.  :(<br />";
 				}
 
 				$query_args = array(
@@ -37,12 +41,12 @@ if(isset($_POST['modify'])) {
 				<?php the_title();?>
 		<form method="post" action="#">
 		<h2>Modify Existing Idea</h2>
-		<textarea rows="2" cols="20" name="new_topic">
+		<textarea rows="2" cols="20" name="new_idea" value="">
 		<?php the_title();?>
 		</textarea>
 		<!-- maybe include a dropdown of all the topics too? -->
-		<input type="hidden" name="cateogry_id" value="<?php get_the_category($post_id); ?>" />
-		<input type="hidden" name="post_id" value="<?php the_ID(); ?>" />
+		<input type="hidden" name="category_id" value="<?php echo "$category_id"; ?>" />
+		<input type="hidden" name="post_parent" value="<?php the_ID(); ?>" />
 		<input type="submit" name="modify_idea" value="Modify" />
 		</form>
 				<?	endwhile;

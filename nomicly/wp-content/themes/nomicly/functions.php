@@ -28,7 +28,8 @@ return $query_variables;
 */
 
 function nomicly_new_idea () {
-
+	global $wpdb;
+	print_r($_POST);
 //need to get user info to connect the topic/idea to the user 
 //potentially redundant but using wp-core functions to reduce impact
 	$userID = get_current_user_id();
@@ -47,19 +48,21 @@ function nomicly_new_idea () {
 	}
 //setup category stuff
 	if (!empty($_POST['category_id'])) {
-		$category_id = array($_POST['category_id']);
+	//	$category_id = array($_POST['category_id']);
+	//	$category_id = implode(",",$category_id);
+	$category_id = $_POST['category_id'];
 		}
 		
 	//make the title safe for mysql
 	$post_title = wp_strip_all_tags($_POST['new_idea']);	
 	//create the slug
-	$post_name = sanitize_title( $post_title, $fallback_title );
+	$post_name = sanitize_title( $post_title );
 
 	//CREATE NEW POST
 	$post = array(
 	  'comment_status' => 'open',  // 'closed' means no comments.
 	  'ping_status'    => 'closed',  // 'closed' means pingbacks or trackbacks turned off
-	  'post_author'    => $userID , //from above. changed from <user ID> - user ID of  author.
+	  'post_author'    => $userID , // user ID of  author.
 	  'post_category'  => $category_id, // wp_set_category() maybe useful for future features
 	  'post_date'      => $post_date,  //The time post was made.
 	  'post_date_gmt'  => $post_date , //The time post was made, in GMT. (just using same time)
@@ -70,8 +73,11 @@ function nomicly_new_idea () {
 	  'post_type'      => 'post', //You may want to insert a regular post, page, link, a menu item or some custom post type
 //	  'tax_input'      => array( 'term_taxonomy_id' => $category_id ) ]
 			);  //END POST ARRAY
+ print_r ($post);
 	// INSERT POST 
-	wp_insert_post( $post, $wp_error ); 
+	$new_post_id = wp_insert_post( $post, $wp_error ); 
+	echo "<br /> from within create new post, new post id = $new_post_id<br />";
+	return $new_post_id;
 // BUG
 // empty post array by redirecting to fresh version of page
 //	header('Location: http://www.jamesdipadua.com/experimental/nomicly/index.php');
@@ -298,31 +304,71 @@ function create_new_topic() {
 
 /*
 // MODIFY IDEAS
-*/
-function nomicly_modify_idea ()  {
-	$parent_id = $_POST['post_id'];
-	if (empty($parent_id))
-		$partent_id = 0;
-	$category_id = $_POST['category'];
-	if (empty($category_id))
-		$category_id = 0;
-	$user_id = get_current_user_id();		
-	// verify if in category, if so, then pass that along too
-	
+// after looking over the create_new_idea function
+// modify ideas feels very similar to that process (maybe no new code)
+// the key is to then use some of what was used for hot or not
+// to get the most recent post_id (returned from wp_insert_post) 
+// then, if applicable, update the term_relationships tbl w/ the new idea
+
+	// this function looks like it will just call two OTHER functions
+	// create_new_idea
+	// update_category
+
 	// note that term_relationships (tbl) has an 'object_id' 
 	// object_id corresponds to POST-ID!! (wtf?)
+	// will need to do an update to the _term_relationships table w/ new post id
+	// if (!empty($catetory_id)) then update term_relationships w/ the post id
+		// note THAT requires querying the post tbl for the new id!
+
 	// review how you did all this before (above) as a refresher...
 	// see: http://www.dagondesign.com/articles/wordpress-23-database-structure-for-categories/
 	
-	
-// populate a textarea w/ said post
-// allow user to edit text
-// submit the text
-// do a quick regex to verify uniqueness (??)
-// insert the idea into the posts 
+	// design thinking:
+	// populate a textarea w/ said post
+	// allow user to edit text
+	// submit the text
+	// do a quick regex to verify uniqueness (??)
+	// insert the idea into the posts 
 	// if in category/topic, then add to that category/topic
+	
+	// probably then want to redirect the user to that new idea
+	// will use a header redirect
+	// get the new slug from the post
+	// do a query to the db for a slug == to new slug
+	// wam-bam, thank you, ma'am.
+	// will want to confirm to the user that the new idea was created
+	// use a basic alert for now and make better-er later
+	// 
+*/
 
-}
+function nomicly_modify_idea ()  {
+	$new_post_id = nomicly_new_idea();
+	echo "<br />new post id from within modify_idea = $new_post_id<br />";
+	if (!empty($_POST['category_id'])) {
+		$category_id = $_POST['category_id'];
+		nomicly_update_term_relationships($new_post_id, $category_id);
+		}
+}  // END MODIFY IDEAS
+
+
+/* 
+// UPDATE TERM_RELATONSHIPS
+*/
+function nomicly_update_term_relationships ($object_id, $cat_id) {
+	global $wpdb;
+	$new_post_id = $object_id;
+	$category_id = $cat_id;
+	$table_term_relationships = $wpdb->prefix."term_relationships"; 
+
+	$term_data = array (
+		'object_id' => $new_post_id,
+		'term_taxonomy_id' => $category_id,
+		term_order => 0
+		);
+	$wpdb->insert( $table_term_relationships, $term_data );
+}// END UPDATE_TERM_ RELATIONSHIPS
+
+	
 
 
 /*
