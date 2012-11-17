@@ -25,7 +25,6 @@ if(isset($_POST['modify_idea'])) {
 				$post_id = $_GET['idea'];
 				$post_id = intval($post_id);
 				$category = get_the_category($post_id);
-				print_r ($category);
 				$int = 0;
 				foreach ($category as $categories) {
 					$category_id[$int] = $category[$int] -> term_taxonomy_id;
@@ -37,7 +36,6 @@ if(isset($_POST['modify_idea'])) {
 				$logged_in = false;
 				$message = "Sorry. The idea you were looking for could not be found.<br />";
 				}
-
 				$query_args = array(
 					'p' => $post_id
 					);
