@@ -39,7 +39,8 @@ get_header();
 		<input type="submit" name="create_topic" value="New Topic" />
 		</form>    
 		<?php	} else {
-	    echo '<h1><a href="../wp-login.php?action=register">Register</a> or <a href="../wp-login.php">Login</a> to Create New Ideas</h1>';
+			$wpurl = get_bloginfo ( 'wpurl' );  
+		    echo '<h1><a href="'.$wpurl.'/wp-login.php?action=register">Register</a> or <a href="'.$wpurl.'/wp-login.php">Login</a> to Create New Ideas</h1>';
 			}
 ?>
 			<?php

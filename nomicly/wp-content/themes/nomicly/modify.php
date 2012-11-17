@@ -57,7 +57,8 @@ if(isset($_POST['modify_idea'])) {
 				<?	endwhile;
 		}// END IS USER LOGGED IN
 		else {
-			echo 'Sorry. This page is for registered users only. Please <a href="../wp-login.php">Login</a> or <a href="../wp-login.php?action=register">Register</a> to modify ideas.<br />';			
+			$wpurl = get_bloginfo ( 'wpurl' );  
+			echo 'Sorry. This page is for registered users only. Please <a href="'.$wpurl.'/wp-login.php?action=register">Register</a> or <a href="'.$wpurl.'/wp-login.php">Login</a> to modify ideas.';			
 			}
 	?>
 
