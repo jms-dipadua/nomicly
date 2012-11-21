@@ -25,7 +25,8 @@ if (isset($_POST['vote'])) {
 			<?php
 				if (isset($_POST['vote'])) {
 				echo "Statistics for the Last Pair:<br />";
-				print_r ($pair_stats);
+				echo "Idea 1 selected: ".$pair_stats['idea_1_consensus_percentage']."<br />";
+				echo "Idea 2 selected: ".$pair_stats['idea_2_consensus_percentage']."<br />";
 				}
 			?>
 	<?php

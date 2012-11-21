@@ -262,7 +262,6 @@ function get_hot_not_stats($pair) {
 	$table_pairs = $wpdb -> prefix.'hot_not_pairs';
 
 	$pair_data = $wpdb->get_row("SELECT * FROM $table_pairs WHERE pair_id = '$pair_id'");
-	print_r($pair_data);
 
 	$idea_1_count = $pair_data -> idea_1_count;
 	$idea_2_count = $pair_data -> idea_2_count;
@@ -280,7 +279,7 @@ function get_hot_not_stats($pair) {
 		$idea_2_consensus = ($idea_2_count / $total_votes) * 100;
 	}
 	else {
-		$idea_1_consensus = 0;
+		$idea_2_consensus = 0;
 		}	
 		// get a string version
 		$idea_1_consensus_percentage = $idea_1_consensus."%";
