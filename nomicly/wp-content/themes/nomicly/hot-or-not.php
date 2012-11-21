@@ -15,13 +15,19 @@
 
 get_header(); 
 if (isset($_POST['vote'])) {
-	nomicly_record_vote();
+	$pair_id = nomicly_record_vote();
+	$pair_stats = get_hot_not_stats($pair_id);
 }
 ?>
 
 		<div id="primary" class="showcase">
 			<div id="content" role="main">
-			
+			<?php
+				if (isset($_POST['vote'])) {
+				echo "Statistics for the Last Pair:<br />";
+				print_r ($pair_stats);
+				}
+			?>
 	<?php
 	// check for login to present idea form or reg/login links
 	if ( is_user_logged_in() ) { ?>

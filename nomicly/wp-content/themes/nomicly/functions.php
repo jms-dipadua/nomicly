@@ -75,7 +75,7 @@ function nomicly_new_idea () {
 		$category_id = $_POST['category_id'];
 	}
 	else {
-	// even stuff in "main" need to have the category assigned
+	// even stuff in "main" needs to have the category assigned
 	// category_id = 0 is "uncategorized"
 	// 1 = 'main'
 		$category_id = 1;
@@ -102,18 +102,26 @@ function nomicly_record_vote() {
 $table_votes = $wpdb->prefix."hot_not_votes";
 $table_pairs = $wpdb->prefix."hot_not_pairs"; 
 
+// I want to make sure I don't have duplicate entries for the same pair of ideas
+// SO i'm going to sort the ideas (lowest, highest)
+// this will allow me to always operate on a standardized pair format
  $idea_1 = $_POST['0'];
  $idea_2 = $_POST['1'];
  $chosen_idea = $_POST['chosen_idea'];
 //Finess the ideas for db stuff 
  $idea_array = array ($idea_1, $idea_2);
+ // THE SORT
  sort($idea_array, SORT_NUMERIC);
+ // STANDARDIZATION OF FORMAT
  $idea_pair = implode(",", $idea_array);
  
 //get the pair_id to process the insert correctly 
 	$pair_id = $wpdb->get_var("SELECT pair_id FROM $table_pairs WHERE idea_pair = '$idea_pair'");
+// then we're going to either insert a new pair, vote and vote-count 
+// or we're going to just insert a vote record and a vote-count update
 	if (empty($pair_id)) {
 		$new_pair_id = insert_new_pair ($idea_pair); 
+			$pair_id = $new_pair_id;
 		$vote_id = insert_vote($new_pair_id, $chosen_idea);
 		update_pairs($new_pair_id, $idea_array, $chosen_idea);
 	 }
@@ -121,7 +129,7 @@ $table_pairs = $wpdb->prefix."hot_not_pairs";
 		$vote_id = insert_vote($pair_id, $chosen_idea);
 		update_pairs($pair_id, $idea_array, $chosen_idea);	
 	}
-
+	return $pair_id;
 }// END NOMICLY_RECORD_VOTE()
 
 function insert_new_pair($pair) {
@@ -212,9 +220,11 @@ function update_pairs($pair, $ideas, $chosen_idea) {
 }// END UPDATE PAIRS
 
 
-
+/*
+// DETERMINE WINNER OF HOT/NOT CHOICE
 //figure out winning choice and then do the insert specific to that winner
 // can make it more elegant later...
+*/
 function determine_winner ($ideas, $chosen_idea) {
 	$idea_array = $ideas;
 	$winner = $chosen_idea;
@@ -238,25 +248,53 @@ function determine_winner ($ideas, $chosen_idea) {
 }// END DETERMINE_WINNER
 
 /* 
-** hot or not player statistics
+//  HOT OR NOT 
+//  PAIR STATISTICS 
+//  1. GET THE PAIR IN QUESTION
+//  2. FIND OUT THE TOTAL NUMBER OF VOTES ON THE PAIR
+//  3. FIND OUT THE PERCENTAGE WON FOR EAHC OF THE PAIRS
+//  	a. DOESN'T EVEN NEED TO BE "20% OF PEOPLE CHOSE THE SAME AS YOU"
+// 		b. JUST FIND THE PERCENTAGE SELECTED FOR BOTH AND SHOW THAT (kiss)
 */
 function get_hot_not_stats($pair) {
+	global $wpdb;
 	$pair_id = $pair;
 	$table_pairs = $wpdb -> prefix.'hot_not_pairs';
 
 	$pair_data = $wpdb->get_row("SELECT * FROM $table_pairs WHERE pair_id = '$pair_id'");
+	print_r($pair_data);
 
-	$idea_1_count = $wpdb -> idea_1_count;
-	$idea_2_count = $wpdb -> idea_2_count;
+	$idea_1_count = $pair_data -> idea_1_count;
+	$idea_2_count = $pair_data -> idea_2_count;
 	$total_votes = $idea_1_count + $idea_2_count;
-	$current_consensus; // = $idea_1_count / $idea_2_count; 
+	// we don't want to return infinite results\
+	// IDEA 1
+	if ($idea_1_count >0 ) { 
+		$idea_1_consensus = ($idea_1_count / $total_votes) * 100;
+	}
+	else {
+		$idea_1_consensus = 0;
+		}
+	// IDEA 2
+	if ($idea_2_count > 0 ) { 
+		$idea_2_consensus = ($idea_2_count / $total_votes) * 100;
+	}
+	else {
+		$idea_1_consensus = 0;
+		}	
+		// get a string version
+		$idea_1_consensus_percentage = $idea_1_consensus."%";
+		$idea_2_consensus_percentage = $idea_2_consensus."%";	
 	
 	$pair_vote_history = array (
 		'pair_id' => $pair_id,
 		'idea_1_count' => $idea_1_count,
 		'idea_2_count' => $idea_2_count,
 		'total_votes' => $total_votes,
-		'current_consensus' => $current_consensus
+		'idea_1_consensus' => $idea_1_consensus,
+		'idea_1_consensus_percentage' => $idea_1_consensus_percentage,
+		'idea_2_consensus' => $idea_2_consensus,
+		'idea_2_consensus_percentage' => $idea_2_consensus_percentage,
 	);
 	return $pair_vote_history;
 }
@@ -316,7 +354,6 @@ function create_new_topic() {
 // the create idea function handles all ancestry and category stuff
 	// note that term_relationships (tbl) has an 'object_id' 
 	// object_id corresponds to POST-ID!! (wtf?)
-	// review how you did all this before (above) as a refresher...
 	// see: http://www.dagondesign.com/articles/wordpress-23-database-structure-for-categories/
 	
 	// design thinking:
@@ -344,6 +381,11 @@ function nomicly_modify_idea ()  {
 
 /* 
 // UPDATE TERM_RELATONSHIPS
+
+// i *thinK* this function can be completely deleted
+// it essentially mimics the behavior of wp_set_post_terms()
+// but i'm not sure if this is being used anywhere right now
+// bug for addressing later.
 */
 function nomicly_update_term_relationships ($object_id, $cat_id) {
 	global $wpdb;
