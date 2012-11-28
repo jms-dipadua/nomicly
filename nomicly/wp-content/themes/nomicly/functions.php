@@ -101,12 +101,11 @@ function nomicly_record_vote() {
 
 $table_votes = $wpdb->prefix."hot_not_votes";
 $table_pairs = $wpdb->prefix."hot_not_pairs"; 
-
 // I want to make sure I don't have duplicate entries for the same pair of ideas
 // SO i'm going to sort the ideas (lowest, highest)
 // this will allow me to always operate on a standardized pair format
- $idea_1 = $_POST['0'];
- $idea_2 = $_POST['1'];
+ $idea_1 = $_POST['idea0'];
+ $idea_2 = $_POST['idea1'];
  $chosen_idea = $_POST['chosen_idea'];
 //Finess the ideas for db stuff 
  $idea_array = array ($idea_1, $idea_2);
@@ -401,6 +400,86 @@ function nomicly_update_term_relationships ($object_id, $cat_id) {
 }// END UPDATE_TERM_ RELATIONSHIPS
 
 	
+/* 
+// AJAX
+*/
+// embed the javascript file that makes the AJAX request
+
+function add_nomicly_js(){  
+	wp_enqueue_script( 'nomicly.js', get_bloginfo('template_directory') . "/js/nomicly.js", array( 'jquery' ) );  
+	// declare the URL to the file that handles the AJAX request (wp-admin/admin-ajax.php)
+	// this little bit of code is SUPPOSE to make a global ajax object
+	// BUT IT DOESN'T
+	wp_localize_script( 'add_nomicly_js', 'nomiclyAJAX', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
+}
+// add the nomicly_js file to the initialization
+add_action( 'init', 'add_nomicly_js' );  
+
+  
+function process_hot_not_vote() {
+	$pair_id = nomicly_record_vote();
+	$pair_stats = get_hot_not_stats($pair_id);
+	$pair_stats['get_next_ideas'] = '<a href="" id="get_next_ideas" name="get_next_ideas">Get Next Ideas</a>';
+// CONVERT ARRAY TO JSON
+	$pair_stats = json_encode($pair_stats);	
+// response output
+	die($pair_stats);
+ }// END PROCESS HOT NOT VOTE
+
+// this handles the callback for hot/not votes
+// logged in user
+add_action('wp_ajax_process_hot_not_vote', 'process_hot_not_vote');
+// non-logged in user
+add_action('wp_ajax_nopriv_process_hot_not_vote', 'process_hot_not_vote' );
+
+/*
+// GET NEXT IDEAS
+// FOR HOT OR NOT
+// POST VOTE
+*/
+
+function get_next_ideas () {
+// using get_posts 
+// returns an array of data
+// then create an easier to work with array
+// json-ify the new array
+// then return new JSON as the response
+	$post_args = array (
+	'posts_per_page' => 2,
+	'orderby' => 'rand'
+	);
+	$new_posts = get_posts( $post_args);
+	$response_data = array (
+		"idea_1_data" => $new_posts[0],
+		"idea_2_data" => $new_posts[1],
+		);	
+	// CONVERT  TO JSON
+	$response_data = json_encode($response_data);
+	// response output
+	die($response_data);
+				
+}// END GET NEW IDEAS
+
+// AJAX callback for getting new ideas after submitting a vote (and reviewing stats)
+// logged in user
+add_action('wp_ajax_get_next_ideas', 'get_next_ideas');
+// non-logged in user
+add_action('wp_ajax_nopriv_get_next_ideas', 'get_next_ideas' );
+
+
+/*
+// buggy ajax shit that just didn't work
+// suppose to make it so the ajax processing url doesn't need to be hardcoded
+*/
+//add_action( 'wp_head', array( &$this, 'add_ajax_library' ) );
+//function add_ajax_library() {
+//    $html = '<script type="text/javascript">';
+//        $html .= 'var ajaxurl = "' . admin_url( 'admin-ajax.php' ) . '"';
+//    $html .= '</script>';
+//    echo $html;
+//} // end add_ajax_library
+
+
 
 
 /*

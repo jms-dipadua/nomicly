@@ -14,16 +14,16 @@
 //wp_enqueue_script( 'twentyeleven-showcase', get_template_directory_uri() . '/js/showcase.js', array( 'jquery' ), '2011-04-28' );
 
 get_header(); 
-if (isset($_POST['vote'])) {
-	$pair_id = nomicly_record_vote();
-	$pair_stats = get_hot_not_stats($pair_id);
-}
+//if (isset($_POST['vote'])) {
+//	$pair_id = nomicly_record_vote();
+//	$pair_stats = get_hot_not_stats($pair_id);
+//}
 ?>
 
 		<div id="primary" class="showcase">
 			<div id="content" role="main">
 			<?php
-				if (isset($_POST['vote'])) {
+				if (isset($_POST['process_hot_not_vote'])) {
 				echo "Statistics for the Last Pair:<br />";
 				echo "Idea 1 selected: ".$pair_stats['idea_1_consensus_percentage']."<br />";
 				echo "Idea 2 selected: ".$pair_stats['idea_2_consensus_percentage']."<br />";
@@ -37,12 +37,12 @@ if (isset($_POST['vote'])) {
 			query_posts( 'posts_per_page=2&orderby=rand' );
 			$nomicly_int = 0;
 			while ( have_posts() ) : the_post(); ?>	
-				<article id="<?php the_ID(); ?>">
+				<article id="<?php the_ID(); ?>" class="<?php echo 'content_for_'.$nomicly_int;?>">
 					<header class="entry-header">
 				<h2 class="entry-title"><?php the_title(); ?></h2>
 					</header><!-- .entry-header -->
 					
-				<input type="hidden" name ="<?php echo "$nomicly_int"; ?>" value="<?php the_ID(); ?>" />
+				<input type="hidden" id="<?php echo 'idea'.$nomicly_int;?>" name ="<?php echo 'idea'.$nomicly_int; ?>" value="<?php the_ID(); ?>" />
 				<a href="" id="<?php the_ID(); ?>" class="vote-link">Vote</a>
 				</article>					
 
