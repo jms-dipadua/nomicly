@@ -110,7 +110,62 @@ jQuery(function() {
 });// END POST
 		return false;
 	}); // END VOTE-LINK CLICKED
-});  // END MAIN JQUERY
+});  // END GET NEW IDEAS
+
+/*
+//  CREATE NEW IDEAS
+//  a. validate (?) form
+//  b. accept idea submission
+//	c. return query for all new ideas created since idea was submitted
+//  d. return new ideas (in order received) and append to top of pre-existing content
+*/
+
+jQuery(function() {
+var ajaxurl = "../../nomicly/wp-admin/admin-ajax.php";
+		jQuery.ajax({
+			url: ajaxurl, 
+			type: "POST",
+			dataType:'json',
+			data: {
+	      		action:'create_new_ideas'
+      	  	 }, 
+ 		success:  function(response){
+ 			// upon request success
+ 			// append new idea to top of existing ideas
+ 				// later you can also pole for other new ideas and append those too
+      			//alert(response.idea_1_data.ID);
+		/*
+      			var id1 = response.idea_1_data.ID;
+      			var title1 = response.idea_1_data.post_title;
+      			var id2 = response.idea_2_data.ID;
+      			var title2 = response.idea_2_data.post_title;
+      			
+      			jQuery('.content_for_0').attr('id', id1);
+      			jQuery('.content_for_0 .vote-link').attr('id', id1);
+      			jQuery('.content_for_0 .entry-title').text(title1);
+      			jQuery('.content_for_0 #idea0').val(id1);
+      			
+      			jQuery('.content_for_1').attr('id', id2);
+      			jQuery('.content_for_1 .vote-link').attr('id', id2);
+      			jQuery('.content_for_1 .entry-title').text(title2);
+      			jQuery('.content_for_1 #idea1').val(id2);
+      			
+      			jQuery('.idea_1_consensus, .idea_2_consensus, .total_votes, .next_ideas').remove();
+      			
+      			jQuery('.content_for_0 .vote-link, .content_for_1 .vote-link ').show();
+      	*/	
+   			}
+
+
+});  // END CREATE (AND RETURN) NEW IDEAS
+
+/*
+// NEW IDEA POLLING
+// 	a. counter that periodically (60 s) queries for new posts
+// 	b. if more, present "get more ideas"
+//	c. query for new ideas since last poll (time set at page load?)
+// 	d. return new ideas and append to top of content
+*/
 
 
 
