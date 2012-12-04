@@ -15,9 +15,10 @@
 get_header(); 
 
 // process new idea posting 
- if (isset($_POST['create'])) {
+/* if (isset($_POST['create'])) {
 	nomicly_new_idea();
 	}
+	*/
 ?>
 
 		<div id="primary">
@@ -28,11 +29,13 @@ get_header();
 		<?php
 	// check for login to present idea form or reg/login links
 	if ( is_user_logged_in() ) { ?>
+		<?php $user_id = get_current_user_id(); ?>
 		<form method ="post" action ="#">
 		<h2>Create A New Idea</h2>
-		<textarea rows="2" cols="20" name="new_idea" value="">
+		<textarea rows="2" cols="20" name="new_idea" id="new_idea" value="">
 		</textarea>
-		<input type="submit" name="create" value="Create" />
+		<input type="hidden" name="user_id" id="user_id" value="<?php echo "$user_id"; ?>" />
+		<input type="submit" name="create" class="idea_submit_button" value="Create" />
 		</form>    
 		<?php	} else {
 			$wpurl = get_bloginfo ( 'wpurl' );  
@@ -41,9 +44,8 @@ get_header();
 		?>		
 		
 				<?php /* Start the Loop */ ?>
-		
+		<div id="the_feed">
 				<?php while ( have_posts() ) : the_post(); ?>
-				<!-- APPEND THE MODIFY FUNCTIONALITY IF USER IS LOGGED IN --> 
 				
 				<?php get_template_part( 'content', get_post_format() ); ?>
 			
@@ -53,6 +55,7 @@ get_header();
 				<?php twentyeleven_content_nav( 'nav-below' ); ?>
 
 			<?php else : ?>
+		</div>
 
 				<article id="post-0" class="post no-results not-found">
 					<header class="entry-header">

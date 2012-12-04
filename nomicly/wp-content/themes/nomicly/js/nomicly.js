@@ -121,42 +121,42 @@ jQuery(function() {
 */
 
 jQuery(function() {
-var ajaxurl = "../../nomicly/wp-admin/admin-ajax.php";
+   jQuery('.idea_submit_button').click(function() {
+	var idea = jQuery('#new_idea').val();
+	var cat_id = jQuery('#category_id').val();
+	var user_id = jQuery('#user_id').val();
+	var ajaxurl = "../nomicly/wp-admin/admin-ajax.php";
+	
 		jQuery.ajax({
 			url: ajaxurl, 
 			type: "POST",
 			dataType:'json',
 			data: {
-	      		action:'create_new_ideas'
-      	  	 }, 
+	      		action:'create_new_ideas',
+	      		new_idea: idea,
+      			category_id: cat_id,
+      			user_id: user_id
+      			  }, 
  		success:  function(response){
  			// upon request success
  			// append new idea to top of existing ideas
  				// later you can also pole for other new ideas and append those too
       			//alert(response.idea_1_data.ID);
+			// returns full array of the new post
+			// so you have title, id, link, cat, etc
+
 		/*
-      			var id1 = response.idea_1_data.ID;
-      			var title1 = response.idea_1_data.post_title;
-      			var id2 = response.idea_2_data.ID;
-      			var title2 = response.idea_2_data.post_title;
+      			var titleID = response.new_idea_data.ID;
+      			var title = response.new_idea_data.title;
       			
-      			jQuery('.content_for_0').attr('id', id1);
-      			jQuery('.content_for_0 .vote-link').attr('id', id1);
-      			jQuery('.content_for_0 .entry-title').text(title1);
-      			jQuery('.content_for_0 #idea0').val(id1);
+      			var the_content = HTML-goes-here;
       			
-      			jQuery('.content_for_1').attr('id', id2);
-      			jQuery('.content_for_1 .vote-link').attr('id', id2);
-      			jQuery('.content_for_1 .entry-title').text(title2);
-      			jQuery('.content_for_1 #idea1').val(id2);
-      			
-      			jQuery('.idea_1_consensus, .idea_2_consensus, .total_votes, .next_ideas').remove();
-      			
-      			jQuery('.content_for_0 .vote-link, .content_for_1 .vote-link ').show();
+      			jQuery('#the_feed').prepend(the_content);
       	*/	
-   			}
-
-
+   			}  // END response
+		}); // END .ajax
+					return false;
+	}); // END .click
 });  // END CREATE (AND RETURN) NEW IDEAS
 
 /*

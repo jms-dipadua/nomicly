@@ -33,29 +33,27 @@ get_header();
 		//get category information
 		global $post;
 		$category = get_the_category($post->ID);
-	//print_r($categories);
 			$int = 0;
 			foreach ($category as $categories) {
-				$category_id[$int] = $category[$int] -> term_taxonomy_id;
-				$int++;
-				} // END FOREACH
+					$category_id[$int] = $category[$int] -> term_taxonomy_id;
+					$int++;
+					} // END FOREACH
 				// may be just a corner-case bug
 				// but WP was appending the main category to every post
 				// didn't want that SO
 				// before writing the form, check the category
 				// if the first entry is = 1 (main category0-
 				// then unset that variable 
-			if ($category_id[0] = 1) {
+			 if ($category_id[0] == 1) {
 				unset($category_id[0]);
 				}
 			$category_id = implode (",", $category_id);		
-			
-		echo 
+			echo 
 		'<form method ="post" action ="#">
 		<h2>Create A New Idea</h2>
-		<textarea rows="2" cols="20" name="new_idea" value="">
+		<textarea rows="2" cols="20" name="new_idea" id="new_idea" value="">
 		</textarea>		
-		<input type="hidden" name="category_id" value="'.$category_id.'" />
+		<input type="hidden" name="category_id" id="category_id" value="'.$category_id.'" />
 		<input type="submit" name="create" value="Create" />
 		</form>'; 
 	} else {

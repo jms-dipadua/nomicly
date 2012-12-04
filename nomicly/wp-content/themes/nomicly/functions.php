@@ -29,10 +29,9 @@ return $query_variables;
 
 function nomicly_new_idea () {
 	global $wpdb;
-	print_r($_POST);
 //need to get user info to connect the topic/idea to the user 
 //potentially redundant but using wp-core functions to reduce impact
-	$userID = get_current_user_id();
+	$userID = $_POST['user_id'];
 	//$user_data = get_userdata( $userID );
 	
 // setup post meta
@@ -83,13 +82,12 @@ function nomicly_new_idea () {
 	// UPDATE POST TERMS
 	wp_set_post_terms($new_post_id, $category_id, 'category', FALSE);
 
-	
-	echo "<br /> from within create new post, new post id = $new_post_id<br />";
-	return $new_post_id;
+		return $new_post_id;
 // BUG
 // empty post array by redirecting to fresh version of page
 //	header('Location: http://www.jamesdipadua.com/experimental/nomicly/index.php');
 }
+
 
 
 /*
@@ -414,6 +412,26 @@ function add_nomicly_js(){
 }
 // add the nomicly_js file to the initialization
 add_action( 'init', 'add_nomicly_js' );  
+
+function create_new_idea () {
+	$new_idea_id = nomicly_new_idea();
+	//get the content for that idea using get_post();
+	$post_args = array (
+		'include' => $new_idea_id
+	);
+	$new_idea = get_posts($post_args);
+	$new_idea_data = array (
+		"new_idea_data" => $new_idea[0]
+		);
+	// CONVERT  TO JSON	
+	$new_idea_data = json_encode($new_idea_data);
+	// response output
+	die($new_idea_data);	
+}
+
+add_action('wp_ajax_create_new_idea', 'create_new_idea');
+// non-logged in user
+add_action('wp_ajax_nopriv_create_new_idea', 'create_new_idea' );
 
   
 function process_hot_not_vote() {

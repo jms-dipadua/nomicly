@@ -48,9 +48,9 @@ if(isset($_POST['modify_idea'])) {
 		<?php the_title();?>
 		</textarea>
 		<!-- maybe include a dropdown of all the topics too? -->
-		<input type="hidden" name="category_id" value="<?php echo "$category_id"; ?>" />
-		<input type="hidden" name="post_parent" value="<?php the_ID(); ?>" />
-		<input type="submit" name="modify_idea" value="Modify" />
+		<input type="hidden" name="category_id" id = "category_id" value="<?php echo "$category_id"; ?>" />
+		<input type="hidden" name="post_parent" id = "post_parent" value="<?php the_ID(); ?>" />
+		<input type="submit" name="modify_idea" class ="submit_modifed_idea" value="Modify" />
 		</form>
 				<?	endwhile;
 		}// END IS USER LOGGED IN
