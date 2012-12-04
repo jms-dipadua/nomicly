@@ -416,17 +416,16 @@ add_action( 'init', 'add_nomicly_js' );
 function create_new_idea () {
 	$new_idea_id = nomicly_new_idea();
 	//get the content for that idea using get_post();
-	$post_args = array (
-		'include' => $new_idea_id
-	);
-	$new_idea = get_posts($post_args);
+	$new_idea = get_post($new_idea_id);
+	
 	$new_idea_data = array (
-		"new_idea_data" => $new_idea[0]
+		"new_idea_data" => $new_idea,
 		);
+	
 	// CONVERT  TO JSON	
-	$new_idea_data = json_encode($new_idea_data);
+	$response_data = json_encode($new_idea_data);
 	// response output
-	die($new_idea_data);	
+	die($response_data);	
 }
 
 add_action('wp_ajax_create_new_idea', 'create_new_idea');
@@ -480,9 +479,9 @@ function get_next_ideas () {
 
 // AJAX callback for getting new ideas after submitting a vote (and reviewing stats)
 // logged in user
-add_action('wp_ajax_get_next_ideas', 'get_next_ideas');
+//add_action('wp_ajax_get_next_ideas', 'get_next_ideas');
 // non-logged in user
-add_action('wp_ajax_nopriv_get_next_ideas', 'get_next_ideas' );
+//add_action('wp_ajax_nopriv_get_next_ideas', 'get_next_ideas' );
 
 
 /*

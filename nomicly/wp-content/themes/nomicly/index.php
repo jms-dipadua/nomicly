@@ -45,6 +45,7 @@ get_header();
 		
 				<?php /* Start the Loop */ ?>
 		<div id="the_feed">
+		<div id="fresh-idea"></div>
 				<?php while ( have_posts() ) : the_post(); ?>
 				
 				<?php get_template_part( 'content', get_post_format() ); ?>

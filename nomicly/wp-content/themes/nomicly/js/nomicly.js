@@ -132,7 +132,7 @@ jQuery(function() {
 			type: "POST",
 			dataType:'json',
 			data: {
-	      		action:'create_new_ideas',
+	      		action:'create_new_idea',
 	      		new_idea: idea,
       			category_id: cat_id,
       			user_id: user_id
@@ -145,14 +145,12 @@ jQuery(function() {
 			// returns full array of the new post
 			// so you have title, id, link, cat, etc
 
-		/*
-      			var titleID = response.new_idea_data.ID;
-      			var title = response.new_idea_data.title;
+      			var theURL = response.new_idea_data.guid;
       			
-      			var the_content = HTML-goes-here;
-      			
-      			jQuery('#the_feed').prepend(the_content);
-      	*/	
+      			jQuery('#fresh-idea').load(theURL +" #article_content");
+      			      	
+      		// then empty the form for a new idea
+      		jQuery('#new_idea').val('');
    			}  // END response
 		}); // END .ajax
 					return false;

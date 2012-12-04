@@ -6,9 +6,12 @@
  * @subpackage Twenty_Eleven
  * @since Twenty Eleven 1.0
  */
+// Modify Idea enhancement from line 23 to 26
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+<div id="article_content" class="post-<?php the_ID(); ?>">
+
 	<header class="entry-header">
 		<h1 class="entry-title"><?php the_title(); ?></h1>
 
@@ -20,10 +23,16 @@
 	</header><!-- .entry-header -->
 
 	<div class="entry-content">
+	<!-- ADDS MODIFY IDEA TO THE CONTENT -->
+	<? if (is_user_logged_in()) { ?>
+	<?php $wpurl = get_bloginfo ( 'wpurl' );  ?>
+			<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="modify-link">Modify Idea</a>
+	<?php }//END IF LOGGED IN  ?>
+
 		<?php the_content(); ?>
 		<?php wp_link_pages( array( 'before' => '<div class="page-link"><span>' . __( 'Pages:', 'twentyeleven' ) . '</span>', 'after' => '</div>' ) ); ?>
 	</div><!-- .entry-content -->
-
+	</div> <!-- #article_content --> 
 	<footer class="entry-meta">
 		<?php
 			/* translators: used between list items, there is a space after the comma */
