@@ -144,9 +144,10 @@ jQuery(function() {
       			//alert(response.idea_1_data.ID);
 			// returns full array of the new post
 			// so you have title, id, link, cat, etc
-
+				// TELL USER WE HAVE NEW IDEA
+				jQuery('#new_idea').val('Saving New Idea...');
       			var theURL = response.new_idea_data.guid;
-      			
+      			// PRESENT THE NEW IDEA
       			jQuery('#fresh-idea').load(theURL +" #article_content");
       			      	
       		// then empty the form for a new idea
@@ -156,6 +157,51 @@ jQuery(function() {
 					return false;
 	}); // END .click
 });  // END CREATE (AND RETURN) NEW IDEAS
+
+/*
+//  MODIFY EXISTING IDEAS
+//  a. validate (?) form
+//  b. accept idea submission
+//	c. return the modified idea
+//  d. append to bottom of content
+*/
+
+jQuery(function() {
+   jQuery('.submit_modifed_idea').click(function() {
+	var idea = jQuery('#new_idea').val();
+	var cat_id = jQuery('#category_id').val();
+	var parent_id = jQuery('#post_parent').val();
+	var user_id = jQuery('#user_id').val();
+	var ajaxurl = "../../nomicly/wp-admin/admin-ajax.php";
+	
+		jQuery.ajax({
+			url: ajaxurl, 
+			type: "POST",
+			dataType:'json',
+			data: {
+	      		action:'modify_existing_idea',
+	      		new_idea: idea,
+      			category_id: cat_id,
+      			post_parent: parent_id,
+      			user_id: user_id
+      			  }, 
+ 		success:  function(response){
+      			var modified_idea = response.new_idea_data.post_title;
+      			var modified_idea_id = response.new_idea_data.ID;
+      			// PRESENT THE NEW IDEA
+      			jQuery('#newly_modified_idea').html('<h1 class="entry-title">'+modified_idea+'</h1>');      			      	
+      		// then put new idea into the form for further modification
+      		jQuery('#new_idea').val(modified_idea);
+      		// reset the parent id to the newly created post id (for ancestry purposes)
+      		jQuery('#post_parent').val(modified_idea_id);
+   			}  // END response
+		}); // END .ajax
+					return false;
+	}); // END .click
+});  // END CREATE (AND RETURN) NEW IDEAS
+
+
+
 
 /*
 // NEW IDEA POLLING

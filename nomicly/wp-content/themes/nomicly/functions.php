@@ -372,6 +372,7 @@ function create_new_topic() {
 
 function nomicly_modify_idea ()  {
 	$new_post_id = nomicly_new_idea();
+	return $new_post_id;
 }  // END MODIFY IDEAS
 
 
@@ -431,6 +432,27 @@ function create_new_idea () {
 add_action('wp_ajax_create_new_idea', 'create_new_idea');
 // non-logged in user
 add_action('wp_ajax_nopriv_create_new_idea', 'create_new_idea' );
+
+
+function modify_existing_idea () {
+	$new_idea_id = nomicly_modify_idea();
+	//get the content for that idea using get_post();
+	$new_idea = get_post($new_idea_id);
+	
+	$new_idea_data = array (
+		"new_idea_data" => $new_idea,
+		);
+	
+	// CONVERT  TO JSON	
+	$response_data = json_encode($new_idea_data);
+	// response output
+	die($response_data);	
+}
+
+add_action('wp_ajax_modify_existing_idea', 'modify_existing_idea');
+// non-logged in user
+add_action('wp_ajax_nopriv_modify_existing_idea', 'modify_existing_idea' );
+
 
   
 function process_hot_not_vote() {

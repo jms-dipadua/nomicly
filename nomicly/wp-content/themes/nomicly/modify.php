@@ -21,6 +21,7 @@ if(isset($_POST['modify_idea'])) {
 		if (is_user_logged_in()) {						
 				//global $wpdb;	
 				$logged_in = true;
+				$user_id = get_current_user_id();
 			if (isset($_GET['idea'])) {
 				$post_id = $_GET['idea'];
 				$post_id = intval($post_id);
@@ -41,15 +42,17 @@ if(isset($_POST['modify_idea'])) {
 					);
 				query_posts( $query_args ); 
 				while ( have_posts() ) : the_post(); ?>
-				<?php the_title();?>
+				<h2> Original Idea: <br /><?php the_title();?>
+				</h2>
 		<form method="post" action="#">
 		<h2>Modify Existing Idea</h2>
-		<textarea rows="2" cols="20" name="new_idea" value="">
+		<textarea rows="2" cols="20" name="new_idea" id ="new_idea" value="">
 		<?php the_title();?>
 		</textarea>
 		<!-- maybe include a dropdown of all the topics too? -->
 		<input type="hidden" name="category_id" id = "category_id" value="<?php echo "$category_id"; ?>" />
 		<input type="hidden" name="post_parent" id = "post_parent" value="<?php the_ID(); ?>" />
+		<input type="hidden" name="user_id" id = "user_id" value="<?php echo "$user_id"; ?>" />
 		<input type="submit" name="modify_idea" class ="submit_modifed_idea" value="Modify" />
 		</form>
 				<?	endwhile;
@@ -59,7 +62,8 @@ if(isset($_POST['modify_idea'])) {
 			echo 'Sorry. This page is for registered users only. Please <a href="'.$wpurl.'/wp-login.php?action=register">Register</a> or <a href="'.$wpurl.'/wp-login.php">Login</a> to modify ideas.';			
 			}
 	?>
-
+			<!--newly modified idea is inserted here with ajax in nomicly.js-->
+			<div id="newly_modified_idea"></div>
 
 			</div><!-- #content -->
 		</div><!-- #primary -->
