@@ -65,16 +65,31 @@ footer, header, hgroup, menu, nav, section {
 	display: block;
 }
 
+/* utility */
+/* ====== media ====== */
+.media {margin:10px;}
+.media, .bd {overflow:hidden; _overflow:visible; zoom:1;}
+.media .img {float:left; margin-right: 10px;}
+.media .img img{display:block;}
+.media .imgExt{float:right; margin-left: 10px;}
 
 /* =Structure
 ----------------------------------------------- */
 
 body {
+	padding: 0;
+}
+.body-wrap {
 	padding: 0 2em;
 }
 #page {
 	margin: 2em auto;
 	max-width: 1000px;
+}
+.header-wrap {
+	margin: 0 auto;
+	max-width: 1000px;
+	position:relative;
 }
 #branding hgroup {
 	margin: 0 7.6%;
@@ -95,6 +110,8 @@ body {
 	float: right;
 	margin-right: 7.6%;
 	width: 18.8%;
+	position:relative;
+	z-index:100000;
 }
 
 /* Singular */
@@ -177,18 +194,26 @@ body {
 /* Right Content */
 .left-sidebar #primary {
 	float: right;
-	margin: 0 0 0 -26.4%;
+	margin: 0 0 0 -26.4%;/* #secondary margin left + width */
 	width: 100%;
 }
 .left-sidebar #content {
-	margin: 0 7.6% 0 34%;
-	width: 58.4%;
+	margin: 0 7.6% 3% 31%;
+	width: 61.4%;
+	background:#fff;
+	padding: 2%;
+	border:1px solid #444;
 }
 .left-sidebar #secondary {
 	float: left;
-	margin-left: 7.6%;
+	margin-left: 3.6%;
 	margin-right: 0;
-	width: 18.8%;
+	width: 21.8%;
+}
+
+.left-sidebar #secondary h3 {
+	font-weight:bold;
+	font-size:16px;
 }
 
 /* One column */
@@ -279,9 +304,11 @@ body {
 	width: auto;
 }
 /* Make sure the logo and search form don't collide */
-.one-column #branding #searchform {
-	right: 40px;
-	top: 4em;
+.one-column #branding #searchform,
+#branding #searchform {
+	right: 140px;
+	top: .75em;
+	background:#fff;
 }
 /* Talking avatars take up too much room at this size */
 .one-column .commentlist > li.comment {
@@ -315,16 +342,16 @@ body {
 ----------------------------------------------- */
 
 body, input, textarea {
-	color: #373737;
-	font: 15px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color: #111;
+	font: 15px Arial, sans-serif;
 	font-weight: 300;
 	line-height: 1.625;
 }
 body {
-	background: #e2e2e2;
+	background: #444;
 }
 #page {
-	background: #fff;
+	background: #d4d4d4;
 }
 
 /* Headings */
@@ -372,7 +399,7 @@ dt {
 dd {
 	margin-bottom: 1.625em;
 }
-strong {
+strong, b {
 	font-weight: bold;
 }
 cite, em, i {
@@ -502,10 +529,21 @@ a:hover {
 ----------------------------------------------- */
 
 #branding {
-	border-top: 2px solid #bbb;
-	padding-bottom: 10px;
 	position: relative;
 	z-index: 9999;
+	top:-2px;
+	width: 100%;
+	margin: -28px auto 0 auto;
+	float:left;
+	
+	background: #222; /* Show a solid color for older browsers */
+	background: -moz-linear-gradient(#252525, #0a0a0a);
+	background: -o-linear-gradient(#252525, #0a0a0a);
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#252525), to(#0a0a0a)); /* older webkit syntax */
+	background: -webkit-linear-gradient(#252525, #0a0a0a);
+	-webkit-box-shadow: rgba(0, 0, 0, 0.4) 0px 1px 2px;
+	-moz-box-shadow: rgba(0, 0, 0, 0.4) 0px 1px 2px;
+	box-shadow: rgba(0, 0, 0, 0.4) 0px 1px 2px;
 }
 #site-title {
 	margin-right: 270px;
@@ -533,24 +571,40 @@ a:hover {
 	margin-bottom: -7px;
 	width: 100%;
 }
+#site-hd {
+	float:left;
+	position:relative;
+	font-size:16px;
+	font-weight:bold;
+	margin-left:0px;
+	margin-right:40px;
+}
 
+.reg-login {
+	position:absolute;
+	right:20px;
+	font-weight:bold;
+	top:16px;
+	font-size:12px;
+	color:#eee;
+}
 
 /* =Menu
 -------------------------------------------------------------- */
 
 #access {
-	background: #222; /* Show a solid color for older browsers */
+/*	background: #222; 
 	background: -moz-linear-gradient(#252525, #0a0a0a);
 	background: -o-linear-gradient(#252525, #0a0a0a);
-	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#252525), to(#0a0a0a)); /* older webkit syntax */
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#252525), to(#0a0a0a)); 
 	background: -webkit-linear-gradient(#252525, #0a0a0a);
 	-webkit-box-shadow: rgba(0, 0, 0, 0.4) 0px 1px 2px;
 	-moz-box-shadow: rgba(0, 0, 0, 0.4) 0px 1px 2px;
-	box-shadow: rgba(0, 0, 0, 0.4) 0px 1px 2px;
+	box-shadow: rgba(0, 0, 0, 0.4) 0px 1px 2px;*/
 	clear: both;
 	display: block;
 	float: left;
-	margin: 0 auto 6px;
+	margin: 0 auto 0px;
 	width: 100%;
 }
 #access ul {
@@ -562,6 +616,7 @@ a:hover {
 #access li {
 	float: left;
 	position: relative;
+	top:6px;
 }
 #access a {
 	color: #eee;
@@ -569,6 +624,7 @@ a:hover {
 	line-height: 3.333em;
 	padding: 0 1.2125em;
 	text-decoration: none;
+	font-weight:bold;
 }
 #access ul ul {
 	-moz-box-shadow: 0 3px 3px rgba(0,0,0,0.2);
@@ -601,16 +657,12 @@ a:hover {
 #access li:hover > a,
 #access ul ul :hover > a,
 #access a:focus {
-	background: #efefef;
+	
 }
 #access li:hover > a,
 #access a:focus {
-	background: #f9f9f9; /* Show a solid color for older browsers */
-	background: -moz-linear-gradient(#f9f9f9, #e5e5e5);
-	background: -o-linear-gradient(#f9f9f9, #e5e5e5);
-	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f9f9f9), to(#e5e5e5)); /* Older webkit syntax */
-	background: -webkit-linear-gradient(#f9f9f9, #e5e5e5);
-	color: #373737;
+	text-shadow: 0 0 16px #fff;
+	color:#fff;
 }
 #access ul li:hover > ul {
 	display: block;
@@ -625,8 +677,8 @@ a:hover {
 /* Search Form */
 #branding #searchform {
 	position: absolute;
-	top: 3.8em;
-	right: 7.6%;
+/*	top: 3.8em;
+	right: 7.6%; */
 	text-align: right;
 }
 #branding #searchform div {
@@ -707,6 +759,10 @@ a:hover {
 	padding: 0 0 1.625em;
 	position: relative;
 }
+#the_feed .hentry {
+	border:1px solid #ccc;
+	padding: 2%;
+}
 .hentry:last-child,
 .no-results {
 	border-bottom: none;
@@ -738,6 +794,17 @@ a:hover {
 .entry-title a:focus,
 .entry-title a:active {
 	color: #1982d1;
+}
+#the_feed .entry-title {
+	font-size:20px;
+	line-height:1.1em;
+	padding-top:0;
+}
+#the_feed .feed-gravatar {
+
+}
+#the_feed .modify-link {
+	float:right;
 }
 .entry-meta {
 	color: #666;
@@ -2261,7 +2328,7 @@ p.comment-form-comment {
 @media (max-width: 800px) {
 	/* Simplify the basic layout */
 	#main #content {
-		margin: 0 7.6%;
+		margin: 0 7.6% 4% 0;
 		width: auto;
 	}
 	#nav-below {
