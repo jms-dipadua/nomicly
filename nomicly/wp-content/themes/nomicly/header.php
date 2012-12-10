@@ -105,8 +105,9 @@
 				<?php /* Our navigation menu. If one isn't filled out, wp_nav_menu falls back to wp_page_menu. The menu assigned to the primary location is the one used. If one isn't assigned, the menu with the lowest ID is used. */ ?>
 				<h1 id="site-hd"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
 				<?php wp_nav_menu( array( 'theme_location' => 'primary' ) ); ?>
-				</div><!--end .header-wrap-->
+				
 			</nav><!-- #access -->
+			</div><!--end .header-wrap-->
 			
 	</header><!-- #branding -->
 <div class="body-wrap">

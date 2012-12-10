@@ -70,7 +70,7 @@ footer, header, hgroup, menu, nav, section {
 .media {margin:10px;}
 .media, .bd {overflow:hidden; _overflow:visible; zoom:1;}
 .media .img {float:left; margin-right: 10px;}
-.media .img img{display:block;}
+.media .img img{display:block;border-radius:3px;}
 .media .imgExt{float:right; margin-left: 10px;}
 
 /* =Structure
@@ -83,8 +83,9 @@ body {
 	padding: 0 2em;
 }
 #page {
-	margin: 2em auto;
+	margin: 1em auto 0 auto;
 	max-width: 1000px;
+	padding-bottom:2em;
 }
 .header-wrap {
 	margin: 0 auto;
@@ -113,13 +114,83 @@ body {
 	position:relative;
 	z-index:100000;
 }
-
-/* Singular */
-.singular #primary {
+/* nomicly widgets and styles */
+.widget {
+	background:#fff;
+	box-shadow: 0 0 2px #000;
+	border-radius:4px;
+	padding: 4%;	
+}
+.profile-sidebar-box p {
+	margin-bottom:0;
+}
+.idea_submit_button, .widget-button {
+	border:1px solid #555;
+	background-color:#2C77BA;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15) inset;
+    color: #fff;
+    padding: 3px 5px;
+    text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.3);
+    border-radius:4px;
+    font-size:12px;
+    font-weight:bold;
+}
+.widget-button {
+	padding: 5px 8px;
+}
+.widget .widget-button:hover {
+	text-decoration:none;
+}
+.widget.recent-ideas-sidebox ul, .widget .sidenav ul, .widget.topic-list ul {
+	list-style-type:none;
+	margin: 5px 0 15px 0;
+}
+.widget.topic-list ul {
+	padding: 5px 0;
+}
+.widget.topic-list {
+	padding: 0;
+}
+.recent-ideas-sidebox li, .widget.topic-list li {
+	border-bottom:1px solid #ccc;
+	padding:7px 0;
+}
+.widget.topic-list li {
+	padding: 0;
+}
+.widget.topic-list li:last-child {
+	border-bottom:0;
+}
+.widget.topic-list li a {
+	padding: 7px 10px;
+	display:block;
+}
+.widget .sidenav ul {
 	margin: 0;
 }
-.singular #content,
-.left-sidebar.singular #content {
+.widget .sidenav li {
+	display:inline;
+	padding: 0 5px;
+}
+.widget .sidenav a {
+	font-weight:normal;
+}
+
+p.cat-links {
+	font-size:12px;
+	color:#666;
+}
+#newly_modified_idea {
+	display:none;
+}
+/* end nomicly widgets */
+
+/* Singular */
+/*.singular #primary {
+	margin: 0;
+} */
+/*.singular #content, 
+.left-sidebar.singular #content */{
 	margin: 0 7.6%;
 	position: relative;
 	width: auto;
@@ -198,24 +269,32 @@ body {
 	width: 100%;
 }
 .left-sidebar #content {
-	margin: 0 7.6% 3% 31%;
-	width: 61.4%;
-	background:#fff;
+	margin: 0 2.6% 3% 31%;
+	width: 66.4%;
+/*	background:#444;
 	padding: 2%;
-	border:1px solid #444;
+	box-shadow: 0 0 2px #000;
+	border-radius:4px; */
 }
-.left-sidebar #secondary {
+.left-sidebar #secondary, .left-sidebar .secondary {
 	float: left;
-	margin-left: 3.6%;
+	margin-left: 2.6%;
 	margin-right: 0;
-	width: 21.8%;
+	width: 23.8%;
 }
 
-.left-sidebar #secondary h3 {
+.left-sidebar #secondary h3, .widget h3 {
 	font-weight:bold;
 	font-size:16px;
 }
-
+.widget h2 {
+	font-size: 24px;
+	line-height:1.3em;
+	font-weight:bold;
+}
+.widget h2 p {
+	margin: 0;
+}
 /* One column */
 .one-column #page {
 	max-width: 690px;
@@ -225,8 +304,7 @@ body {
 	width: auto;
 }
 .one-column #nav-below {
-	border-bottom: 1px solid #ddd;
-	margin-bottom: 1.625em;
+	
 }
 .one-column #secondary {
 	float: none;
@@ -309,6 +387,7 @@ body {
 	right: 140px;
 	top: .75em;
 	background:#fff;
+	border-radius:5px;
 }
 /* Talking avatars take up too much room at this size */
 .one-column .commentlist > li.comment {
@@ -348,10 +427,11 @@ body, input, textarea {
 	line-height: 1.625;
 }
 body {
-	background: #444;
+	background: #333;
 }
 #page {
-	background: #d4d4d4;
+	background: #444;
+	background: rgba(0, 0, 0, 0.1);
 }
 
 /* Headings */
@@ -469,6 +549,7 @@ textarea {
 	box-shadow: inset 0 1px 1px rgba(0,0,0,0.1);
 	border: 1px solid #ddd;
 	color: #888;
+	border-radius:  4px;
 }
 input[type=text]:focus,
 textarea:focus {
@@ -529,11 +610,11 @@ a:hover {
 ----------------------------------------------- */
 
 #branding {
-	position: relative;
-	z-index: 9999;
-	top:-2px;
+	position: fixed;
+	z-index: 10000000;
+	top:0px;
 	width: 100%;
-	margin: -28px auto 0 auto;
+	margin: 0px auto 0 auto;
 	float:left;
 	
 	background: #222; /* Show a solid color for older browsers */
@@ -735,7 +816,7 @@ a:hover {
 
 #main {
 	clear: both;
-	padding: 1.625em 0 0;
+	padding: 3.625em 0 0;
 }
 .page-title {
 	color: #666;
@@ -760,8 +841,9 @@ a:hover {
 	position: relative;
 }
 #the_feed .hentry {
-	border:1px solid #ccc;
 	padding: 2%;
+	background:#fff;
+	border-radius:4px;
 }
 .hentry:last-child,
 .no-results {
@@ -795,13 +877,24 @@ a:hover {
 .entry-title a:active {
 	color: #1982d1;
 }
-#the_feed .entry-title {
+#the_feed .entry-title, .widget .entry-title {
 	font-size:20px;
 	line-height:1.1em;
 	padding-top:0;
 }
+.widget .entry-title {
+	line-height:1.3em;
+}
 #the_feed .feed-gravatar {
-
+	font-size:12px;
+	text-align:center;
+	width:auto;
+	line-height:14px;
+	top:3px;
+	position:relative;
+}
+#the_feed .feed-gravatar a {
+	display:block;
 }
 #the_feed .modify-link {
 	float:right;
@@ -1158,12 +1251,12 @@ article.format-status .entry-content {
 .singular.page .hentry {
 	padding: 3.5em 0 0;
 }
-.singular .entry-title {
+/*.singular .entry-title {
 	color: #000;
 	font-size: 36px;
 	font-weight: bold;
 	line-height: 48px;
-}
+} */
 .singular .entry-title,
 .singular .entry-header .entry-meta {
 	padding-right: 0;
@@ -2320,22 +2413,43 @@ p.comment-form-comment {
 	color: #555;
 	font-weight: bold;
 }
+/* nomicly footer */
 
+#footer-search {
+	display:none;
+	
+}
+#footer-search #searchform  {
+
+	display: block;
+    margin: 20px auto;
+}
+
+#footer-search input#s {
+	background: #fff url(images/search.png) no-repeat 5px 6px;
+	width: 80%;
+	margin: 0 auto;
+	display:block;
+	border-radius:4px;
+}
 
 /* =Responsive Structure
 ----------------------------------------------- */
 
 @media (max-width: 800px) {
 	/* Simplify the basic layout */
+	#footer-search {
+		display:block;
+	}
+	#branding #searchform {display:none}
 	#main #content {
-		margin: 0 7.6% 4% 0;
+		margin: 0 7.6% 4% 7.6%;
 		width: auto;
 	}
 	#nav-below {
-		border-bottom: 1px solid #ddd;
-		margin-bottom: 1.625em;
+		
 	}
-	#main #secondary {
+	#main #secondary, #main .secondary {
 		float: none;
 		margin: 0 7.6%;
 		width: auto;
@@ -2449,8 +2563,17 @@ p.comment-form-comment {
 	#site-description {
 		font-size: 12px;
 	}
+	#site-hd {
+		margin-right:10px;
+	}
 	#access ul {
 		font-size: 12px;
+	}
+	#access li {
+		top:8px;
+	}
+	.reg-login {
+		top:18px;
 	}
 	article.intro .entry-content {
 		font-size: 12px;
@@ -2461,9 +2584,9 @@ p.comment-form-comment {
 	.featured-post .entry-title {
 		font-size: 14px;
 	}
-	.singular .entry-title {
+	/*.singular .entry-title {
 		font-size: 28px;
-	}
+	} */
 	.entry-meta {
 		font-size: 12px;
 	}

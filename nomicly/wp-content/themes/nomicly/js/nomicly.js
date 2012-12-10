@@ -189,11 +189,13 @@ jQuery(function() {
       			var modified_idea = response.new_idea_data.post_title;
       			var modified_idea_id = response.new_idea_data.ID;
       			// PRESENT THE NEW IDEA
-      			jQuery('#newly_modified_idea').html('<h1 class="entry-title">'+modified_idea+'</h1>');      			      	
+      			jQuery('#newly_modified_idea').html('<h1 class="entry-title">Modified idea:<br />'+modified_idea+'</h1>');      			      	
       		// then put new idea into the form for further modification
       		jQuery('#new_idea').val(modified_idea);
       		// reset the parent id to the newly created post id (for ancestry purposes)
       		jQuery('#post_parent').val(modified_idea_id);
+      		//show the idea div that was previously hidden
+      		jQuery('#newly_modified_idea').show();
    			}  // END response
 		}); // END .ajax
 					return false;

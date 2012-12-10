@@ -26,9 +26,13 @@
 				<?php do_action( 'twentyeleven_credits' ); ?>
 				<a href="<?php echo esc_url( __( 'http://wordpress.org/', 'twentyeleven' ) ); ?>" title="<?php esc_attr_e( 'Semantic Personal Publishing Platform', 'twentyeleven' ); ?>" rel="generator"><?php printf( __( 'Proudly powered by %s', 'twentyeleven' ), 'WordPress' ); ?></a>
 			</div>-->
+			<div id="footer-search"><?php get_search_form(); ?></div>
 	</footer><!-- #colophon -->
+	
 </div><!-- #page -->
+
+</div><!--end .body-wrap-->
 <?php wp_footer(); ?>
-	</div><!--end .body-wrap-->
+
 </body>
 </html>

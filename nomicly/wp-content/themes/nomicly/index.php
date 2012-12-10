@@ -21,70 +21,55 @@ get_header();
 	*/
 ?>
 
-		<div id="secondary" class="widget-area" role="complementary">		
-		<?php if ( is_user_logged_in() ) { ?>
-		
-			<div class="profile-sidebar-box">
-				<?php global $current_user;
-					  get_currentuserinfo();
-				
-					  echo '<h3>' . $current_user->user_login . '</h3>';
-					  
-   					  echo get_avatar( $current_user->user_email, $size = '42' ); 
+<!--logged in sidebar-->
+	<?php if ( is_user_logged_in() ) { ?>
+	<div id="secondary" class="widget-area" role="complementary">		
+			<!--profile box-->
+				<div class="profile-sidebar-box widget media">
+				<div class="img">
+					<?php global $current_user;
+						  get_currentuserinfo();
+						  
+						  echo get_avatar( $current_user->user_email, $size = '42' );?>
+					</div>
+					<div class="bd">	  
+						<?php  echo '<h4><a href="">' . $current_user->user_login . '</h4></a>'; ?>
+						<p><b>Ideas:</b> 400</p>
+						<p><b>Topics:</b> 30</p>
+					</div>
+				</div>
+			<!--new idea box-->	
+				<div class="widget new-idea-sidebox">	
+					<?php $user_id = get_current_user_id(); ?>
+						<form method ="post" action ="#">
+						<h3>Create A New Idea</h3>
+						<textarea rows="2" cols="20" name="new_idea" id="new_idea" value=""></textarea>
+						<input type="hidden" name="user_id" id="user_id" value="<?php echo "$user_id"; ?>" />
+						<div><input type="submit" name="create" class="idea_submit_button" value="Create" /></div>
+					</form>    
+				</div>
+			<!--recent ideas box-->
+				<div class="widget recent-ideas-sidebox">	
+					<h3>My Recent Ideas</h3>
+					<ul>
+						<li><a href="">This is a recent idea link</a></li>
+						<li><a href="">This is a recent idea link</a></li>
+						<li><a href="">This is a recent idea link</a></li>
+					</ul>
+					<p><a href="" class="widget-button">View all</a></p>
+				</div>
 
-				?>
-			</div>
-			
-			<?php $user_id = get_current_user_id(); ?>
-				<form method ="post" action ="#">
-				<h3>Create A New Idea</h3>
-				<textarea rows="2" cols="20" name="new_idea" id="new_idea" value=""></textarea>
-				<input type="hidden" name="user_id" id="user_id" value="<?php echo "$user_id"; ?>" />
-				<input type="submit" name="create" class="idea_submit_button" value="Create" />
-			</form>    
-			
-		<?php } 
-			else { ?>	
-			<h3>The Short Summary</h3>
-			<p>Nomicly is a place to create ideas that solve real world problems and to build consensus around the best ideas.<p>
-			
-			<h3>Create Ideas</h3>
-			<p>You can create an idea about anything you'd like.</p>
-			
-			<p>If you see an idea from someone else that triggers an idea of your own, you can modify the original idea. </p>
-			
-			<p>To create an idea to address a specific topic or solve a problem, first go to the Topics page where all ideas are organized by Topic. </p>
-			
-			<h3>Build Consensus</h3>
-			<p>Nomicly helps identify good ideas (and the bad ones) with your help.</p>
-			
-			<p>For each idea, you can either Thumbs Up or Thumbs Down it, helping identify the best ideas and solutions to the toughest problems. </p>
-			
-			<h3>Want to make Nomicly better?</h3>
-			
-			<p>Please suggest improvements for Nomicly here. It's Nomicily for Nomicly.</p>
-			
-		<?php	$wpurl = get_bloginfo ( 'wpurl' );  
-		    echo '<p><b><a href="'.$wpurl.'/wp-login.php?action=register">Register</a> or <a href="'.$wpurl.'/wp-login.php">Login</a> to Participate</b></p>'; ?>
-			
-			
-			<?php } ?>
-		</div>
+			</div><!--end secondary-->
+		<?php } ?>	
+	<!--end logged in sidebar-->
 
+
+<!-- primary content-->
 		<div id="primary">
 			<div id="content" role="main">
 
 	<?php if ( have_posts() ) : ?>
 
-				<?php twentyeleven_content_nav( 'nav-above' ); ?>
-		<?php
-	// check for login to present idea form or reg/login links
-	if ( !is_user_logged_in() ) { 
-			$wpurl = get_bloginfo ( 'wpurl' );  
-		    echo '<h1><a href="'.$wpurl.'/wp-login.php?action=register">Register</a> or <a href="'.$wpurl.'/wp-login.php">Login</a> to Create New Ideas</h1>';
-			}
-		?>		
-		
 				<?php /* Start the Loop */ ?>
 		<div id="the_feed">
 		<div id="fresh-idea"></div>
@@ -98,7 +83,7 @@ get_header();
 				<?php twentyeleven_content_nav( 'nav-below' ); ?>
 
 			<?php else : ?>
-		</div>
+		
 
 				<article id="post-0" class="post no-results not-found">
 					<header class="entry-header">
@@ -112,10 +97,52 @@ get_header();
 				</article><!-- #post-0 -->
 
 			<?php endif; ?>
-
+				</div><!--END the_feed-->
 			</div><!-- #content -->
 		</div><!-- #primary -->
-		
+	
+	<!--non loggedin sidebar-->	
+		<?php if ( !is_user_logged_in() ) { ?>		
+		<div id="secondary" class="widget-area" role="complementary">	
+			<div class="widget">	
+				<h3>The Short Summary</h3>
+				<p>Nomicly is a place to create ideas that solve real world problems and to build consensus around the best ideas.<p>
+			</div>
+			<div class="widget">	
+				<h3>Create Ideas</h3>
+				<p>You can create an idea about anything you'd like.</p>
+				
+				<p>If you see an idea from someone else that triggers an idea of your own, you can modify the original idea. </p>
+				
+				<p>To create an idea to address a specific topic or solve a problem, first go to the Topics page where all ideas are organized by Topic. </p>
+			</div>
+				
+			<div class="widget">	
+				<h3>Build Consensus</h3>
+				<p>Nomicly helps identify good ideas (and the bad ones) with your help.</p>
+				
+				<p>For each idea, you can either Thumbs Up or Thumbs Down it, helping identify the best ideas and solutions to the toughest problems. </p>
+			</div>
+			<div class="widget">	
+				<h3>Want to make Nomicly better?</h3>
+				
+				<p>Please suggest improvements for Nomicly here. It's Nomicily for Nomicly.</p>
+			</div>
+			<div class="widget">	
+			<?php	$wpurl = get_bloginfo ( 'wpurl' );  
+				echo '<b><a href="'.$wpurl.'/wp-login.php?action=register">Register</a> or <a href="'.$wpurl.'/wp-login.php">Login</a> to Participate</b>'; ?>
+			</div>
+				<?php if ( ! dynamic_sidebar( 'sidebar-2' ) ) ?><!--sidebar nav in showcase widget area-->
+	
+			</div><!--end secondary-->	
+		<?php } ?>
+
+		<!--logged in navbox-->
+		<?php if ( is_user_logged_in() ) { ?>		
+			<div class="secondary widget-area" role="complementary">	
+			<?php if ( ! dynamic_sidebar( 'sidebar-2' ) ) ?><!--sidebar nav in showcase widget area-->
+			</div><!--end secondary-->	
+		<?php } ?>
 
 
 <!--<?php //get_sidebar(); ?>-->

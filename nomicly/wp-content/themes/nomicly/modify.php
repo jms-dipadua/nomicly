@@ -14,9 +14,30 @@ if(isset($_POST['modify_idea'])) {
 	}
 ?>
 
+	<!--logged in sidebar, minus navbox which is after #primary-->
+	<?php if ( is_user_logged_in() ) { ?>
+	<div id="secondary" class="widget-area" role="complementary">		
+
+			<!--related ideas box-->
+				<div class="widget recent-ideas-sidebox">	
+					<h3>Related Ideas</h3>
+					<ul>
+						<li><a href="">This is a related idea link</a></li>
+						<li><a href="">This is a related idea link</a></li>
+						<li><a href="">This is a related idea link</a></li>
+					</ul>
+					<p><a href="" class="widget-button">View all</a></p>
+				</div>
+
+			</div><!--end secondary-->
+		<?php } ?>	
+	<!--end logged in sidebar-->
+		
+		
+		
 		<div id="primary">
 			<div id="content" role="main">
-				
+			
 	<?php
 		if (is_user_logged_in()) {						
 				//global $wpdb;	
@@ -42,30 +63,48 @@ if(isset($_POST['modify_idea'])) {
 					);
 				query_posts( $query_args ); 
 				while ( have_posts() ) : the_post(); ?>
-				<h2> Original Idea: <br /><?php the_title();?>
-				</h2>
-		<form method="post" action="#">
-		<h2>Modify Existing Idea</h2>
-		<textarea rows="2" cols="20" name="new_idea" id ="new_idea" value="">
-		<?php the_title();?>
-		</textarea>
-		<!-- maybe include a dropdown of all the topics too? -->
-		<input type="hidden" name="category_id" id = "category_id" value="<?php echo "$category_id"; ?>" />
-		<input type="hidden" name="post_parent" id = "post_parent" value="<?php the_ID(); ?>" />
-		<input type="hidden" name="user_id" id = "user_id" value="<?php echo "$user_id"; ?>" />
-		<input type="submit" name="modify_idea" class ="submit_modifed_idea" value="Modify" />
-		</form>
+				<div class="widget">
+					<h3> Original Idea</h3> <p><?php the_title();?></p>
+					<?php
+
+						$categories_list = get_the_category_list( __( ', ', 'twentyeleven' ) );
+						if ( $categories_list ):
+					?>
+					<p class="cat-links">
+						<?php printf( __( '<span class="%1$s">Issues addressed:</span> %2$s', 'twentyeleven' ), 'entry-utility-prep entry-utility-prep-cat-links', $categories_list );
+						$show_sep = true; ?>
+					</p>
+					<?php endif; // End if categories ?>
+			
+					<form method="post" action="#">
+						<h3>Modify Existing Idea</h3>
+						<textarea rows="2" cols="20" name="new_idea" id ="new_idea" value=""><?php the_title();?></textarea>
+						<!-- maybe include a dropdown of all the topics too? -->
+						<input type="hidden" name="category_id" id = "category_id" value="<?php echo "$category_id"; ?>" />
+						<input type="hidden" name="post_parent" id = "post_parent" value="<?php the_ID(); ?>" />
+						<input type="hidden" name="user_id" id = "user_id" value="<?php echo "$user_id"; ?>" />
+						<input type="submit" name="modify_idea" class ="widget-button submit_modifed_idea" value="Modify" />
+					</form>
+				</div>
 				<?	endwhile;
 		}// END IS USER LOGGED IN
 		else {
+		
 			$wpurl = get_bloginfo ( 'wpurl' );  
-			echo 'Sorry. This page is for registered users only. Please <a href="'.$wpurl.'/wp-login.php?action=register">Register</a> or <a href="'.$wpurl.'/wp-login.php">Login</a> to modify ideas.';			
+			echo '<div class="widget">Sorry. This page is for registered users only. Please <a href="'.$wpurl.'/wp-login.php?action=register">Register</a> or <a href="'.$wpurl.'/wp-login.php">Login</a> to modify ideas.</div>';			
 			}
 	?>
 			<!--newly modified idea is inserted here with ajax in nomicly.js-->
-			<div id="newly_modified_idea"></div>
+			<div id="newly_modified_idea" class="widget"></div>
 
 			</div><!-- #content -->
 		</div><!-- #primary -->
+		
+	<!--logged in nav box-->
+		 <?php if ( is_user_logged_in() ) { ?>		
+			<div class="secondary widget-area" role="complementary">	
+			<?php if ( ! dynamic_sidebar( 'sidebar-2' ) ) ?><!--sidebar nav in showcase widget area-->
+			</div><!--end secondary-->	
+		<?php } ?>
 
 <?php get_footer(); ?>

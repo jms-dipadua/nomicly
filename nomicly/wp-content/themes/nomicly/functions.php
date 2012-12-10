@@ -185,6 +185,7 @@ function update_pairs($pair, $ideas, $chosen_idea) {
  //NOTE THIS SHOULD  be using wp query
  // BUT IT WASN'T LETTING ME DO THE UPDATE THE WAY I WANTED
  // THAT IS, WITH COL = COL+1... 
+ // so just wrote the query i wanted to use
 	if ($winner == 1) {
 		$query = "UPDATE nomicly_hot_not_pairs 
 			SET idea_1_count = idea_1_count+1, updated_at = '$date' 
@@ -398,9 +399,268 @@ function nomicly_update_term_relationships ($object_id, $cat_id) {
 	$wpdb->insert( $table_term_relationships, $term_data );
 }// END UPDATE_TERM_ RELATIONSHIPS
 
+
+/*
+* THIS IS FOR ANCESTRY INFORMATION AND FOR MAKING CHILD IDEAS FROM ANOTHER IDEA
+function get_children_posts() {
+
+}
+/*
+
+/* 
+// CUSTOM VOTING SECTION
+*/
+	/*
+	* RECORD_IDEA_VOTE - records the person's choice on an idea
+	*/
+function record_idea_vote() {
+	global $wpdb;
+	$table_user_idea_votes = $wpdb->prefix."user_idea_votes"; 
+	$user_id = $_POST['user_id'];
+	$idea = $_POST['idea_id'];
+	$vote_type = $_POST['vote_type'];
+	$date = date('Y-m-d H:i:s');
+
+// 1. Record the actual vote
+	$vote_data = array (
+		'ideaID' => $idea,
+		'userID' => $user_id,
+		'vote_type' => $vote_type,
+		'created_at' => $date
+		);
+	$wpdb->insert( $table_user_idea_votes, $vote_data );
+	// $vote_id = $wpdb -> insert_id;
 	
+// 2. Take away a vote from user cache
+	decrease_available_votes($user_id);
+
+// 3. Update the idea_consensus
+	$new_consensus = update_idea_consensus ($idea, $vote_type);
+
+	return $new_consensus;	
+} // END RECORD IDEA VOTE
+
+function count_votes($idea) {
+	global $wpdb;
+	$idea_id = $idea;
+
+	
+	//get all the stats and populate into an array to return to record_idea_vote()
+	$vote_stats = array (
+		'idea_id' => $idea_id,
+		'votes_yes' => $votes_yes,
+		'votes_no' => $votes_no	
+	);
+	return $vote_stats;
+} // END COUNT VOTES
+
+	 /*
+	 // UPDATE_IDEA_CONSENSUS - update the consensus for an idea based on a vote
+	*/
+function update_idea_consensus($idea_id, $vote_type) {
+	global $wpdb;
+	$table = $wpdb -> prefix."idea_consensus";
+	$idea = $idea_id;
+	$type = $vote_type;
+	$type = intval($type);
+	$date = date('Y-m-d H:i:s');
+
+// 1. increase YES/NO depending on type
+//	- yes = 1, no = 0
+	// a. YES
+	if ($type == 1) {
+	$query = "UPDATE '$table'
+			SET votes_yes = votes_yes+1, updated_at = '$date' 
+			WHERE idea_id = '$idea'";
+	$update_query = mysql_query($query);
+			if (!$update_query ) {
+				echo mysql_error();
+				}	
+	}
+	// b. NO
+	elseif ($type == 0) {
+	$query = "UPDATE '$table'
+			SET votes_no = votes_no+1, updated_at = '$date' 
+			WHERE idea_id = '$idea'";
+	$update_query = mysql_query($query);
+			if (!$update_query ) {
+				echo mysql_error();
+				}		
+	}
+
+// 2. get the current consensus to return it
+	$idea_stats = get_current_consensus($idea);	
+	return $idea_stats;
+} // END UPDATE CONSENSUS
+
+	/*
+	// GET_VOTE_RECORD - determine whether a person has voted on a specific idea or not
+	// TRUE = HAS VOTED = 1
+	// FALSE = NOT VOTED = 0
+			// also returns the vote data (yes/no, date, etc) if TRUE
+	*/
+function get_vote_record($user_id, $idea_id) {
+	global $wpdb;
+	$table = $wpdb ->prefix."user_idea_votes";
+	$user = $user_id;
+	$idea = $idea_id;
+// 1. see if the user has voted
+	$vote_data = $wpdb -> get_row("SELECT * FROM '$table' WHERE idea_id = '$idea' and user_id = '$user'");
+	if (empty($vote_record)) {
+		$vote_status = 0;
+		return $vote_status;
+		}
+	else {
+		$vote_status = 1;		
+		$vote_id = $vote_data -> vote_id;
+		$vote_type = $vote_data -> vote_type;
+		$created_at = $vote_data -> created_at;
+		$updated_at = $vote_data -> updated_at;
+		
+		$voter_record = array (
+			'vote_status' => $vote_status,
+			'vote_id' => $vote_id,
+			'user_id' => $user,
+			'idea_id' => $idea,
+			'vote_type' => $vote_type,
+			'created_at' => $created_at,
+			'updated_at' => $updated_at
+			);
+		return $voter_record;
+	}
+} // END GET VOTE RECORD
+
+	/*
+	// GET CURRENT CONSENSUS
+	*/
+function get_current_consensus($idea_id) {
+	global $wpdb;
+	$table = $wpdb -> prefix."idea_consensus";
+	$idea = $idea_id;
+	$idea_data = $wpdb -> get_row("SELECT * FROM $table WHERE idea_id = '$idea'");
+
+	$votes_yes = $idea_data -> votes_yes;
+	$votes_no = $idea_data -> votes_no;
+	$updated_at = $idea_data -> updated_at;
+	
+	$idea_stats = array (
+		'idea_id' => $idea,
+		'votes_yes' => $votes_yes,
+		'votes_no' => $votes_no,
+		'updated_at' => $updated_at
+		);
+	
+	return $idea_stats;
+}  // END GET CURRENT CONSENSUS
+
+	/* 
+	// GET AVAILABLE VOTES
+	*/
+function get_available_votes($user_id) {
+	global $wpdb;
+	$user = $user_id;
+	$cache_count = $wpdb->get_var("SELECT count(*) FROM $table_user_vote_cache WHERE user_id = '$user'");
+	return $cache_count;
+} // END GET AVAILABLE VOTES
+
+ /*
+ // INCREASE AVAILABLE VOTES
+ */
+function increase_available_votes($user_id, $award_amount) {
+	global $wpdb;
+	$table = $wpdb -> prefix."user_vote_cache";
+	$user = $user_id;
+	$amount = $award_amount;
+	$date = date('Y-m-d H:i:s');
+
+// 1. check if user already at max_votes
+	$avail_votes = get_available_votes($user);
+	$max_votes = get_user_max_votes($user);
+// 2. if so, end
+	if ($avail_votes == $max_votes) {
+		return;
+	}
+// 3. if NOT, award votes to user
+	//	a. calc max award
+	// 	b. if amount > max, set the amount = to max
+	//	c. then award
+	$max_award_amount = $max_votes - $avail_votes;
+		if ($amount > $max_award_amount) {
+			$amount = $max_award_amount;
+			}	
+	$query = "UPDATE '$table'
+			SET num_votes_avail = num_votes_avail + '$amount', updated_at = '$date' 
+			WHERE user_id = '$user'";
+	$update_query = mysql_query($query);
+			if (!$update_query ) {
+				echo mysql_error();
+				}	
+} // END INCREASE AVAIL VOTES
+ /*
+ // DECREASE AVAILABLE VOTES
+ */
+function decrease_available_votes($user_id) {
+	global $wpdb;
+	$user = $user_id;
+	$table_user_vote_cache = $wpdb->prefix."user_vote_cache"; 
+	$date = date('Y-m-d H:i:s');
+
+	// not using WP-QUERY due to lack of support for num = num -1 
+	$query = "UPDATE nomicly_user_vote_cache 
+			SET num_votes_avail = num_votes_avail-1, updated_at = '$date' 
+			WHERE user_id = '$user'";
+	$update_query = mysql_query($query);
+			if (!$update_query ) {
+				echo mysql_error();
+				}	
+// then get the count of avail. 
+	$cache_count = get_available_votes($user);
+//	if less than 0, set to 0
+	if ($cache_count < 0) {
+			$query = "UPDATE nomicly_user_vote_cache 
+				SET num_votes_avail = 0, updated_at = '$date' 
+				WHERE user_id = '$user'";
+		$update_query = mysql_query($query);
+				if (!$update_query ) {
+					echo mysql_error();
+					}	
+	}// end check cache less than 0
+} // END DECREASE AVAILABLE VOTES
+
+	/*
+	// GET MAX VOTES - find out how max num of votes a user can have
+	*/
+function get_user_max_votes($user_id) {
+	global $wpdb;
+	$user = $user_id;
+	$max_votes = $wpdb->get_var("SELECT max_votes FROM $table_user_vote_cache WHERE user_id = '$user'"); 
+	return $max_votes;
+} // END GET MAX VOTES
+
+	/*
+		// CHANGE VOTE - for when people change their minds
+		// NOT DONE
+	*/
+function change_vote($user_id, $idea_id) {
+	global $wpdb;
+	$user = $user_id;
+	$idea = $idea_id;
+	$table_nomicly_user_idea_vote = $wpdb -> prefix."user_idea_vote";
+	
+	/*
+	$query = "UPDATE '$table_nomicly_user_idea_vote'
+			WHERE user_id = '$user' AND idea_id = '$idea'";
+	$update_query = mysql_query($query);
+			if (!$update_query ) {
+				echo mysql_error();
+				}	
+				*/
+} // END CHANGE VOTE
+
+
 /* 
 // AJAX
+// this section of code encompasses the ajax requests and handling. 
 */
 // embed the javascript file that makes the AJAX request
 
@@ -518,15 +778,11 @@ function get_next_ideas () {
 //    echo $html;
 //} // end add_ajax_library
 
-
-
-
 /*
-* THIS IS FOR ANCESTRY INFORMATION AND FOR MAKING CHILD IDEAS FROM ANOTHER IDEA
-function get_children_posts() {
+ // END AJAX section
+*/
 
-}
-/*
+
 
 /**
  * Twenty Eleven functions and definitions

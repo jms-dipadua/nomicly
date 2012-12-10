@@ -18,7 +18,7 @@
 			<?php else : ?>
 			
 			<div class="media">
-				<div class="feed-gravatar img"> <?php echo get_avatar( $id_or_email, $size = '28' ); ?><a href="<?php bloginfo( 'wpurl' ); ?>/user-profile/"><?php  the_author(); ?></a> </div>
+				<div class="feed-gravatar img"> <? echo get_avatar( get_the_author_meta('user_email'), $size = '48'); ?><a href="<?php bloginfo( 'wpurl' ); ?>/user-profile/"><?php  the_author(); ?></a> </div>
 				<div class="bd">
 					<h1 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf( esc_attr__( 'Permalink to %s', 'twentyeleven' ), the_title_attribute( 'echo=0' ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h1>
 				</div>
@@ -37,7 +37,7 @@
 			</div>-->
 				<? if (is_user_logged_in()) { ?>
 				 <?php $wpurl = get_bloginfo ( 'wpurl' );  ?>
-			<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="modify-link">Modify Idea</a>
+			<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="modify-link widget-button">Modify Idea</a>
 					<?php }//END IF LOGGED IN  ?>
 			<?php endif; ?>
 		</header><!-- .entry-header -->
@@ -82,6 +82,6 @@
 
 
 
-			<?php edit_post_link( __( 'Edit', 'twentyeleven' ), '<span class="edit-link">', '</span>' ); ?>
+
 		</footer><!-- #entry-meta -->
 	</article><!-- #post-<?php the_ID(); ?> -->
