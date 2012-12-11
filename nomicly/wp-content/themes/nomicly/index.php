@@ -27,8 +27,9 @@ get_header();
 			<!--profile box-->
 				<div class="profile-sidebar-box widget media">
 				<div class="img">
-					<?php global $current_user;
-						  get_currentuserinfo();
+					<?php 
+						global $current_user;
+						get_currentuserinfo();
 						  
 						  echo get_avatar( $current_user->user_email, $size = '42' );?>
 					</div>
@@ -74,10 +75,7 @@ get_header();
 		<div id="the_feed">
 		<div id="fresh-idea"></div>
 				<?php while ( have_posts() ) : the_post(); ?>
-				
 				<?php get_template_part( 'content', get_post_format() ); ?>
-			
-
 				<?php endwhile; ?>
 
 				<?php twentyeleven_content_nav( 'nav-below' ); ?>

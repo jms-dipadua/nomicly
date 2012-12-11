@@ -1,6 +1,10 @@
 <?php
 /**
  * The default template for displaying content
+ // NOTE THIS PAGE HAS BEEN MODIFIED TO ACCOUNT FOR LOGGED-IN/LOGGED-OUT STATUS
+ 	//	1. modify ideas
+ 	//  2. vote status +/- vote buttons 
+ 	// CIRCA LINES 40
  *
  * @package WordPress
  * @subpackage Twenty_Eleven
@@ -38,6 +42,8 @@
 				<? if (is_user_logged_in()) { ?>
 				 <?php $wpurl = get_bloginfo ( 'wpurl' );  ?>
 			<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="modify-link widget-button">Modify Idea</a>
+			<div id='status_<?php the_ID(); ?>' class="vote-box">
+			</div>
 					<?php }//END IF LOGGED IN  ?>
 			<?php endif; ?>
 		</header><!-- .entry-header -->

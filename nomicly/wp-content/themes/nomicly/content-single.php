@@ -13,20 +13,20 @@
 <div id="article_content" class="post-<?php the_ID(); ?>">
 
 	<header class="entry-header">
-		<h1 class="entry-title"><?php the_title(); ?></h1>
-
-		<?php if ( 'post' == get_post_type() ) : ?>
-		<div class="entry-meta">
-			<?php twentyeleven_posted_on(); ?>
-		</div><!-- .entry-meta -->
-		<?php endif; ?>
+	
+		<div class="media">
+				<div class="feed-gravatar img"> <? echo get_avatar( get_the_author_meta('user_email'), $size = '48'); ?><a href="<?php bloginfo( 'wpurl' ); ?>/user-profile/"><?php  the_author(); ?></a> </div>
+				<div class="bd">
+					<h1 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf( esc_attr__( 'Permalink to %s', 'twentyeleven' ), the_title_attribute( 'echo=0' ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h1>
+				</div>
+			</div>
 	</header><!-- .entry-header -->
 
 	<div class="entry-content">
 	<!-- ADDS MODIFY IDEA TO THE CONTENT -->
 	<? if (is_user_logged_in()) { ?>
 	<?php $wpurl = get_bloginfo ( 'wpurl' );  ?>
-			<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="modify-link">Modify Idea</a>
+			<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="widget-button modify-link">Modify Idea</a>
 	<?php }//END IF LOGGED IN  ?>
 
 		<?php the_content(); ?>
@@ -41,12 +41,10 @@
 			/* translators: used between list items, there is a space after the comma */
 			$tag_list = get_the_tag_list( '', __( ', ', 'twentyeleven' ) );
 			if ( '' != $tag_list ) {
-				$utility_text = __( 'This entry was posted in %1$s and tagged %2$s by <a href="%6$s">%5$s</a>. Bookmark the <a href="%3$s" title="Permalink to %4$s" rel="bookmark">permalink</a>.', 'twentyeleven' );
+				$utility_text = __( 'This idea addresses %1$s and tagged %2$s.', 'twentyeleven' );
 			} elseif ( '' != $categories_list ) {
-				$utility_text = __( 'This entry was posted in %1$s by <a href="%6$s">%5$s</a>. Bookmark the <a href="%3$s" title="Permalink to %4$s" rel="bookmark">permalink</a>.', 'twentyeleven' );
-			} else {
-				$utility_text = __( 'This entry was posted by <a href="%6$s">%5$s</a>. Bookmark the <a href="%3$s" title="Permalink to %4$s" rel="bookmark">permalink</a>.', 'twentyeleven' );
-			}
+				$utility_text = __( 'This idea addresses %1$s.', 'twentyeleven' );
+			} 
 
 			printf(
 				$utility_text,
@@ -58,8 +56,7 @@
 				esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) )
 			);
 		?>
-		<?php edit_post_link( __( 'Edit', 'twentyeleven' ), '<span class="edit-link">', '</span>' ); ?>
-
+		
 		<?php if ( get_the_author_meta( 'description' ) && ( ! function_exists( 'is_multi_author' ) || is_multi_author() ) ) : // If a user has filled out their description and this is a multi-author blog, show a bio on their entries ?>
 		<div id="author-info">
 			<div id="author-avatar">

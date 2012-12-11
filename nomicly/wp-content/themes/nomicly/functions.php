@@ -417,14 +417,14 @@ function record_idea_vote() {
 	global $wpdb;
 	$table_user_idea_votes = $wpdb->prefix."user_idea_votes"; 
 	$user_id = $_POST['user_id'];
-	$idea = $_POST['idea_id'];
+	$idea_id = $_POST['idea_id'];
 	$vote_type = $_POST['vote_type'];
 	$date = date('Y-m-d H:i:s');
 
 // 1. Record the actual vote
 	$vote_data = array (
-		'ideaID' => $idea,
-		'userID' => $user_id,
+		'idea_id' => $idea_id,
+		'user_id' => $user_id,
 		'vote_type' => $vote_type,
 		'created_at' => $date
 		);
@@ -440,19 +440,29 @@ function record_idea_vote() {
 	return $new_consensus;	
 } // END RECORD IDEA VOTE
 
-function count_votes($idea) {
+	/*
+	// GET CURRENT CONSENSUS
+	*/
+function get_current_consensus($idea_id) {
 	global $wpdb;
-	$idea_id = $idea;
+	$table = $wpdb -> prefix."idea_consensus";
+	$idea = $idea_id;
+	$idea_data = $wpdb -> get_row("SELECT * FROM $table WHERE idea_id = '$idea'");
 
+	$votes_yes = $idea_data -> votes_yes;
+	$votes_no = $idea_data -> votes_no;
+	$updated_at = $idea_data -> updated_at;
 	
-	//get all the stats and populate into an array to return to record_idea_vote()
-	$vote_stats = array (
-		'idea_id' => $idea_id,
+	$idea_stats = array (
+		'idea_id' => $idea,
 		'votes_yes' => $votes_yes,
-		'votes_no' => $votes_no	
-	);
-	return $vote_stats;
-} // END COUNT VOTES
+		'votes_no' => $votes_no,
+		'updated_at' => $updated_at
+		);
+	
+	return $idea_stats;
+}  // END GET CURRENT CONSENSUS
+
 
 	 /*
 	 // UPDATE_IDEA_CONSENSUS - update the consensus for an idea based on a vote
@@ -466,7 +476,7 @@ function update_idea_consensus($idea_id, $vote_type) {
 	$date = date('Y-m-d H:i:s');
 
 // 1. increase YES/NO depending on type
-//	- yes = 1, no = 0
+//	  yes = 1, no = 0
 	// a. YES
 	if ($type == 1) {
 	$query = "UPDATE '$table'
@@ -508,7 +518,10 @@ function get_vote_record($user_id, $idea_id) {
 	$vote_data = $wpdb -> get_row("SELECT * FROM '$table' WHERE idea_id = '$idea' and user_id = '$user'");
 	if (empty($vote_record)) {
 		$vote_status = 0;
-		return $vote_status;
+		$voter_record = array (
+			'vote_status' => $vote_status,
+			);
+		return $voter_record;
 		}
 	else {
 		$vote_status = 1;		
@@ -529,29 +542,6 @@ function get_vote_record($user_id, $idea_id) {
 		return $voter_record;
 	}
 } // END GET VOTE RECORD
-
-	/*
-	// GET CURRENT CONSENSUS
-	*/
-function get_current_consensus($idea_id) {
-	global $wpdb;
-	$table = $wpdb -> prefix."idea_consensus";
-	$idea = $idea_id;
-	$idea_data = $wpdb -> get_row("SELECT * FROM $table WHERE idea_id = '$idea'");
-
-	$votes_yes = $idea_data -> votes_yes;
-	$votes_no = $idea_data -> votes_no;
-	$updated_at = $idea_data -> updated_at;
-	
-	$idea_stats = array (
-		'idea_id' => $idea,
-		'votes_yes' => $votes_yes,
-		'votes_no' => $votes_no,
-		'updated_at' => $updated_at
-		);
-	
-	return $idea_stats;
-}  // END GET CURRENT CONSENSUS
 
 	/* 
 	// GET AVAILABLE VOTES
@@ -700,7 +690,7 @@ function modify_existing_idea () {
 	$new_idea = get_post($new_idea_id);
 	
 	$new_idea_data = array (
-		"new_idea_data" => $new_idea,
+		"new_idea_data" => $new_idea
 		);
 	
 	// CONVERT  TO JSON	
@@ -713,6 +703,111 @@ add_action('wp_ajax_modify_existing_idea', 'modify_existing_idea');
 // non-logged in user
 add_action('wp_ajax_nopriv_modify_existing_idea', 'modify_existing_idea' );
 
+/*
+// DETERMINE VOTER STATUS
+// - identifies whether a person has voted on an idea or not
+*/
+
+function determine_voter_idea_status () {
+	$idea_id = $_GET['idea_id'];
+	$user_id = get_current_user_id();
+// NOT LOGGED IN, HAS TO REGISTER/LOGIN 	
+/*
+	// THIS NEEDS TO MOVE TO ITS OWN FUNCTION/SPECIAL-CASE 
+	if (empty($user_id)) {
+		$response = array(
+			'voter_status_data' => "NULL"
+			);
+			$response_data = json_encode($response);
+		}
+	else {
+	*/
+// LOGGED IN USER
+	$voter_status_data = get_vote_record($user_id, $idea_id);
+	
+	$voter_status_data = array (
+		"voter_status_data" => $voter_status_data
+		);
+	
+	// CONVERT  TO JSON	
+	$response_data = json_encode($voter_status_data);
+	//}
+	// response output
+	die($response_data);	
+} // END VOTER STATUS
+
+add_action('wp_ajax_determine_voter_idea_status', 'determine_voter_idea_status');
+// non-logged in user
+add_action('wp_ajax_nopriv_determine_voter_idea_status', 'determine_voter_idea_status' );
+
+
+function fetch_idea_consensus() {
+	$idea_id = $_GET['idea_id'];
+	$current_consensus = get_current_consensus($user_id);
+	$consensus_data = array (
+		"consensus_data" => $current_consensus
+		);
+	// CONVERT  TO JSON	
+	$response_data = json_encode($consensus_data);
+	// response output
+	die($response_data);	
+}
+
+add_action('wp_ajax_fetch_idea_consensus', 'fetch_idea_consensus');
+// non-logged in user
+add_action('wp_ajax_nopriv_fetch_idea_consensus', 'fetch_idea_consensus' );
+
+
+function determine_user_available_votes() {
+	$user_id = $_POST['user_id'];
+	$available_votes = get_available_votes($user_id);
+	
+	$available_votes_data = array (
+		"available_votes_data" => $available_votes
+		);
+	
+	// CONVERT  TO JSON	
+	$response_data = json_encode($available_votes_data);
+	// response output
+	die($response_data);	
+}
+
+add_action('wp_ajax_determine_user_available_votes', 'determine_user_available_votes');
+// non-logged in user
+add_action('wp_ajax_nopriv_determine_user_available_votes', 'determine_user_available_votes' );
+
+/*
+ // PROCESS UESER VOTE
+*/
+function process_user_vote () {
+	// make sure the user has votes
+	$user_id = $_POST['user_id'];
+	$avail_votes = get_available_votes($user_id);	
+	// if votes, then process
+	 if ($avail_votes > 0) {
+		$vote_response = record_idea_vote();	
+		$vote_response_data = array (
+			"vote_response_data" => $vote_response
+			);
+		
+		// CONVERT  TO JSON	
+		$vote_response_data = json_encode($vote_response_data);
+		// response output
+		die($vote_response_data);	
+		}
+	// otherwise we tell them sorry, no votes available
+	else {
+		$no_votes_message = "Sorry, you don't have any more votes available. Nomicly awards more votes once per hour. You can also earn more votes by contributing your own new ideas.";
+		$vote_response_data = array (
+			"no_votes_message" => $no_votes_message
+			);
+			die ($vote_response_data);
+		}
+} // end process_user_vote
+
+add_action('wp_ajax_process_user_vote', 'process_user_vote');
+// non-logged in user
+add_action('wp_ajax_nopriv_process_user_vote', 'process_user_vote' );
 
   
 function process_hot_not_vote() {
