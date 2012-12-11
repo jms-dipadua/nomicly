@@ -128,7 +128,6 @@ jQuery(function() {
 				jQuery(div_stats).append('<a href="#" id="agree_'+idea+'" class="idea-vote agree-with">Agree</a>  <a href="#" id="disagree_'+idea+'" class="idea-vote disagree-with">Disagree</a>');
 				}
  			else {
- 		
  				// LOGGED IN USER
  				// HAS VOTED
  				if (response.voter_status_data.vote_status == 1) {
@@ -138,20 +137,20 @@ jQuery(function() {
 						type: "get",
 						dataType:'json',
 						data: {
-							action:'get_idea_status',
+							action:'fetch_idea_consensus',
 							idea_id: idea,
 							  }, 
 						success:  function(response2){
 							// will need to get the person's actual vote still...
 							var votes_yes = response2.consensus_data.votes_yes;
 							var votes_no = response2.consensus_data.votes_no;
-								if (response.voter_status_data.vote_type = 1) {
+								if (response.voter_status_data.vote_type == 1) {
 								var vote_type = 'Agreed';
 								}
 								else {
-								var vote_type = 'Disagree';
+								var vote_type = 'Disagreed';
 								}
-							jQuery(div_stats).append('<p>Current Consensus<br /> Yes: '+votes_yes+'    No: '+votes_no+'   You '+vote_type+'</p>');
+							jQuery(div_stats).append('<p>Current Consensus<br /> Votes Yes: '+votes_yes+'   Votes No: '+votes_no+'   <br /> You '+vote_type+' with this idea.</p>');
 						} // end RESPONSE - GET STATS
 						}); // END -GET STATS AJAX
  				  // in future let them re-vote (change vote) 
@@ -204,12 +203,21 @@ jQuery(function() {
 	      		vote_type: type
       			  }, 
 			success:  function(response){
-				// upon request success
-				// get the new consensus
-				// remove the vote buttons 
-				// append the consensus to the stats box
-				
-				}  // END response
+				// VOTE NOT COUNTED
+				if (response.vote_response_data == "no-vote") {
+					jQuery(div_stats).html(response.vote_message);
+				}
+				// SUCCESSFUL VOTE
+				else {
+					// remove the vote buttons 
+					// append the consensus to the stats box
+						var votes_yes = response.vote_response_data.votes_yes;
+						var votes_no = response.vote_response_data.votes_no;
+						jQuery(div_stats).html('<p>Vote Successful! <br /> Current Consensus<br /> Votes Yes: '+votes_yes+'    Votes No: '+votes_no+'</p>');
+					}// END SUCCESSFUL VOTE
+				}	// end RESPONSE 
+ 				  // in future let them re-vote (change vote) 
+ 				  // for now to minimize abuse we'll just show it the one time					
 			}); // END .ajax		
 	return false; // so nobody goes anywhere...
 	});

@@ -203,6 +203,14 @@ p.cat-links {
 	font-size:12px;
 }
 /* end nomicly widgets */
+/*nomicly structures */
+
+.full-width {
+	width:95.2%;
+	background:#fff;
+	border-radius:4px;
+	margin: 0 2.6% 2em 2.6%;
+}
 
 /* Singular */
 /*.singular #primary {
@@ -862,13 +870,20 @@ a:hover {
 #compare-ideas-form article {
 	margin: 0 0 1.625em;
 }
-#the_feed .hentry, #compare-ideas-form article {
+.the_feed .hentry, #compare-ideas-form article {
 	padding: 2%;
 	background:#fff;
 	border-radius:4px;
 }
-.single-post .hentry {
+#user_feed {
+	background:#fff;
+	border-radius:4px;
+}
+.single-post .hentry, #user_feed .hentry {
 	padding: 2%;
+}
+#user_feed .hentry {
+	margin: 0;
 }
 .single-post #content {
 	background:#fff;
@@ -906,17 +921,22 @@ a:hover {
 .entry-title a:active {
 	color: #1982d1;
 }
-#the_feed .entry-title, .widget .entry-title,
+.the_feed .entry-title, .widget .entry-title,
 .single-post article .entry-title, 
-#compare-ideas-form article .entry-title {
+#compare-ideas-form article .entry-title,
+#user_feed .entry-title {
 	font-size:20px;
 	line-height:1.1em;
 	padding-top:0;
 }
+#user_feed .user-hd {
+	font-size:26px;
+	padding: 2%;
+}
 .widget .entry-title {
 	line-height:1.3em;
 }
-#the_feed .feed-gravatar, .single-post .hentry .feed-gravatar {
+.the_feed .feed-gravatar, .single-post .hentry .feed-gravatar {
 	font-size:12px;
 	text-align:center;
 	width:auto;
@@ -924,10 +944,11 @@ a:hover {
 	top:3px;
 	position:relative;
 }
-#the_feed .feed-gravatar a, .single-post .hentry .feed-gravatar a {
+.the_feed .feed-gravatar a, .single-post .hentry .feed-gravatar a {
 	display:block;
 }
-#the_feed .modify-link, .single-post .hentry .modify-link {
+.the_feed .modify-link, .single-post .hentry .modify-link,
+#user_feed .modify-link {
 	float:right;
 }
 .entry-meta {
@@ -2475,6 +2496,10 @@ p.comment-form-comment {
 	#branding #searchform {display:none}
 	#main #content {
 		margin: 0 7.6% 4% 7.6%;
+		width: auto;
+	}
+	.full-width {
+		margin: 0 7.6% 2em 7.6%;
 		width: auto;
 	}
 	#nav-below {

@@ -21,22 +21,15 @@ if (isset($_POST['create_topic'])) {
 
 ?>
 
-<!--logged in sidebar-->
-
-			
-	<div id="secondary" class="widget-area" role="complementary">	
-		<!--new idea box-->	
-		<?php
-			// check for login to present idea form or reg/login links
-			if ( is_user_logged_in() ) { ?>
-			
-				<!--profile box-->
-				<div class="profile-sidebar-box widget media">
+<?php if ( is_user_logged_in() ) { ?>
+	<div class="full-width">
+		<!--profile box-->
+				<div class="profile-sidebar-box media" style="padding: 2%">
 				<div class="img">
 					<?php global $current_user;
 						  get_currentuserinfo();
 						  
-						  echo get_avatar( $current_user->user_email, $size = '42' );?>
+						  echo get_avatar( $current_user->user_email, $size = '100' );?>
 					</div>
 					<div class="bd">	  
 						<?php  echo '<h4><a href="">' . $current_user->user_login . '</h4></a>'; ?>
@@ -45,6 +38,20 @@ if (isset($_POST['create_topic'])) {
 						<p><b>Reputation:</b> awesome</p>
 					</div>
 				</div>
+	
+	</div>		
+	
+<?php } ?>		
+
+
+<!--logged in sidebar-->
+
+			
+	<div id="secondary" class="widget-area" role="complementary">	
+		<!--new idea box-->	
+		<?php
+			// check for login to present idea form or reg/login links
+			if ( is_user_logged_in() ) { ?>
 			
 				<div class="widget new-idea-sidebox">	
 					<?php $user_id = get_current_user_id(); ?>
@@ -68,6 +75,41 @@ if (isset($_POST['create_topic'])) {
 					<input type="submit" name="create_topic" value="New Topic" class="widget-button" />
 				</form> 
 			</div>
+			<!--my topics box-->
+			<div class="widget">
+				<?php
+				echo "<h3>My Topics</h3>";
+				///GET THE TOPICS FROM THIS UER
+				// QUERY USER_TOPICS
+				// GET THE TOPIC_IDS (ARRAY)
+				// THEN FOR EACH ENTRY, GRAB THE CATEGORY AND DISPLAY IT...
+				global $wpdb;
+				$table_user_topics = $wpdb->prefix."user_topics";
+				$topic_query_results = $wpdb->get_results("SELECT topic_id from $table_user_topics WHERE user_id = '$user_id'", 'ARRAY_N'); 
+				// collapse the results for the next query
+			if (!empty($topic_query_results)) {
+				$user_topics = $topic_query_results[0];
+				$user_topics = implode(",", $user_topics);
+				$args=array(
+				  'orderby' => 'name',
+				  'order' => 'ASC',
+ 			  	  'hide_empty' => 0,
+ 			  	  'include' => $user_topics
+ 			  	);
+				$categories=get_categories($args);
+
+				foreach($categories as $category) { 
+					echo '<p><a href="' . get_category_link( $category->term_id ) . '" title="' . sprintf( __( "View %s" ), $category->name ) . '" ' . '>' . $category->description.'</a> </p>'; }
+					//echo '<p> Description:'. $category->description . '</p>';  
+
+					}// END USER TOPIC DISPLAY
+				else {
+					echo "<p>You haven't created any topics. <br /> 
+				 		  See how Nomicly can help solve problems by creating a discussion topic.</p>";
+				 	}// END NO TOPICS BY USER
+				?>
+			</div>
+			<!--end topic box-->
 			<?php	} else {
 	    		echo '<div class="widget"><h3><a href="../wp-login.php?action=register">Register</a> or <a href="../wp-login.php">Login</a> to Create New Ideas</h3></div>';
 			}
@@ -79,7 +121,7 @@ if (isset($_POST['create_topic'])) {
 		<div id="primary">
 			<div id="content" role="main">
 			
-			<div id="the_feed">
+			<div id="user_feed">
 				
 			<?php 
 			/* GUTS OF USER PROFILE PAGE
@@ -97,7 +139,7 @@ if (isset($_POST['create_topic'])) {
 					);
 				query_posts( $query_args ); 
 				global $wpdb;
-					echo "<h2 class='entry-title light'>My Ideas</h2>";			
+					echo "<h2 class='user-hd entry-title'>My Ideas</h2>";			
 				 while ( have_posts() ) : the_post();  ?>
 				<article class="hentry media" id="post-<?php the_ID(); ?>">
 						<div class="img idea-stats">
@@ -122,39 +164,6 @@ if (isset($_POST['create_topic'])) {
 				 		  That makes us a Sad Panda. :( <br />";
 				 		} // END NO POSTS FOR USER	
 					?>
-					
-				<?php
-				echo "<h2 class='entry-title light'>My Topics</h2>";
-				///GET THE TOPICS FROM THIS UER
-				// QUERY USER_TOPICS
-				// GET THE TOPIC_IDS (ARRAY)
-				// THEN FOR EACH ENTRY, GRAB THE CATEGORY AND DISPLAY IT...
-				global $wpdb;
-				$table_user_topics = $wpdb->prefix."user_topics";
-				$topic_query_results = $wpdb->get_results("SELECT topic_id from $table_user_topics WHERE user_id = '$user_id'", 'ARRAY_N'); 
-				// collapse the results for the next query
-			if (!empty($topic_query_results)) {
-				$user_topics = $topic_query_results[0];
-				$user_topics = implode(",", $user_topics);
-				$args=array(
-				  'orderby' => 'name',
-				  'order' => 'ASC',
- 			  	  'hide_empty' => 0,
- 			  	  'include' => $user_topics
- 			  	);
-				$categories=get_categories($args);
-
-				foreach($categories as $category) { 
-					echo '<div class="hentry"><h3 class="entry-title"><a href="' . get_category_link( $category->term_id ) . '" title="' . sprintf( __( "View %s" ), $category->name ) . '" ' . '>' . $category->description.'</a> </h3> </div>'; }
-					//echo '<p> Description:'. $category->description . '</p>';  
-
-					}// END USER TOPIC DISPLAY
-				else {
-					echo "<div class='widget'>You haven't created any topics. <br /> 
-				 		  See how Nomicly can help solve problems by creating a discussion topic.</div>";
-				 	}// END NO TOPICS BY USER
-				?>
-		
 					
 			<?php 	// END IF USER_LOGGED_IN()
 				}   ?>

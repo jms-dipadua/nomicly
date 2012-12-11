@@ -12,7 +12,7 @@ function my_get_posts( $query ) {
 	if ( is_home() && false == $query->query_vars['suppress_filters'] )
 		$query->set( 'post_type', array( 'post', 'ideas' ) );
 	return $query;
-}
+}// END FILTERED LOOP
 
 add_filter('query_vars', 'add_query_vars' );
 
@@ -24,17 +24,14 @@ return $query_variables;
 
 
 /*
-///this is for processing new ideas (via post from custom form)
+/// CREATE NEW IDEAS
 */
 
 function nomicly_new_idea () {
 	global $wpdb;
 //need to get user info to connect the topic/idea to the user 
 //potentially redundant but using wp-core functions to reduce impact
-	$userID = $_POST['user_id'];
-	//$user_data = get_userdata( $userID );
-	
-// setup post meta
+	$userID = $_POST['user_id'];	
 	$post_date = date('Y-m-d H:i:s');
 
 // POTENTIAL BUG
@@ -45,12 +42,10 @@ function nomicly_new_idea () {
 	else {
 	$post_parent = 0;
 	}
-		
 	//make the title safe for mysql
 	$post_title = wp_strip_all_tags($_POST['new_idea']);	
 	//create the slug
 	$post_name = sanitize_title( $post_title );
-
 	//CREATE NEW POST
 	$post = array(
 	  'comment_status' => 'open',  // 'closed' means no comments.
@@ -86,7 +81,7 @@ function nomicly_new_idea () {
 // BUG
 // empty post array by redirecting to fresh version of page
 //	header('Location: http://www.jamesdipadua.com/experimental/nomicly/index.php');
-}
+}// END NEW IDEA
 
 
 
@@ -181,7 +176,6 @@ function update_pairs($pair, $ideas, $chosen_idea) {
 
  $winner = determine_winner ($idea_array, $winning_idea);
  $winner = intval($winner);
- 
  //NOTE THIS SHOULD  be using wp query
  // BUT IT WASN'T LETTING ME DO THE UPDATE THE WAY I WANTED
  // THAT IS, WITH COL = COL+1... 
@@ -426,7 +420,8 @@ function record_idea_vote() {
 		'idea_id' => $idea_id,
 		'user_id' => $user_id,
 		'vote_type' => $vote_type,
-		'created_at' => $date
+		'created_at' => $date,
+		'updated_at' => $date
 		);
 	$wpdb->insert( $table_user_idea_votes, $vote_data );
 	// $vote_id = $wpdb -> insert_id;
@@ -435,8 +430,7 @@ function record_idea_vote() {
 	decrease_available_votes($user_id);
 
 // 3. Update the idea_consensus
-	$new_consensus = update_idea_consensus ($idea, $vote_type);
-
+	$new_consensus = update_idea_consensus($idea_id, $vote_type);
 	return $new_consensus;	
 } // END RECORD IDEA VOTE
 
@@ -445,10 +439,9 @@ function record_idea_vote() {
 	*/
 function get_current_consensus($idea_id) {
 	global $wpdb;
-	$table = $wpdb -> prefix."idea_consensus";
+	//$table = $wpdb -> prefix."idea_consensus";
 	$idea = $idea_id;
-	$idea_data = $wpdb -> get_row("SELECT * FROM $table WHERE idea_id = '$idea'");
-
+	$idea_data = $wpdb -> get_row("SELECT * FROM nomicly_idea_consensus WHERE idea_id = '$idea'");
 	$votes_yes = $idea_data -> votes_yes;
 	$votes_no = $idea_data -> votes_no;
 	$updated_at = $idea_data -> updated_at;
@@ -459,10 +452,24 @@ function get_current_consensus($idea_id) {
 		'votes_no' => $votes_no,
 		'updated_at' => $updated_at
 		);
-	
 	return $idea_stats;
 }  // END GET CURRENT CONSENSUS
 
+/*
+// INSERT IDEA INTO IDEA CONSENSUS TABLE
+*/
+function initialize_idea_consensus($idea_id) {
+	global $wpdb;
+	$table_idea_consensus = $wpdb -> prefix."idea_consensus";
+	$idea = $idea_id;
+	$date = date('Y-m-d H:i:s');
+	$initial_idea_data = array (
+		'idea_id' => $idea_id,
+		'updated_at' => $date
+		);
+	$wpdb->insert( $table_idea_consensus, $initial_idea_data );
+	return;
+} // END
 
 	 /*
 	 // UPDATE_IDEA_CONSENSUS - update the consensus for an idea based on a vote
@@ -470,9 +477,18 @@ function get_current_consensus($idea_id) {
 function update_idea_consensus($idea_id, $vote_type) {
 	global $wpdb;
 	$idea = $idea_id;
-	$type = $vote_type;
-	$type = intval($type);
+	$type = intval($vote_type);
 	$date = date('Y-m-d H:i:s');
+
+// before you can update a consensus, it has to exist.
+// check for existence of idea in idea_consensus
+// if not, insert it.
+	$idea_id = $wpdb->get_var("SELECT idea_id FROM nomicly_idea_consensus WHERE idea_id = '$idea'");
+// then we're going to either insert a new pair, vote and vote-count 
+// or we're going to just insert a vote record and a vote-count update
+	if (empty($idea_id)) {
+		initialize_idea_consensus($idea);		
+	 }
 
 // 1. increase YES/NO depending on type
 //	  yes = 1, no = 0
@@ -498,8 +514,8 @@ function update_idea_consensus($idea_id, $vote_type) {
 	}
 
 // 2. get the current consensus to return it
-	$idea_stats = get_current_consensus($idea);	
-	return $idea_stats;
+	$current_idea_stats = get_current_consensus($idea);	
+	return $current_idea_stats;
 } // END UPDATE CONSENSUS
 
 	/*
@@ -514,8 +530,8 @@ function get_vote_record($user_id, $idea_id) {
 	$user = $user_id;
 	$idea = $idea_id;
 // 1. see if the user has voted
-	$vote_data = $wpdb -> get_row("SELECT * FROM '$table' WHERE idea_id = '$idea' and user_id = '$user'");
-	if (empty($vote_record)) {
+	$vote_data = $wpdb -> get_row("SELECT * FROM nomicly_user_idea_votes WHERE idea_id = '$idea' and user_id = '$user'");
+	if (empty($vote_data)) {
 		$vote_status = 0;
 		$voter_record = array (
 			'vote_status' => $vote_status,
@@ -548,7 +564,7 @@ function get_vote_record($user_id, $idea_id) {
 function get_available_votes($user_id) {
 	global $wpdb;
 	$user = $user_id;
-	$cache_count = $wpdb->get_var("SELECT count(*) FROM $table_user_vote_cache WHERE user_id = '$user'");
+	$cache_count = $wpdb->get_var("SELECT num_votes_avail  FROM nomicly_user_vote_cache  WHERE user_id = '$user'");
 	return $cache_count;
 } // END GET AVAILABLE VOTES
 
@@ -725,7 +741,6 @@ function determine_voter_idea_status () {
 	$voter_status_data = array (
 		"voter_status_data" => $voter_status_data
 		);
-	
 	// CONVERT  TO JSON	
 	$response_data = json_encode($voter_status_data);
 	}
@@ -740,7 +755,7 @@ add_action('wp_ajax_nopriv_determine_voter_idea_status', 'determine_voter_idea_s
 
 function fetch_idea_consensus() {
 	$idea_id = $_GET['idea_id'];
-	$current_consensus = get_current_consensus($user_id);
+	$current_consensus = get_current_consensus($idea_id);
 	$consensus_data = array (
 		"consensus_data" => $current_consensus
 		);
@@ -785,33 +800,31 @@ function process_user_vote () {
 	// SHOULD THIS MOVE TO ITS OWN FUNCTION/SPECIAL-CASE ? (it's duplicate code)
 	if (empty($user_id)) {
 		$no_vote_message = "Please <a href='http://jamesdipadua.com/experimental/nomicly/wp-login.php'>Login</a> or <a href='http://jamesdipadua.com/experimental/nomicly/wp-login.php?action=register'>Register</a> to Vote.";
-		$vote_response = array(
+		$vote_response_data = array(
 				"vote_response_data" => "no-vote",
 				"vote_message" => $no_vote_message
 			);
-			$response_data = json_encode($vote_response);
 		}  // END NOT LOGGED IN
 	else {
 		$avail_votes = get_available_votes($user_id);	
-		// if votes, then process
+		// IF HAS VOTES, PROCESS VOTE
 		 if ($avail_votes > 0) {
 			$vote_response = record_idea_vote();	
 			$vote_response_data = array (
 				"vote_response_data" => $vote_response
 				);
-			// CONVERT  TO JSON	
-			$response_data = json_encode($vote_response_data);
-			// response output
 			}
 		// NO VOTES AVAILABLE
 		else {
 			$no_vote_message = "Sorry, you don't have any more votes available. Nomicly awards more votes once per hour. You can also earn more votes by contributing your own new ideas.";
-			$response_data = array (
+			$vote_response_data = array (
 				"vote_response_data" => "no-vote",
 				"vote_message" => $no_vote_message
 				);
 			} // END NO VOTES AVAILABLE
 		}// END LOGGED IN USER
+		// CONVERT  TO JSON	
+	$response_data = json_encode($vote_response_data);
 	die($response_data);	
 } // end process_user_vote
 

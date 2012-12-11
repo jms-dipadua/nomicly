@@ -67,12 +67,12 @@ get_header();
 
 <!-- primary content-->
 		<div id="primary">
-			<div id="content" role="main">
+			<div id="content" role="main" class="the_feed">
 
 	<?php if ( have_posts() ) : ?>
 
 				<?php /* Start the Loop */ ?>
-		<div id="the_feed">
+	
 		<div id="fresh-idea"></div>
 				<?php while ( have_posts() ) : the_post(); ?>
 				<?php get_template_part( 'content', get_post_format() ); ?>
@@ -95,7 +95,7 @@ get_header();
 				</article><!-- #post-0 -->
 
 			<?php endif; ?>
-				</div><!--END the_feed-->
+				
 			</div><!-- #content -->
 		</div><!-- #primary -->
 	
