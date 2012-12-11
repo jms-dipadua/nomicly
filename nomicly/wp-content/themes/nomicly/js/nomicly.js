@@ -11,7 +11,6 @@
 //	c. return query for all new ideas created since idea was submitted
 //  d. return new ideas (in order received) and append to top of pre-existing content
 */
-
 jQuery(function() {
    jQuery('.idea_submit_button').click(function() {
 	var idea = jQuery('#new_idea').val();
@@ -57,7 +56,6 @@ jQuery(function() {
 //	c. return the modified idea
 //  d. append to bottom of content
 */
-
 jQuery(function() {
    jQuery('.submit_modifed_idea').click(function() {
 	var idea = jQuery('#new_idea').val();
@@ -92,7 +90,7 @@ jQuery(function() {
 		}); // END .ajax
 					return false;
 	}); // END .click
-});  // END CREATE (AND RETURN) NEW IDEAS
+});  // END MODIFY EXISTING IDEAS 
 
 /*
 // DETERMINE WHICH IDEAS THE PERSON HAS VOTED ON
@@ -111,7 +109,7 @@ jQuery(function() {
 		var idea_array = idea_data.split('-');
 		var idea = idea_array[1];
 		var ajaxurl = "../nomicly/wp-admin/admin-ajax.php";
-		var div_status = '#status_'+idea;
+		var div_stats = '#stats_'+idea;
 	
 		jQuery.ajax({
 			url: ajaxurl, 
@@ -123,12 +121,12 @@ jQuery(function() {
       			  }, 
  		success:  function(response){
  			// determine case of response (either logged in or needs to)
- 		
- 			if (response.voter_status_data == 'NULL') {
+ 			if (response.voter_status_data == "NULL") {
   			// print voter buttons
   			// we'll get them to register in a soon-coming revision
   			// goal is to just turn on the query and start debugging that!
-			jQuery(div_status).append('<a href="#" id="agree_'+idea+'" class="widget-button">Agree</a>  <a href="#" id="disagree_'+idea+'" class="widget-button">Disagree</a>'); 				}
+				jQuery(div_stats).append('<a href="#" id="agree_'+idea+'" class="idea-vote agree-with">Agree</a>  <a href="#" id="disagree_'+idea+'" class="idea-vote disagree-with">Disagree</a>');
+				}
  			else {
  		
  				// LOGGED IN USER
@@ -153,7 +151,7 @@ jQuery(function() {
 								else {
 								var vote_type = 'Disagree';
 								}
-							jQuery(div_status).append('<p>Current Consensus<br /> Yes: '+votes_yes+'    No: '+votes_no+'   You '+vote_type+'</p>');
+							jQuery(div_stats).append('<p>Current Consensus<br /> Yes: '+votes_yes+'    No: '+votes_no+'   You '+vote_type+'</p>');
 						} // end RESPONSE - GET STATS
 						}); // END -GET STATS AJAX
  				  // in future let them re-vote (change vote) 
@@ -161,7 +159,7 @@ jQuery(function() {
  				} // END HAS VOTED
 				else if (response.voter_status_data.vote_status == 0) { // NOT VOTED
 					  // print voter buttons
-					jQuery(div_status).append('<a href="#" id="agree_'+idea+'" class="widget-button">Agree</a>  <a href="#" id="disagree_'+idea+'" class="widget-button">Disagree</a>');
+					jQuery(div_stats).append('<a href="#" id="agree_'+idea+'" class="idea-vote agree-with">Agree</a>  <a href="#" id="disagree_'+idea+'" class="idea-vote disagree-with">Disagree</a>');
 						}// END NOT VOTED
  				} // END LOGGED IN USER
    			}  // END response
@@ -169,13 +167,6 @@ jQuery(function() {
 	});// END EACH
 }); // END DETERMINE IDEAS VOTED ON
 
-
-/*
-// GET THE NUMBER OF VOTES A UERS HAS AVAILABLE (OR SHOULD THIS BE IN PHP ONLY?)
-	// - seems like this is largely handled when a person tries to vote
-	// - the argument *for* this function is to *display* the num votes to the user
-		// -- and to update the num votes after a person votes
-*/ 
 
 /*
 // VOTING - MAIN FEED (I.E. NON-HOT/HOT)
@@ -188,7 +179,48 @@ jQuery(function() {
 
 //   DON'T FORGET TO APPEND THE STATS TO THE IDEA ONCE THE PERSON HAS VOTED . lol.
 */
+jQuery(function() {
+	jQuery('.vote-box').delegate('.idea-vote', 'click', function() {
+		//set up all the data
+		var vote_data = jQuery(this).attr('id');
+		var vote_array = vote_data.split('_');
+		var vote_choice = vote_array[0];
+		var idea = vote_array[1];
+		var ajaxurl = "../nomicly/wp-admin/admin-ajax.php";
+		var div_stats = '#stats_'+idea;
+		if (vote_choice == "agree") {
+			type = '1';
+		}
+		else {
+			type = '0';
+		}
+		jQuery.ajax({
+			url: ajaxurl, 
+			type: "POST",
+			dataType:'json',
+			data: {
+	      		action:'process_user_vote',
+	      		idea_id: idea,
+	      		vote_type: type
+      			  }, 
+			success:  function(response){
+				// upon request success
+				// get the new consensus
+				// remove the vote buttons 
+				// append the consensus to the stats box
+				
+				}  // END response
+			}); // END .ajax		
+	return false; // so nobody goes anywhere...
+	});
+}); // END VOTING (NON-HOT/NOT)
 
+/*
+// GET THE NUMBER OF VOTES A UERS HAS AVAILABLE (OR SHOULD THIS BE IN PHP ONLY?)
+	// - seems like this is largely handled when a person tries to vote
+	// - the argument *for* this function is to *display* the num votes to the user
+		// -- and to update the num votes after a person votes
+*/ 
 
 
 /*

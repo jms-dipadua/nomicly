@@ -42,10 +42,9 @@
 				<? if (is_user_logged_in()) { ?>
 				 <?php $wpurl = get_bloginfo ( 'wpurl' );  ?>
 			<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="modify-link widget-button">Modify Idea</a>
-			<div id='status_<?php the_ID(); ?>' class="vote-box">
-			</div>
 					<?php }//END IF LOGGED IN  ?>
 			<?php endif; ?>
+			<div id='stats_<?php the_ID(); ?>' class="vote-box"> </div>
 		</header><!-- .entry-header -->
 
 		<?php if ( is_search() ) : // Only display Excerpts for Search ?>

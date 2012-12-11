@@ -416,7 +416,7 @@ function get_children_posts() {
 function record_idea_vote() {
 	global $wpdb;
 	$table_user_idea_votes = $wpdb->prefix."user_idea_votes"; 
-	$user_id = $_POST['user_id'];
+	$user_id = get_current_user_id();
 	$idea_id = $_POST['idea_id'];
 	$vote_type = $_POST['vote_type'];
 	$date = date('Y-m-d H:i:s');
@@ -469,7 +469,6 @@ function get_current_consensus($idea_id) {
 	*/
 function update_idea_consensus($idea_id, $vote_type) {
 	global $wpdb;
-	$table = $wpdb -> prefix."idea_consensus";
 	$idea = $idea_id;
 	$type = $vote_type;
 	$type = intval($type);
@@ -479,7 +478,7 @@ function update_idea_consensus($idea_id, $vote_type) {
 //	  yes = 1, no = 0
 	// a. YES
 	if ($type == 1) {
-	$query = "UPDATE '$table'
+	$query = "UPDATE nomicly_idea_consensus
 			SET votes_yes = votes_yes+1, updated_at = '$date' 
 			WHERE idea_id = '$idea'";
 	$update_query = mysql_query($query);
@@ -489,7 +488,7 @@ function update_idea_consensus($idea_id, $vote_type) {
 	}
 	// b. NO
 	elseif ($type == 0) {
-	$query = "UPDATE '$table'
+	$query = "UPDATE nomicly_idea_consensus
 			SET votes_no = votes_no+1, updated_at = '$date' 
 			WHERE idea_id = '$idea'";
 	$update_query = mysql_query($query);
@@ -712,8 +711,7 @@ function determine_voter_idea_status () {
 	$idea_id = $_GET['idea_id'];
 	$user_id = get_current_user_id();
 // NOT LOGGED IN, HAS TO REGISTER/LOGIN 	
-/*
-	// THIS NEEDS TO MOVE TO ITS OWN FUNCTION/SPECIAL-CASE 
+	// SHOULD THIS MOVE TO ITS OWN FUNCTION/SPECIAL-CASE ?
 	if (empty($user_id)) {
 		$response = array(
 			'voter_status_data' => "NULL"
@@ -721,7 +719,6 @@ function determine_voter_idea_status () {
 			$response_data = json_encode($response);
 		}
 	else {
-	*/
 // LOGGED IN USER
 	$voter_status_data = get_vote_record($user_id, $idea_id);
 	
@@ -731,7 +728,7 @@ function determine_voter_idea_status () {
 	
 	// CONVERT  TO JSON	
 	$response_data = json_encode($voter_status_data);
-	//}
+	}
 	// response output
 	die($response_data);	
 } // END VOTER STATUS
@@ -777,32 +774,45 @@ add_action('wp_ajax_determine_user_available_votes', 'determine_user_available_v
 add_action('wp_ajax_nopriv_determine_user_available_votes', 'determine_user_available_votes' );
 
 /*
- // PROCESS UESER VOTE
+ // PROCESS USER VOTE
 */
 function process_user_vote () {
 	// make sure the user has votes
-	$user_id = $_POST['user_id'];
-	$avail_votes = get_available_votes($user_id);	
-	// if votes, then process
-	 if ($avail_votes > 0) {
-		$vote_response = record_idea_vote();	
-		$vote_response_data = array (
-			"vote_response_data" => $vote_response
+	// AND that it's a user!! 
+	// if not a user we present the "please login to vote message"
+	$user_id = get_current_user_id();
+	// NOT LOGGED IN
+	// SHOULD THIS MOVE TO ITS OWN FUNCTION/SPECIAL-CASE ? (it's duplicate code)
+	if (empty($user_id)) {
+		$no_vote_message = "Please <a href='http://jamesdipadua.com/experimental/nomicly/wp-login.php'>Login</a> or <a href='http://jamesdipadua.com/experimental/nomicly/wp-login.php?action=register'>Register</a> to Vote.";
+		$vote_response = array(
+				"vote_response_data" => "no-vote",
+				"vote_message" => $no_vote_message
 			);
-		
-		// CONVERT  TO JSON	
-		$vote_response_data = json_encode($vote_response_data);
-		// response output
-		die($vote_response_data);	
-		}
-	// otherwise we tell them sorry, no votes available
+			$response_data = json_encode($vote_response);
+		}  // END NOT LOGGED IN
 	else {
-		$no_votes_message = "Sorry, you don't have any more votes available. Nomicly awards more votes once per hour. You can also earn more votes by contributing your own new ideas.";
-		$vote_response_data = array (
-			"no_votes_message" => $no_votes_message
-			);
-			die ($vote_response_data);
-		}
+		$avail_votes = get_available_votes($user_id);	
+		// if votes, then process
+		 if ($avail_votes > 0) {
+			$vote_response = record_idea_vote();	
+			$vote_response_data = array (
+				"vote_response_data" => $vote_response
+				);
+			// CONVERT  TO JSON	
+			$response_data = json_encode($vote_response_data);
+			// response output
+			}
+		// NO VOTES AVAILABLE
+		else {
+			$no_vote_message = "Sorry, you don't have any more votes available. Nomicly awards more votes once per hour. You can also earn more votes by contributing your own new ideas.";
+			$response_data = array (
+				"vote_response_data" => "no-vote",
+				"vote_message" => $no_vote_message
+				);
+			} // END NO VOTES AVAILABLE
+		}// END LOGGED IN USER
+	die($response_data);	
 } // end process_user_vote
 
 add_action('wp_ajax_process_user_vote', 'process_user_vote');

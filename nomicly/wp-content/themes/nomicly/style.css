@@ -73,6 +73,10 @@ footer, header, hgroup, menu, nav, section {
 .media .img img{display:block;border-radius:3px;}
 .media .imgExt{float:right; margin-left: 10px;}
 
+.light, .entry-title.light {
+	color:#fff;
+}	
+
 /* =Structure
 ----------------------------------------------- */
 
@@ -124,7 +128,7 @@ body {
 .profile-sidebar-box p {
 	margin-bottom:0;
 }
-.idea_submit_button, .widget-button {
+.idea_submit_button, .widget-button, #get_next_ideas {
 	border:1px solid #555;
 	background-color:#2C77BA;
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15) inset;
@@ -135,11 +139,17 @@ body {
     font-size:12px;
     font-weight:bold;
 }
+#get_next_ideas {
+	font-size:16px;
+	padding: 8px 16px;
+}
 .widget-button {
 	padding: 5px 8px;
 }
-.widget .widget-button:hover {
+.widget .widget-button:hover, .widget-button:hover,
+.idea_submit_button:hover, #get_next_ideas:hover {
 	text-decoration:none;
+	background-color:#2f80c8;
 }
 .widget.recent-ideas-sidebox ul, ul.related-ideas, .widget .sidenav ul, .widget.topic-list ul {
 	list-style-type:none;
@@ -592,7 +602,7 @@ a {
 a:focus,
 a:active,
 a:hover {
-	text-decoration: underline;
+	/*text-decoration: underline; */
 }
 
 /* Assistive text */
@@ -849,7 +859,10 @@ a:hover {
 	padding: 0 0 1.625em;
 	position: relative;
 }
-#the_feed .hentry {
+#compare-ideas-form article {
+	margin: 0 0 1.625em;
+}
+#the_feed .hentry, #compare-ideas-form article {
 	padding: 2%;
 	background:#fff;
 	border-radius:4px;
@@ -894,7 +907,8 @@ a:hover {
 	color: #1982d1;
 }
 #the_feed .entry-title, .widget .entry-title,
-.single-post article .entry-title {
+.single-post article .entry-title, 
+#compare-ideas-form article .entry-title {
 	font-size:20px;
 	line-height:1.1em;
 	padding-top:0;

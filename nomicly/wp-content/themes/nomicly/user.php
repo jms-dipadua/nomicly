@@ -97,9 +97,9 @@ if (isset($_POST['create_topic'])) {
 					);
 				query_posts( $query_args ); 
 				global $wpdb;
-					echo "<h2 class='entry-title'>My Ideas</h2>";			
+					echo "<h2 class='entry-title light'>My Ideas</h2>";			
 				 while ( have_posts() ) : the_post();  ?>
-				<article class="hentry media">
+				<article class="hentry media" id="post-<?php the_ID(); ?>">
 						<div class="img idea-stats">
 							<p><b>Positive votes:</b> 400</p>
 							<p><b>Negative votes:</b> 30</p>
@@ -124,7 +124,7 @@ if (isset($_POST['create_topic'])) {
 					?>
 					
 				<?php
-				echo "<h2 class='entry-title'>My Topics</h2>";
+				echo "<h2 class='entry-title light'>My Topics</h2>";
 				///GET THE TOPICS FROM THIS UER
 				// QUERY USER_TOPICS
 				// GET THE TOPIC_IDS (ARRAY)
@@ -145,13 +145,13 @@ if (isset($_POST['create_topic'])) {
 				$categories=get_categories($args);
 
 				foreach($categories as $category) { 
-					echo '<p>Topic: <a href="' . get_category_link( $category->term_id ) . '" title="' . sprintf( __( "View %s" ), $category->name ) . '" ' . '>' . $category->description.'</a> </p> '; }
+					echo '<div class="hentry"><h3 class="entry-title"><a href="' . get_category_link( $category->term_id ) . '" title="' . sprintf( __( "View %s" ), $category->name ) . '" ' . '>' . $category->description.'</a> </h3> </div>'; }
 					//echo '<p> Description:'. $category->description . '</p>';  
 
 					}// END USER TOPIC DISPLAY
 				else {
-					echo "You haven't created any topics. <br /> 
-				 		  See how Nomicly can help solve problems by creating a discussion topic.";
+					echo "<div class='widget'>You haven't created any topics. <br /> 
+				 		  See how Nomicly can help solve problems by creating a discussion topic.</div>";
 				 	}// END NO TOPICS BY USER
 				?>
 		

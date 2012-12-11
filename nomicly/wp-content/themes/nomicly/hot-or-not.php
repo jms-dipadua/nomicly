@@ -22,10 +22,7 @@ get_header();
 
 		<div id="primary" class="showcase">
 			<div id="content" role="main">
-<h1>Compare Ideas</h1>
-<p>Compare Ideas is a no-consequences game where you choose one of two ideas.</p> 
-<p>Sometimes the ideas will be related but most often they will be silly comparisons.</p> 
-<p>The object of the game is to agree with others.</p>
+
 			<?php
 				if (isset($_POST['process_hot_not_vote'])) {
 				echo "Statistics for the Last Pair:<br />";
@@ -47,7 +44,7 @@ get_header();
 					</header><!-- .entry-header -->
 					
 				<input type="hidden" id="<?php echo 'idea'.$nomicly_int;?>" name ="<?php echo 'idea'.$nomicly_int; ?>" value="<?php the_ID(); ?>" />
-				<a href="" id="<?php the_ID(); ?>" class="vote-link">Vote</a>
+				<a href="" id="<?php the_ID(); ?>" class="widget-button vote-link">This idea is better</a>
 				</article>					
 
 				<?php 
@@ -59,11 +56,27 @@ get_header();
 				</form>
 		<?php 
 		} else {
-	    echo '<h1><a href="../wp-login.php?action=register">Register</a> or <a href="../wp-login.php">Login</a> to Create New Ideas</h1>';
+	    echo '<div class="widget"><h3><a href="../wp-login.php?action=register">Register</a> or <a href="../wp-login.php">Login</a> to play</h3></div>';
 			}
 		?>				
 			
 			</div><!-- #content -->
 		</div><!-- #primary -->
+		
+		<!--logged in description box-->
+		
+		 	<div id="secondary" class="widget-area" role="complementary">
+		 		<div class="widget">
+		 			<h3>Compare Ideas</h3>
+		 			<p>Compare ideas is a game where you get to decide which idea is better.  See what other people think as well.  Sometimes the ideas will be related but most often they will be silly comparisons.</p>
+		 		</div>
+		 		<!--nav box-->
+				<?php if ( ! dynamic_sidebar( 'sidebar-2' ) ) ?><!--sidebar nav in showcase widget area-->
+		 	</div>
+		
+
+		
+
+
 
 <?php get_footer(); ?>
