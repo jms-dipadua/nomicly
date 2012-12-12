@@ -56,7 +56,7 @@ get_header();
 
 <!--start primary-->
 		<section id="primary">
-			<div id="content" role="main">
+			<div id="content" role="main" class="the_feed">
 
 <?php
 /* THIS IS WHERE YOU'LL PUT THE TOPIC-RESPONSE FORM 
@@ -74,7 +74,7 @@ get_header();
 			}
 			
 ?>
-		<div id="the_feed">
+		
 			<?php if ( have_posts() ) : ?>
 
 
@@ -108,7 +108,7 @@ get_header();
 				
 				</div>
 			<?php endif; ?>
-				</div><!--end the feed-->
+			
 			</div><!-- #content -->
 		</section><!-- #primary -->
 		

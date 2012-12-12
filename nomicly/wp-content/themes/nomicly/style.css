@@ -67,7 +67,7 @@ footer, header, hgroup, menu, nav, section {
 
 /* utility */
 /* ====== media ====== */
-.media {margin:10px;}
+.media {margin:10px; padding-bottom:10px;}
 .media, .bd {overflow:hidden; _overflow:visible; zoom:1;}
 .media .img {float:left; margin-right: 10px;}
 .media .img img{display:block;border-radius:3px;}
@@ -76,6 +76,19 @@ footer, header, hgroup, menu, nav, section {
 .light, .entry-title.light {
 	color:#fff;
 }	
+
+#infscr-loading img { text-align: center; }
+
+#infscr-loading {
+	margin: 20px auto 40px auto;
+	text-align:center;
+}
+
+.home #infscr-loading  {
+	background:#fff;
+	border-radius:4px;
+	padding: 15px 0;
+}
 
 /* =Structure
 ----------------------------------------------- */
@@ -201,6 +214,24 @@ p.cat-links {
 .idea-stats p {
 	margin-bottom: 0;
 	font-size:12px;
+}
+
+.vote-box {
+
+}
+.vote-box a {
+	font-size:11px;
+	height:18px;
+	padding-left:20px;
+	display:block;
+	float:left;
+}
+.agree-with {
+	background: url(images/thumbs-up.png) no-repeat;
+	margin-right:15px;
+}
+.disagree-with {
+	background: url(images/thumbs-down.png) no-repeat;
 }
 /* end nomicly widgets */
 /*nomicly structures */
@@ -875,14 +906,17 @@ a:hover {
 	background:#fff;
 	border-radius:4px;
 }
-#user_feed {
+.user_feed {
 	background:#fff;
 	border-radius:4px;
 }
-.single-post .hentry, #user_feed .hentry {
+.single-post .hentry, #content.user_feed .hentry {
 	padding: 2%;
 }
-#user_feed .hentry {
+#content.user_feed .hentry:last-child {
+	border-bottom:0;
+}
+.user_feed .hentry {
 	margin: 0;
 }
 .single-post #content {
@@ -924,12 +958,12 @@ a:hover {
 .the_feed .entry-title, .widget .entry-title,
 .single-post article .entry-title, 
 #compare-ideas-form article .entry-title,
-#user_feed .entry-title {
+.user_feed .entry-title {
 	font-size:20px;
 	line-height:1.1em;
 	padding-top:0;
 }
-#user_feed .user-hd {
+.user_feed .user-hd {
 	font-size:26px;
 	padding: 2%;
 }
@@ -948,7 +982,7 @@ a:hover {
 	display:block;
 }
 .the_feed .modify-link, .single-post .hentry .modify-link,
-#user_feed .modify-link {
+.user_feed .modify-link {
 	float:right;
 }
 .entry-meta {

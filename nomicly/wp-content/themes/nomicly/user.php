@@ -7,8 +7,9 @@
  * @subpackage Twenty_Eleven
  * @since Twenty Eleven 1.0
  */
-
+// Enqueue scripts
 get_header(); 
+
 // process new idea posting 
  if (isset($_POST['create'])) {
 	nomicly_new_idea();
@@ -20,6 +21,9 @@ if (isset($_POST['create_topic'])) {
 	}
 
 ?>
+
+<!--this is ghetto.  move it somewhere else.  tried using enqueu script but wasn't working-->
+<script type='text/javascript' src='http://jamesdipadua.com/experimental/nomicly/wp-content/plugins/infinite-scroll/infinitescroll.init.js.php?p=YToyOntpOjA7YTozOntpOjA7czo1MDoiaHR0cDovL2phbWVzZGlwYWR1YS5jb20vZXhwZXJpbWVudGFsL25vbWljbHkvcGFnZS8iO2k6MTtzOjE6Ii8iO2k6MjtpOjE7fWk6MTtzOjMyOiIzMTU0OTlkZGMxNDVlOTM1NjcyNDc0NGRlNTZmMDkyNSI7fQ=='></script>
 
 <?php if ( is_user_logged_in() ) { ?>
 	<div class="full-width">
@@ -119,9 +123,7 @@ if (isset($_POST['create_topic'])) {
 
 
 		<div id="primary">
-			<div id="content" role="main">
-			
-			<div id="user_feed">
+			<div id="content" role="main" class="user_feed">
 				
 			<?php 
 			/* GUTS OF USER PROFILE PAGE
@@ -141,7 +143,7 @@ if (isset($_POST['create_topic'])) {
 				global $wpdb;
 					echo "<h2 class='user-hd entry-title'>My Ideas</h2>";			
 				 while ( have_posts() ) : the_post();  ?>
-				<article class="hentry media" id="post-<?php the_ID(); ?>">
+				<article class="hentry media post" id="post-<?php the_ID(); ?>">
 						<div class="img idea-stats">
 							<p><b>Positive votes:</b> 400</p>
 							<p><b>Negative votes:</b> 30</p>
@@ -157,7 +159,9 @@ if (isset($_POST['create_topic'])) {
 							
 						</div>
 				</article>
+				
 			<?php endwhile;	?>			
+			<?php twentyeleven_content_nav( 'nav-below' ); ?>
 				<?php
 				if (!have_posts()) {
 				 		echo "Looks like you haven't created any ideas! <br /> 
@@ -167,7 +171,7 @@ if (isset($_POST['create_topic'])) {
 					
 			<?php 	// END IF USER_LOGGED_IN()
 				}   ?>
-				</div>
+			
 			</div><!-- #content -->
 		</div><!-- #primary -->
 

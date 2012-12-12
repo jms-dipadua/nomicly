@@ -110,6 +110,8 @@ jQuery(function() {
 		var idea = idea_array[1];
 		var ajaxurl = "../nomicly/wp-admin/admin-ajax.php";
 		var div_stats = '#stats_'+idea;
+		//check to see if div_stats has content
+		if( !jQuery.trim( jQuery(div_stats).html() ).length ) {
 	
 		jQuery.ajax({
 			url: ajaxurl, 
@@ -163,6 +165,7 @@ jQuery(function() {
  				} // END LOGGED IN USER
    			}  // END response
 		}); // END .ajax
+		}//end check for div_stats content
 	});// END EACH
 }); // END DETERMINE IDEAS VOTED ON
 
