@@ -169,7 +169,18 @@ function create_award_votes_cron() {
 }
 
 function award_initial_votes() {
-	// for each user, give them 10 votes and populate them into the user_vote_cache table
+	// 1. get all users
+	// 2. populate them into the user_vote_cache table w/ 10 votes each
+	global $wpdb;
+	$table = $wpdb ->prefix."users";
+	$award_amount = 10
+	$user_ids=$wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM $table"));
+	if ( $user_ids ) {
+		foreach ( $user_ids as $user_id ) { 	
+		//POPULATE INTO USER_VOTE_CACHE
+			increase_available_votes($user_id, $award_amount);
+		}
+	}
 }
 
 function nomicly_award_votes() {

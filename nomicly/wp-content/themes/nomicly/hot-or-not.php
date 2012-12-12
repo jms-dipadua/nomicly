@@ -39,9 +39,12 @@ get_header();
 			$nomicly_int = 0;
 			while ( have_posts() ) : the_post(); ?>	
 				<article id="<?php the_ID(); ?>" class="<?php echo 'content_for_'.$nomicly_int;?>">
-					<header class="entry-header">
-				<h2 class="entry-title"><?php the_title(); ?></h2>
-					</header><!-- .entry-header -->
+				
+				<div class="media">
+					<div class="img compare-vote-results"></div>
+					<div class="bd"><h2 class="entry-title"><?php the_title(); ?></h2></div>
+				</div>
+
 					
 				<input type="hidden" id="<?php echo 'idea'.$nomicly_int;?>" name ="<?php echo 'idea'.$nomicly_int; ?>" value="<?php the_ID(); ?>" />
 				<a href="" id="<?php the_ID(); ?>" class="widget-button vote-link">This idea is better</a>
@@ -52,8 +55,11 @@ get_header();
 				endwhile;
 				?>
 				<input type="hidden" name="chosen_idea" id="chosen_idea" value="" />
-				<input id="compare-ideas-submit" type="submit" name="vote" value="Vote" style="display:none" />					
+				<input id="compare-ideas-submit" type="submit" name="vote" value="Vote" style="display:none" />		
+				
+					<div class="compare-results-box widget"></div>			
 				</form>
+				
 		<?php 
 		} else {
 	    echo '<div class="widget"><h3><a href="../wp-login.php?action=register">Register</a> or <a href="../wp-login.php">Login</a> to play</h3></div>';

@@ -3,6 +3,15 @@
 // 		js/jquery to augment nomicly functionality 
 */
 
+/* onload, get these functions ready */
+
+jQuery(function() {
+	if (jQuery('.home, .category').length > 0) {
+		determine_ideas_voted_on();
+	}
+
+});
+
 
 /*
 //  CREATE NEW IDEAS
@@ -103,7 +112,7 @@ jQuery(function() {
 	// 6-a. if true, get the stats and display them
 	// 6-b. if false, append the vote buttons to the div (or put them in there however adria tells you to)
 */
-jQuery(function() {
+function determine_ideas_voted_on() {
 	jQuery('article').each(function() {
 		var idea_data = jQuery(this).attr('id');
 		var idea_array = idea_data.split('-');
@@ -167,7 +176,7 @@ jQuery(function() {
 		}); // END .ajax
 		}//end check for div_stats content
 	});// END EACH
-}); // END DETERMINE IDEAS VOTED ON
+} // END DETERMINE IDEAS VOTED ON
 
 
 /*
@@ -286,13 +295,16 @@ jQuery(function() {
  			// 	to identify the "voting results" 
  			// 	that way it's easy after the user 'gets new ideas'
  			//	to drop the stats from the page (i.e. "reset the voting booth")
-      					jQuery('.content_for_0').append('<span class="idea_1_consensus">'+response.idea_1_consensus_percentage+'</span>');
-      					jQuery('.content_for_1').append('<span class="idea_2_consensus">'+response.idea_2_consensus_percentage+'</span>');
+      					jQuery('.content_for_0 .compare-vote-results').append('<span class="idea_1_consensus">'+response.idea_1_consensus_percentage+'</span>');
+      					jQuery('.content_for_1 .compare-vote-results').append('<span class="idea_2_consensus">'+response.idea_2_consensus_percentage+'</span>');
       					
 
-      					jQuery('.content_for_1').append("<p class='total_votes'>Out of a total of "+response.total_votes+' votes</p>');
+      					jQuery('.compare-results-box').append("<p class='total_votes'>Total Votes: "+response.total_votes+'</p>');
       					
-      					jQuery('#content').append('<p class="next_ideas">'+response.get_next_ideas+'</p>');
+      					jQuery('.compare-results-box').append('<p class="next_ideas">'+response.get_next_ideas+'</p>');
+      					
+      					jQuery('.compare-results-box').show();
+      					jQuery('.compare-vote-results').show();
       					
       					jQuery('.content_for_0 .vote-link, .content_for_1 .vote-link').hide();
       					//todo:  instead of hiding this, remove it and then recreate it.  that would be more fool-proof
@@ -313,7 +325,7 @@ jQuery(function() {
 		var ajaxurl = "../../nomicly/wp-admin/admin-ajax.php";
 		jQuery.ajax({
 			url: ajaxurl, 
-			type: "POST",
+			type: "get",
 			dataType:'json',
 			data: {
 	      		action:'get_next_ideas'

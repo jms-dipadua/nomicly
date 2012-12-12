@@ -152,10 +152,6 @@ body {
     font-size:12px;
     font-weight:bold;
 }
-#get_next_ideas {
-	font-size:16px;
-	padding: 8px 16px;
-}
 .widget-button {
 	padding: 5px 8px;
 }
@@ -232,6 +228,32 @@ p.cat-links {
 }
 .disagree-with {
 	background: url(images/thumbs-down.png) no-repeat;
+}
+/* compare ideas */
+.compare-vote-results {
+	background: #eee;
+    border: 1px solid #CCCCCC;
+    font-size: 24px;
+    line-height:24px;
+    padding: 10px 12px;
+    width: 60px;
+    display:none;
+    text-align:center;
+}
+.compare-results-box {
+	display:none;
+}
+.total_votes {
+	font-size:26px;
+	line-height:26px;
+	float:left;
+}
+#get_next_ideas {
+	float: right;
+    font-size: 14px;
+    padding: 5px 14px;
+    position: relative;
+    top: -5px;
 }
 /* end nomicly widgets */
 /*nomicly structures */

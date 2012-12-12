@@ -83,8 +83,6 @@ function nomicly_new_idea () {
 //	header('Location: http://www.jamesdipadua.com/experimental/nomicly/index.php');
 }// END NEW IDEA
 
-
-
 /*
 ** THE FOLLOWING IS FOR THE HOT OR NOT GAME
 */
@@ -854,8 +852,7 @@ add_action('wp_ajax_nopriv_process_hot_not_vote', 'process_hot_not_vote' );
 // FOR HOT OR NOT
 // POST VOTE
 */
-
-function get_next_ideas () {
+function get_next_ideas() {
 // using get_posts 
 // returns an array of data
 // then create an easier to work with array
@@ -879,9 +876,9 @@ function get_next_ideas () {
 
 // AJAX callback for getting new ideas after submitting a vote (and reviewing stats)
 // logged in user
-//add_action('wp_ajax_get_next_ideas', 'get_next_ideas');
+add_action('wp_ajax_get_next_ideas', 'get_next_ideas');
 // non-logged in user
-//add_action('wp_ajax_nopriv_get_next_ideas', 'get_next_ideas' );
+add_action('wp_ajax_nopriv_get_next_ideas', 'get_next_ideas' );
 
 
 /*
