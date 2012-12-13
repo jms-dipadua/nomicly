@@ -16,8 +16,7 @@ function my_get_posts( $query ) {
 
 add_filter('query_vars', 'add_query_vars' );
 
-function add_query_vars( $query_variables)
-{
+function add_query_vars( $query_variables){
 $query_variables[] = 'idea';
 return $query_variables;
 }
@@ -139,7 +138,6 @@ function insert_new_pair($pair) {
 	return $pair_id;
 }// END INSERT_NEW_PAIR
 
-
 function insert_vote($pair, $chosen) {
 	global $wpdb;
 	$user_id = get_current_user_id();
@@ -162,7 +160,6 @@ function insert_vote($pair, $chosen) {
 	return $vote_id;
 	
 } //END INSERT_VOTE
-
 
 function update_pairs($pair, $ideas, $chosen_idea) {
 	global $wpdb;
@@ -208,7 +205,6 @@ function update_pairs($pair, $ideas, $chosen_idea) {
 				}
 		}//END IDEA 2 COUNT
 }// END UPDATE PAIRS
-
 
 /*
 // DETERMINE WINNER OF HOT/NOT CHOICE
@@ -613,6 +609,7 @@ function increase_available_votes($user_id, $award_amount) {
 				echo mysql_error();
 				}	
 } // END INCREASE AVAIL VOTES
+
  /*
  // DECREASE AVAILABLE VOTES
  */

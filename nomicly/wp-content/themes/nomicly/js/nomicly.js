@@ -6,7 +6,7 @@
 /* onload, get these functions ready */
 
 jQuery(function() {
-	if (jQuery('.home, .category, .topic-list').length > 0) {
+	if (jQuery('.home').length > 0) {
 		determine_ideas_voted_on();
 	}
 

@@ -18,8 +18,19 @@ Detailed Overview:
 */
 ?>
 <?php
+/*
+// BUG/WHERE I LEFT OFF
+// - cron created successfully
+// - @ activation, get header outputs
+// - suspect it has something to do with calling functions in the functions.php file
+// - not populating user_vote_cache or awarding votes
+*/
+
+
 // INITIALIZATION
 register_activation_hook(__FILE__, 'nomicly_activation');
+add_action('nomicly_vote_award_hourly', 'nomicly_award_votes');
+
 // DEACTIVATION
 register_deactivation_hook(__FILE__, 'nomicly_deactivation');
 
@@ -43,9 +54,8 @@ function nomicly_activation() {
 
 // CRON SETUP
 	create_award_votes_cron();
-	add_action('nomicly_vote_award_hourly', 'nomicly_award_votes');
-	
-	// award_initial_votes();
+// AWARD INITIAL VOTES	
+	//award_initial_votes();
 
 }//end of nomicly_activiation
 
@@ -71,10 +81,9 @@ $table_user_idea_votes = $wpdb->prefix."user_idea_votes";
 }// END CREATE USER IDEA VOTES
 
 function nomicly_create_user_vote_cache_db() {
-require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+//require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 global $wpdb;
 $table_user_vote_cache = $wpdb->prefix."user_vote_cache";
-
 
 	$sql = "CREATE TABLE $table_user_vote_cache (
 	user_id int NOT NULL,
@@ -122,7 +131,6 @@ dbDelta($sql);
 	
 } // end nomicly_create_hot_or_not_votes
 
-
 function nomicly_create_hot_not_pairs_db() {
 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 global $wpdb;
@@ -139,7 +147,6 @@ $sql = "CREATE TABLE IF NOT EXISTS $table_pairs (
 dbDelta($sql);
 	
 } // end nomicly_create_hot_not_pairs_db
-
 
 function nomicly_create_user_topics_db () {
 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -173,18 +180,38 @@ function award_initial_votes() {
 	// 2. populate them into the user_vote_cache table w/ 10 votes each
 	global $wpdb;
 	$table = $wpdb ->prefix."users";
-	$award_amount = 10
-	$user_ids=$wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM $table"));
+	$table_user_cache = $wpdb ->prefix."user_vote_cache";
+	$award_amount = 10;
+	$user_ids=$wpdb->get_col( $wpdb->prepare( "SELECT ID FROM '$table'"));
 	if ( $user_ids ) {
 		foreach ( $user_ids as $user_id ) { 	
 		//POPULATE INTO USER_VOTE_CACHE
-			increase_available_votes($user_id, $award_amount);
+			$initial_user_data = array (
+			'user_id' => $user_id,
+			'created_at' => $date
+			);
+			$wpdb->insert( $table_user_cach, $initial_user_data );
+		// GIVE THEM VOTES
+		//	increase_available_votes($user_id, $award_amount);
 		}
 	}
 }
 
 function nomicly_award_votes() {
-	$amount = 10;
+	// 1. get all users
+	// 2. give them 10 votes each
+		// 	-- later versions may need to deal w/ status
+		//	-- status is *not* really supported in WP at this time...
+	global $wpdb;
+	$table = $wpdb ->prefix."users";
+	$award_amount = 10;
+	$user_ids = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM '$table'"));
+	if ( $user_ids ) {
+		foreach ( $user_ids as $user_id ) { 	
+		//POPULATE INTO USER_VOTE_CACHE
+	//		increase_available_votes($user_id, $award_amount);
+		}
+	}
 }
 
 /* 
@@ -238,43 +265,6 @@ $table_user_topics = $wpdb->prefix."user_topics";
 //  $wpdb ->query("DROP TABLE IF EXISTS $table_user_topics");
 
 }//END DEACTIVATION 
-
-/* 
-// what i was using when i was making a custom post-type
-function jadalm_nomicly_activation () {
-#create the custom-post-type
-  $labels = array(
-              'labels' => array(
-	                'name' => 'Ideas',
-	                'singular_name' => 'Idea',
-	                'add_new' => 'Add New',
-	                'add_new_item' => 'Add New Idea',
-	                'edit' => 'Edit',
-	                'edit_item' => 'Edit Idea',
-	                'new_item' => 'New Idea',
-	                'view' => 'View',
-					'view_item' => 'View Idea', 
-	                'search_items' => 'Search Ideas',
-	                'not_found' => 'No Ideas Found',
-	                'not_found_in_trash' => 'No Ideas Found in Trash',
-	                'parent' => 'Parent Idea'
-    	        )//end labels array
-            );
-    $arguments = array(
-    		'labels' => $labels,
-            'public' => true,
-            'menu_position' => 5,
-            'supports' => array( 'title', 'author', 'comments'),
-//            'supports' => array( 'title', 'author', 'comments', 'custom-fields' ),
-//            'supports' => array( 'title', 'author', 'comments', 'editor', 'custom-fields' ),
-            'taxonomies' => array( '' ),
-            'menu_icon' => plugins_url( 'images/icon.jpg', __FILE__ ),
-            'has_archive' => true
-        );
-   register_post_type( 'ideas', $arguments);
-}
-
-*/
 
 
 ?>
