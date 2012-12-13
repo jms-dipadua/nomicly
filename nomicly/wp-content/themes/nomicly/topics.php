@@ -33,8 +33,6 @@ get_header();
 			Topic Description: 
 			<textarea rows="2" cols="20" name="new_topic" value="">
 			</textarea>
-			<input type="hidden" name="cateogry_id" value="<?php get_the_category($post_id); ?>" />
-			<!-- maybe include a dropdown of all the topics too? -->
 			<input type="submit" name="create_topic" value="Add Topic" class="widget-button" />
 			</form>  
 		</div>  

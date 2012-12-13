@@ -1,5 +1,5 @@
 <?php
-// require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+ require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 /*
 // this is for getting custom post types
@@ -300,40 +300,54 @@ function create_new_topic() {
 	$new_topic_name = wp_strip_all_tags($_POST['new_topic_name']);	
 	$new_topic = wp_strip_all_tags($_POST['new_topic']);	
 	//create the slug
-	$new_topic_slug = sanitize_title( $new_topic, $fallback_title );
+	$new_topic_slug = sanitize_title( $new_topic );
 	
-	$table_terms = $wpdb -> prefix.'terms';
-	$table_term_taxonomy = $wpdb -> prefix.'term_taxonomy';
+	$new_topic_data = array (
+	'cat_name' => $new_topic_name, 
+	'category_description' => $new_topic, 
+	'category_nicename' => $new_topic_slug,
+	'category_parent' => '',
+	 'taxonomy' => 'category'
+	);
+	$new_term_id = wp_insert_category($new_topic_data);
+	
 	$table_user_topics = $wpdb -> prefix.'user_topics';
-	
-	//prep data for insert
-	$term_data = array (
-		'name' => $new_topic_name,
-    	'slug' => $new_topic_slug,
-		'term_group' => 0
-	);
-
-	// insert new term data into db
-	$wpdb->insert( $table_terms, $term_data );
-	// get vote_id and return for update_pairs function
-	$term_id = $wpdb -> insert_id;  // MAY need to return this as an array...?
-
-	$taxonomy_data = array (
-		'term_id' => $term_id,
-		'taxonomy' => "category",
-		'description' => $new_topic,
-		'parent' => 0,
-		'count' => 0		
-	);
-	$wpdb->insert( $table_term_taxonomy, $taxonomy_data );
-
 // CONNECT TOPIC TO USER WHO CREATED IT
 	$user_topic_data = array (
 		'user_id' => $user_id,
-		'topic_id' => $term_id,
+		'topic_id' => $new_term_id,
 		'created_at' => $date
 	);
 	$wpdb->insert( $table_user_topics, $user_topic_data);
+	
+	// NOTE TO MAKE IT APPEAR WITHOUT A BUG, YOU HAVE TO CREATE A DUMMY IDEA TOO 
+	// FUCKING RETARDED...
+	// quick copy paste to reduce my already high annoyance with this bug
+	global $wpdb;
+	$post_parent = 0;
+	$post_title = "This is an example idea for ".$new_topic_name;
+	// create slug
+	$post_name = sanitize_title( $post_title );
+	//CREATE NEW POST
+	$post = array(
+	  'comment_status' => 'open',  // 'closed' means no comments.
+	  'ping_status'    => 'closed',  // 'closed' means pingbacks or trackbacks turned off
+	  'post_author'    => $userID , // user ID of  author.
+	  'post_date'      => $post_date,  //The time post was made.
+	  'post_date_gmt'  => $post_date , //The time post was made, in GMT. (just using same time)
+	  'post_name'      => $post_name, // The name (slug) for your post
+	  'post_parent'    => $post_parent, //Sets the parent of the new post. 
+	  'post_status'    => 'publish', //Set the status of the new post.
+	  'post_title'     =>  $post_title, //The title of your post.
+	  'post_type'      => 'post', //You may want to insert a regular post, page, link, a menu item or some custom post type
+//	  'tax_input'      => array( 'term_taxonomy_id' => $category_id ) ]
+			);  //END POST ARRAY
+	// INSERT POST 
+	$new_post_id = wp_insert_post( $post, $wp_error ); 
+	// CONNECT THE POST TO THE CATEGORY SO THE FUCKING ARRAY WILL WORK PROPERLY
+	// UPDATE POST TERMS
+	wp_set_post_terms($new_post_id, $new_term_id, 'category', FALSE);
+	
 }// END CREATE NEW TOPIC
 
 

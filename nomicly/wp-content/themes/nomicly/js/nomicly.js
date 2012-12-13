@@ -6,7 +6,7 @@
 /* onload, get these functions ready */
 
 jQuery(function() {
-	if (jQuery('.home, .category').length > 0) {
+	if (jQuery('.home, .category, .topic-list').length > 0) {
 		determine_ideas_voted_on();
 	}
 
@@ -25,7 +25,7 @@ jQuery(function() {
 	var idea = jQuery('#new_idea').val();
 	var cat_id = jQuery('#category_id').val();
 	var user_id = jQuery('#user_id').val();
-	var ajaxurl = "../nomicly/wp-admin/admin-ajax.php";
+		var ajaxurl = "http://www.jamesdipadua.com/experimental/nomicly/wp-admin/admin-ajax.php";
 	
 		jQuery.ajax({
 			url: ajaxurl, 
@@ -117,7 +117,7 @@ function determine_ideas_voted_on() {
 		var idea_data = jQuery(this).attr('id');
 		var idea_array = idea_data.split('-');
 		var idea = idea_array[1];
-		var ajaxurl = "../nomicly/wp-admin/admin-ajax.php";
+		var ajaxurl = "http://www.jamesdipadua.com/experimental/nomicly/wp-admin/admin-ajax.php";
 		var div_stats = '#stats_'+idea;
 		//check to see if div_stats has content
 		if( !jQuery.trim( jQuery(div_stats).html() ).length ) {
@@ -197,7 +197,7 @@ jQuery(function() {
 		var vote_array = vote_data.split('_');
 		var vote_choice = vote_array[0];
 		var idea = vote_array[1];
-		var ajaxurl = "../nomicly/wp-admin/admin-ajax.php";
+		var ajaxurl = "http://www.jamesdipadua.com/experimental/nomicly/wp-admin/admin-ajax.php";
 		var div_stats = '#stats_'+idea;
 		if (vote_choice == "agree") {
 			type = '1';

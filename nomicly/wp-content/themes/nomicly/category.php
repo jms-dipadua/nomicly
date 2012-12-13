@@ -20,11 +20,8 @@ get_header();
 			<div id="secondary" class="widget-area" role="complementary">		
 				<div class="widget">
 					<?php
-
-
 					//get category information
-					global $post;
-					$category = get_the_category($post->ID);
+					$category = get_the_category();
 						$int = 0;
 						foreach ($category as $categories) {
 								$category_id[$int] = $category[$int] -> term_taxonomy_id;

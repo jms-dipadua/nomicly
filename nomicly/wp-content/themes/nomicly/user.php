@@ -89,7 +89,7 @@ if (isset($_POST['create_topic'])) {
 				// THEN FOR EACH ENTRY, GRAB THE CATEGORY AND DISPLAY IT...
 				global $wpdb;
 				$table_user_topics = $wpdb->prefix."user_topics";
-				$topic_query_results = $wpdb->get_results("SELECT topic_id from $table_user_topics WHERE user_id = '$user_id'", 'ARRAY_N'); 
+				$topic_query_results = $wpdb->get_col("SELECT topic_id from $table_user_topics WHERE user_id = '$user_id'", 'ARRAY_N'); 
 				// collapse the results for the next query
 			if (!empty($topic_query_results)) {
 				$user_topics = $topic_query_results[0];
