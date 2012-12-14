@@ -141,6 +141,12 @@ body {
 .profile-sidebar-box p {
 	margin-bottom:0;
 }
+.profile-sidebar-box .entry-title {
+	font-weight:bold;
+	font-size:1.2em;
+	line-height:1em;
+	padding-top:0;
+}
 .idea_submit_button, .widget-button, #get_next_ideas {
 	border:1px solid #555;
 	background-color:#2C77BA;
@@ -984,6 +990,7 @@ a:hover {
 	font-size:20px;
 	line-height:1.1em;
 	padding-top:0;
+	padding-bottom:15px;
 }
 .user_feed .user-hd {
 	font-size:26px;

@@ -34,8 +34,13 @@ get_header();
 						  echo get_avatar( $current_user->user_email, $size = '42' );?>
 					</div>
 					<div class="bd">	  
-						<?php  echo '<h4><a href="">' . $current_user->user_login . '</h4></a>'; ?>
-						<p><b>Ideas:</b> 400</p>
+						<h4><a href="<?php bloginfo( 'wpurl' ); ?>/user-profile/"><?php  echo $current_user->user_login ?></a></h4>
+						
+						<p><b>Ideas:</b> 
+						<?php 	$user_id = get_current_user_id();
+						$post_count = count_user_posts($user_id);
+						echo "$post_count"; ?>
+						</p>
 						<p><b>Topics:</b> 30</p>
 					</div>
 				</div>
@@ -53,11 +58,16 @@ get_header();
 				<div class="widget recent-ideas-sidebox">	
 					<h3>My Recent Ideas</h3>
 					<ul>
-						<li><a href="">This is a recent idea link</a></li>
-						<li><a href="">This is a recent idea link</a></li>
-						<li><a href="">This is a recent idea link</a></li>
+					<?php
+					  $number_recents_posts = 5;//Enter number of recent of posts you want to display
+					 $args=array('numberposts' => $number_recents_posts,'post_status'=>'publish');
+				
+					  $recent_posts = wp_get_recent_posts( $args );
+					  foreach($recent_posts as $post){
+						echo '<li><a href="' . get_permalink($post["ID"]) . '" title="Look '.$post["post_title"].'" >' .   $post["post_title"].'</a> </li> ';
+					  } ?>
 					</ul>
-					<p><a href="" class="widget-button">View all</a></p>
+					<p><a href="<?php bloginfo( 'wpurl' ); ?>/user-profile/" class="widget-button">View all</a></p>
 				</div>
 
 			</div><!--end secondary-->

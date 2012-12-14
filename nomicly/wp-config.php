@@ -16,7 +16,7 @@
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
-define('DB_NAME', 'nomicly');
+define('DB_NAME', 'nomicly_dev');
 
 /** MySQL database username */
 define('DB_USER', 'nomicly');

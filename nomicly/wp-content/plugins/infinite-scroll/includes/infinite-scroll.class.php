@@ -127,7 +127,7 @@ public static function addInfiniteScroll()
 	global $user_level,$wp_query;
 	$load_infinite_scroll = true;	
 	/* Lets start our pre-flight checks */
-	if(is_page() || is_single() || !have_posts())
+	if(is_single() || !have_posts())
 		$load_infinite_scroll = false;
 	
 	$load_infinite_scroll = apply_filters('infinite_scroll_load_override', $load_infinite_scroll);
