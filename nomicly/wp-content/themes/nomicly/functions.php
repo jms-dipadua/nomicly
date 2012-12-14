@@ -319,7 +319,6 @@ function create_new_topic() {
 	// NOTE TO MAKE IT APPEAR WITHOUT A BUG, YOU HAVE TO CREATE A DUMMY IDEA TOO 
 	// FUCKING RETARDED...
 	// quick copy paste to reduce my already high annoyance with this bug
-	global $wpdb;
 	$post_parent = 0;
 	$post_title = "This is an example idea for ".$new_topic_name;
 	// create slug
@@ -328,9 +327,9 @@ function create_new_topic() {
 	$post = array(
 	  'comment_status' => 'open',  // 'closed' means no comments.
 	  'ping_status'    => 'closed',  // 'closed' means pingbacks or trackbacks turned off
-	  'post_author'    => $userID , // user ID of  author.
-	  'post_date'      => $post_date,  //The time post was made.
-	  'post_date_gmt'  => $post_date , //The time post was made, in GMT. (just using same time)
+	  'post_author'    => $user_id , // user ID of  author.
+	  'post_date'      => $date,  //The time post was made.
+	  'post_date_gmt'  => $date , //The time post was made, in GMT. (just using same time)
 	  'post_name'      => $post_name, // The name (slug) for your post
 	  'post_parent'    => $post_parent, //Sets the parent of the new post. 
 	  'post_status'    => 'publish', //Set the status of the new post.
