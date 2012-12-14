@@ -15,6 +15,7 @@ jQuery(function() {
 
 
 
+
 /*
 //  CREATE NEW IDEAS
 //  a. validate (BUG) form -- cannot be empty + checks for swearing?
@@ -27,7 +28,6 @@ jQuery(function() {
 	var idea = jQuery('#new_idea').val();
 	var cat_id = jQuery('#category_id').val();
 	var user_id = jQuery('#user_id').val();
-	var ajaxurl = "../nomicly/wp-admin/admin-ajax.php";
 	
 		jQuery.ajax({
 			url: ajaxurl, 
@@ -73,7 +73,6 @@ jQuery(function() {
 	var cat_id = jQuery('#category_id').val();
 	var parent_id = jQuery('#post_parent').val();
 	var user_id = jQuery('#user_id').val();
-	var ajaxurl = "../../nomicly/wp-admin/admin-ajax.php";
 	
 		jQuery.ajax({
 			url: ajaxurl, 
@@ -119,7 +118,6 @@ function determine_ideas_voted_on() {
 		var idea_data = jQuery(this).attr('id');
 		var idea_array = idea_data.split('-');
 		var idea = idea_array[1];
-		var ajaxurl = "../nomicly/wp-admin/admin-ajax.php";
 		var div_stats = '#stats_'+idea;
 		//check to see if div_stats has content
 		if( !jQuery.trim( jQuery(div_stats).html() ).length ) {
@@ -199,7 +197,6 @@ jQuery(function() {
 		var vote_array = vote_data.split('_');
 		var vote_choice = vote_array[0];
 		var idea = vote_array[1];
-		var ajaxurl = "http://www.jamesdipadua.com/experimental/nomicly/wp-admin/admin-ajax.php";
 		var div_stats = '#stats_'+idea;
 		if (vote_choice == "agree") {
 			type = '1';
@@ -276,7 +273,6 @@ jQuery(function() {
 		var setHidden = jQuery('#chosen_idea').attr('value', votedID);
 		var idea1 = jQuery('#idea0').val();
 		var idea2 = jQuery('#idea1').val();
-		var ajaxurl = "../../nomicly/wp-admin/admin-ajax.php";
 		//alert( jQuery(setHidden).attr('value') ) ;
 //		jQuery('#compare-ideas-submit').click();
 		jQuery.ajax({
@@ -324,7 +320,6 @@ jQuery(function() {
 */
 jQuery(function() {
 	jQuery('#primary').delegate('#get_next_ideas', 'click', function() {
-		var ajaxurl = "../../nomicly/wp-admin/admin-ajax.php";
 		jQuery.ajax({
 			url: ajaxurl, 
 			type: "get",

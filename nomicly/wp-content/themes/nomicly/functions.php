@@ -1,6 +1,15 @@
 <?php
  require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
+add_action('wp_head','pluginname_ajaxurl');
+function pluginname_ajaxurl() {?>
+<script type="text/javascript">
+var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+</script>
+<?
+}
+
+
 /*
 // this is for getting custom post types
 // and displaying them on the home page
