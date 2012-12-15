@@ -354,7 +354,6 @@ function create_new_topic() {
 	
 }// END CREATE NEW TOPIC
 
-
 /*
 // COUNT USER CREATED TOPICS
 */

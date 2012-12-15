@@ -152,7 +152,7 @@ if (isset($_POST['create_topic'])) {
 							<p><b>Shares:</b> 5</p>-->
 						</div>
 						
-						<?php the_date('m/d/y', '<span class="pub-date">', '</span>'); ?>
+						<span class="pub-date"><?php the_time('m/d/y'); ?></span>
 						<div class="bd"><h3 class="entry-title"> <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a> </h3>
 							<?php the_content(); ?>
 							<!-- ADDS MODIFY IDEA TO THE CONTENT -->

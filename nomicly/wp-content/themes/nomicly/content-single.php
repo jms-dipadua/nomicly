@@ -13,10 +13,11 @@
 <div id="article_content" class="post-<?php the_ID(); ?>">
 
 	<header class="entry-header">
-	
+	<span class="pub-date"><?php the_time('m/d/y'); ?></span>
 		<div class="media">
 				<div class="feed-gravatar img"> <? echo get_avatar( get_the_author_meta('user_email'), $size = '48'); ?><a href="<?php bloginfo( 'wpurl' ); ?>/user-profile/"><?php  the_author(); ?></a> </div>
 				<div class="bd">
+				
 					<h1 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf( esc_attr__( 'Permalink to %s', 'twentyeleven' ), the_title_attribute( 'echo=0' ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h1>
 				</div>
 			</div>

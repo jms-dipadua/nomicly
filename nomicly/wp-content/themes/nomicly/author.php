@@ -83,8 +83,10 @@ get_header(); ?>
 				<?php while ( have_posts() ) : the_post(); ?>
 				
 					<article class="hentry post" id="post-<?php the_ID(); ?>">
-							
-							<h3 class="entry-title"> <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a> </h3><?php the_date('m/d/y', '<span class="pub-date">', '</span>'); ?>
+						<header class="entry-header">
+							<span class="pub-date"><?php the_time('m/d/y'); ?></span>
+							<h3 class="entry-title"> <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a> </h3>
+							</header>
 								<?php the_content(); ?>
 								<!-- ADDS MODIFY IDEA TO THE CONTENT -->
 								<? if (is_user_logged_in()) { ?>

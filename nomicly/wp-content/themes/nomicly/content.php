@@ -31,7 +31,7 @@
 
 				<a href="<?php echo get_author_posts_url(get_the_author_meta( 'ID' )); ?>"><?php the_author_meta('display_name'); ?></a>
 				</div>
-				<?php the_date('m/d/y', '<span class="pub-date">', '</span>'); ?>
+				<span class="pub-date"><?php the_time('m/d/y'); ?></span>
 				<div class="bd">
 					<h1 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf( esc_attr__( 'Permalink to %s', 'twentyeleven' ), the_title_attribute( 'echo=0' ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h1>
 				</div>
