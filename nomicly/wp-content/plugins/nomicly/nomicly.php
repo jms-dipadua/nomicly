@@ -55,7 +55,7 @@ function nomicly_activation() {
 // CRON SETUP
 	create_award_votes_cron();
 // AWARD INITIAL VOTES	
-	//award_initial_votes();
+	award_initial_votes();
 
 }//end of nomicly_activiation
 
@@ -167,7 +167,7 @@ dbDelta($sql);
 }// END CREATE USER_TOPICS_DB
 
 /*
-//AWARD VOTES AND CRON JOB STUFF
+//	CRON JOB STUFF
 // v1.0
 */
 function create_award_votes_cron() {
@@ -175,14 +175,22 @@ function create_award_votes_cron() {
 		wp_schedule_event($time, 'hourly', 'nomicly_vote_award_hourly');
 }
 
+
+/*
+//	AWARD VOTES + SUPPORT
+// v1.0
+*/
+
 function award_initial_votes() {
 	// 1. get all users
 	// 2. populate them into the user_vote_cache table w/ 10 votes each
 	global $wpdb;
-	$table = $wpdb ->prefix."users";
+	$table_users = $wpdb ->prefix."users";
 	$table_user_cache = $wpdb ->prefix."user_vote_cache";
 	$award_amount = 10;
-	$user_ids=$wpdb->get_col( $wpdb->prepare( "SELECT ID FROM '$table'"));
+	$date = date('Y-m-d H:i:s');
+
+	$user_ids = $wpdb->get_col("SELECT ID FROM nomicly_users");
 	if ( $user_ids ) {
 		foreach ( $user_ids as $user_id ) { 	
 		//POPULATE INTO USER_VOTE_CACHE
@@ -190,12 +198,12 @@ function award_initial_votes() {
 			'user_id' => $user_id,
 			'created_at' => $date
 			);
-			$wpdb->insert( $table_user_cach, $initial_user_data );
+			$wpdb->insert( $table_user_cache, $initial_user_data );
 		// GIVE THEM VOTES
-		//	increase_available_votes($user_id, $award_amount);
-		}
-	}
-}
+			increase_available_votes($user_id, $award_amount);
+		}// END FOR EACH
+	}// USERS EXIST
+}// END AWARD INITIAL VOTES
 
 function nomicly_award_votes() {
 	// 1. get all users
@@ -205,14 +213,14 @@ function nomicly_award_votes() {
 	global $wpdb;
 	$table = $wpdb ->prefix."users";
 	$award_amount = 10;
-	$user_ids = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM '$table'"));
+	$user_ids = $wpdb->get_col("SELECT ID FROM nomicly_users");
 	if ( $user_ids ) {
 		foreach ( $user_ids as $user_id ) { 	
-		//POPULATE INTO USER_VOTE_CACHE
-	//		increase_available_votes($user_id, $award_amount);
+		// GIVE THEM VOTES
+			increase_available_votes($user_id, $award_amount);
 		}
 	}
-}
+} // END AWARD VOTES
 
 /* 
 	// TO DO

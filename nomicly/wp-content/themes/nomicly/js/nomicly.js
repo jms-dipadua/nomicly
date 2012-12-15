@@ -257,9 +257,9 @@ function get_available_user_votes () {
 					}
 					else {
 						var num_votes_avail = response.available_votes_data;
-						var display = "<p>Votes Available: "+num_votes_avail+ "</p>";
+						var display = "<p><b>Votes Available:</b> "+num_votes_avail+ "</p>";
 							// 2. append to the user box. 
-						jQuery('.profile-sidebar-box').append(display);
+						jQuery('.profile-sidebar-box .bd').not('.author .profile-sidebar-box .bd').append(display);
 		 			}
    			}  // END response
 		}); // END .ajax

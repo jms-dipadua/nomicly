@@ -2,12 +2,12 @@
  require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 add_action('wp_head','pluginname_ajaxurl');
-function pluginname_ajaxurl() {?>
-<script type="text/javascript">
-var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
-</script>
-<?
-}
+	function pluginname_ajaxurl() {?>
+		<script type="text/javascript">
+		var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+		</script>
+	<?
+	}
 
 
 /*
@@ -487,9 +487,9 @@ function initialize_idea_consensus($idea_id) {
 	return;
 } // END
 
-	 /*
-	 // UPDATE_IDEA_CONSENSUS - update the consensus for an idea based on a vote
-	*/
+ /*
+ // UPDATE_IDEA_CONSENSUS - update the consensus for an idea based on a vote
+*/
 function update_idea_consensus($idea_id, $vote_type) {
 	global $wpdb;
 	$idea = $idea_id;
@@ -609,12 +609,18 @@ function increase_available_votes($user_id, $award_amount) {
 		if ($amount > $max_award_amount) {
 			$amount = $max_award_amount;
 			}	
-	$query = "UPDATE '$table'
-			SET num_votes_avail = num_votes_avail + '$amount', updated_at = '$date' 
+	/*
+	// 	BUG
+	//	- APPEARS YOU CAN'T USE THE +$AMOUNT. HAVE TO PASS IN AN ACTUAL NUMBER
+	//	- NEXT STEP 
+			-- TRY TO USE EXTRAPOLATIVE KEYS: %d, etc. 
+	*/
+	$query = "UPDATE nomicly_user_vote_cache
+			SET num_votes_avail = num_votes_avail+'$amount', updated_at = '$date' 
 			WHERE user_id = '$user'";
 	$update_query = mysql_query($query);
 			if (!$update_query ) {
-				echo mysql_error();
+				 $wpdb->show_errors(); 
 				}	
 } // END INCREASE AVAIL VOTES
 

@@ -150,6 +150,7 @@ if (isset($_POST['create_topic'])) {
 							<p><b>Influenced ideas:</b> 2</p>
 							<p><b>Shares:</b> 5</p>
 						</div>
+						<?php the_date('m/d/y', '<span class="pub-date">', '</span>'); ?>
 						<div class="bd"><h3 class="entry-title"> <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a> </h3>
 							<?php the_content(); ?>
 							<!-- ADDS MODIFY IDEA TO THE CONTENT -->
@@ -157,6 +158,33 @@ if (isset($_POST['create_topic'])) {
 							<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="widget-button modify-link">Modify Idea</a>
 							
 						</div>
+						<footer class="entry-meta">
+								<?php $show_sep = false; ?>
+								<?php if ( 'post' == get_post_type() ) : // Hide category and tag text for pages on Search ?>
+								<?php
+									/* translators: used between list items, there is a space after the comma */
+									$categories_list = get_the_category_list( __( ', ', 'twentyeleven' ) );
+									if ( $categories_list ):
+								?>
+								<span class="cat-links">
+									<?php printf( __( '<span class="%1$s">This idea addresses:</span> %2$s', 'twentyeleven' ), 'entry-utility-prep entry-utility-prep-cat-links', $categories_list );
+									$show_sep = true; ?>
+								</span>
+								<?php endif; // End if categories ?>
+								<?php
+									/* translators: used between list items, there is a space after the comma */
+									$tags_list = get_the_tag_list( '', __( ', ', 'twentyeleven' ) );
+									if ( $tags_list ):
+									if ( $show_sep ) : ?>
+								<span class="sep"> | </span>
+									<?php endif; // End if $show_sep ?>
+								<span class="tag-links">
+									<?php printf( __( '<span class="%1$s">Tagged</span> %2$s', 'twentyeleven' ), 'entry-utility-prep entry-utility-prep-tag-links', $tags_list );
+									$show_sep = true; ?>
+								</span>
+								<?php endif; // End if $tags_list ?>
+								<?php endif; // End if 'post' == get_post_type() ?>
+						</footer>
 				</article>
 				
 			<?php endwhile;	?>			

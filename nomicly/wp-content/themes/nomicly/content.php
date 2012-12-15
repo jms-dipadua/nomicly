@@ -18,10 +18,7 @@
 					<h2 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf( esc_attr__( 'Permalink to %s', 'twentyeleven' ), the_title_attribute( 'echo=0' ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h2>
 					<h3 class="entry-format"><?php _e( 'Featured', 'twentyeleven' ); ?></h3>
 				</hgroup>
-			<?php elseif ( is_page('user-profile') ) : ?>
-			
-			hello
-			
+
 			<?php else : ?>
 			
 			<div class="media">
@@ -31,10 +28,10 @@
 					$author_id=$post->post_author;
 					
 					?>
-				<a href='<?php bloginfo( "wpurl" ); ?>/user-profile/'>
-					<?php  the_author(); ?>
-				</a> 
+
+				<a href="<?php echo get_author_posts_url(get_the_author_meta( 'ID' )); ?>"><?php the_author_meta('display_name'); ?></a>
 				</div>
+				<?php the_date('m/d/y', '<span class="pub-date">', '</span>'); ?>
 				<div class="bd">
 					<h1 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf( esc_attr__( 'Permalink to %s', 'twentyeleven' ), the_title_attribute( 'echo=0' ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h1>
 				</div>

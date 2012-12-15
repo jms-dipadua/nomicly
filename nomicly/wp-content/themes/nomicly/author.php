@@ -23,13 +23,11 @@ get_header(); ?>
 						<?php
 							global $post;
 							$author_id=$post->post_author;
-							$field=user_login;
-							the_author_meta( $field, $author_id );
-							echo '<h3 class="entry-title">' .the_author_meta(). '</h3>';
-							?>
-						<p><b>Ideas:</b> <?php $user_id = get_current_user_id(); $post_count = count_user_posts($user_id); echo "$post_count";?></p>
-						<p><b>Topics:</b> 30</p>
-						<p><b>Reputation:</b> awesome</p>
+							$field=user_login; ?>
+							<h3 class="entry-title"><?php the_author_meta( $field, $author_id ); ?> </h3>
+							<p><b>Ideas:</b> <?php $post_count = count_user_posts($author_id); echo "$post_count";?></p>
+							<p><b>Topics:</b> 30</p>
+							<p><b>Reputation:</b> awesome</p>
 					</div>
 				</div>
 	
@@ -81,14 +79,52 @@ get_header(); ?>
 
 				<?php /* Start the Loop */ ?>
 				<?php while ( have_posts() ) : the_post(); ?>
+				
+					<article class="hentry media post" id="post-<?php the_ID(); ?>">
+						<div class="img idea-stats">
+							<p><b>Positive votes:</b> 400</p>
+							<p><b>Negative votes:</b> 30</p>
+							<p><b>Consensus:</b> awesome</p>
+							<p><b>Influenced ideas:</b> 2</p>
+							<p><b>Shares:</b> 5</p>
+						</div>
+						<?php the_date('m/d/y', '<span class="pub-date">', '</span>'); ?>
+						<div class="bd"><h3 class="entry-title"> <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a> </h3>
+							<?php the_content(); ?>
+							<!-- ADDS MODIFY IDEA TO THE CONTENT -->
+							<?php $wpurl = get_bloginfo ( 'wpurl' );  ?>
+							<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="widget-button modify-link">Modify Idea</a>
+							
+						</div>
+						<footer class="entry-meta">
+								<?php $show_sep = false; ?>
+								<?php if ( 'post' == get_post_type() ) : // Hide category and tag text for pages on Search ?>
+								<?php
+									/* translators: used between list items, there is a space after the comma */
+									$categories_list = get_the_category_list( __( ', ', 'twentyeleven' ) );
+									if ( $categories_list ):
+								?>
+								<span class="cat-links">
+									<?php printf( __( '<span class="%1$s">This idea addresses:</span> %2$s', 'twentyeleven' ), 'entry-utility-prep entry-utility-prep-cat-links', $categories_list );
+									$show_sep = true; ?>
+								</span>
+								<?php endif; // End if categories ?>
+								<?php
+									/* translators: used between list items, there is a space after the comma */
+									$tags_list = get_the_tag_list( '', __( ', ', 'twentyeleven' ) );
+									if ( $tags_list ):
+									if ( $show_sep ) : ?>
+								<span class="sep"> | </span>
+									<?php endif; // End if $show_sep ?>
+								<span class="tag-links">
+									<?php printf( __( '<span class="%1$s">Tagged</span> %2$s', 'twentyeleven' ), 'entry-utility-prep entry-utility-prep-tag-links', $tags_list );
+									$show_sep = true; ?>
+								</span>
+								<?php endif; // End if $tags_list ?>
+								<?php endif; // End if 'post' == get_post_type() ?>
+						</footer>
+				</article>
 
-					<?php
-						/* Include the Post-Format-specific template for the content.
-						 * If you want to overload this in a child theme then include a file
-						 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
-						 */
-						get_template_part( 'content', get_post_format() );
-					?>
 
 				<?php endwhile; ?>
 
