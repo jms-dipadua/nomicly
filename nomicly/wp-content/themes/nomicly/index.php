@@ -56,19 +56,28 @@ get_header();
 					</form>    
 				</div>
 			<!--recent ideas box-->
-				<div class="widget recent-ideas-sidebox">	
-					<h3>My Recent Ideas</h3>
-					<ul>
+				<div class="widget recent-ideas-sidebox">				
 					<?php
-					  $number_recents_posts = 5;//Enter number of recent of posts you want to display
-					 $args=array('numberposts' => $number_recents_posts,'post_status'=>'publish');
-				
-					  $recent_posts = wp_get_recent_posts( $args );
-					  foreach($recent_posts as $post){
-						echo '<li><a href="' . get_permalink($post["ID"]) . '" title="Look '.$post["post_title"].'" >' .   $post["post_title"].'</a> </li> ';
-					  } ?>
-					</ul>
-					<p><a href="<?php bloginfo( 'wpurl' ); ?>/user-profile/" class="widget-button">View all</a></p>
+					if ( is_user_logged_in() ) {
+					  $user_id = get_current_user_id();
+					  query_posts( "author=$user_id&posts_per_page=5" );?>
+					  <h3>My Recent Ideas</h3>
+					  <ul>
+						 <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+							<li>
+								<a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link: <?php the_title(); ?>">
+								<?php the_title(); ?></a>
+							</li>
+					
+						<?php endwhile;?>
+						</ul>
+						<p><a href="<?php bloginfo( 'wpurl' ); ?>/user-profile/" class="widget-button">View all</a></p>					
+						<?php endif; ?>
+						<?php wp_reset_query();
+						} else {
+						 ('You have no recent ideas.');
+						} 
+					?>
 				</div>
 
 			</div><!--end secondary-->

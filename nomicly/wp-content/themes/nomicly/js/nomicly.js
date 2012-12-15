@@ -7,14 +7,27 @@
 
 
 jQuery(function() {
-	if (jQuery('.home, .category').length > 0) {
+/*
+//	MAIN SETUP 
+// 	GETTING VOTER RECORDS AND VOTE CONSENSUS
+// 	ALSO SETS UP PROCESSING USER VOTES
+*/
+	if (jQuery('.home, .category, .author').length > 0) {
 		determine_ideas_voted_on();
+		register_user_vote();
+	}
+/*
+// GET NUMBER OF AVAILABLE VOTES
+*/
+	get_available_user_votes();
+/*
+// SET UP THE CURRENT, LOGGED-IN USER PROFILE PAGE TO GET IDEA CONSENSUS	
+*/
+	if (jQuery('.page-template-profile-php').length > 0) {
+	get_idea_consensus_data();
 	}
 
-	get_available_user_votes();
 });
-
-
 
 
 /*
@@ -121,6 +134,7 @@ function determine_ideas_voted_on() {
 		var idea = idea_array[1];
 		var div_stats = '#stats_'+idea;
 		//check to see if div_stats has content
+		// if empty, this will not run
 		if( !jQuery.trim( jQuery(div_stats).html() ).length ) {
 	
 		jQuery.ajax({
@@ -181,6 +195,40 @@ function determine_ideas_voted_on() {
 
 
 /*
+// GET IDEA CONSENSUS DATA
+// 	- returns the consensus data as JSON
+//	 NOT IN USE 
+//	 NEEDS TO BE COMPLETED
+*/
+
+function get_idea_consensus_data() {
+	jQuery('article').each(function() {
+		var idea_data = jQuery(this).attr('id');
+		var idea_array = idea_data.split('-');
+		var idea = idea_array[1];
+		var positive_id = '#positive_votes_'+idea+' span';
+		var negative_id = '#negative_votes_'+idea+' span';
+	jQuery.ajax({
+				url: ajaxurl, 
+				type: "get",
+				dataType:'json',
+				data: {
+					action:'fetch_idea_consensus',
+					idea_id: idea,
+					  }, 
+				success:  function(response){
+					var votes_yes = " "+response.consensus_data.votes_yes;
+					var votes_no = " "+response.consensus_data.votes_no;
+					jQuery(positive_id).html(votes_yes);
+					jQuery(negative_id).html(votes_no);
+				} // end RESPONSE - GET STATS
+			}); // END AJAX
+		}); // END FOR EACH
+} // END GET IDEA CONSENSUS
+
+
+
+/*
 // VOTING - MAIN FEED (I.E. NON-HOT/HOT)
 // 	1. get the id for the idea voted on (may need to split the article)
 // 	2. send to process
@@ -191,7 +239,7 @@ function determine_ideas_voted_on() {
 
 //   DON'T FORGET TO APPEND THE STATS TO THE IDEA ONCE THE PERSON HAS VOTED . lol.
 */
-jQuery(function() {
+function register_user_vote() {
 	jQuery('.vote-box').delegate('.idea-vote', 'click', function() {
 		//set up all the data
 		var vote_data = jQuery(this).attr('id');
@@ -234,7 +282,7 @@ jQuery(function() {
 			}); // END .ajax		
 	return false; // so nobody goes anywhere...
 	});
-}); // END VOTING (NON-HOT/NOT)
+} // END VOTING (NON-HOT/NOT)
 
 /*
 // GET THE NUMBER OF VOTES A UERS HAS AVAILABLE 

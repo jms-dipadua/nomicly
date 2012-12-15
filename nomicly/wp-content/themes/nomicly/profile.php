@@ -145,18 +145,21 @@ if (isset($_POST['create_topic'])) {
 				 while ( have_posts() ) : the_post();  ?>
 				<article class="hentry media post" id="post-<?php the_ID(); ?>">
 						<div class="img idea-stats">
-							<p class="idea-stats-positive"><b>Positive votes:</b></p>
-							<p class="idea-stats-negative"><b>Negative votes:</b></p>
+							<p class="idea-stats-positive" id="positive_votes_<?php the_ID(); ?>"><b>Positive votes:</b><span></span></p>
+							<p class="idea-stats-negative" id="negative_votes_<?php the_ID(); ?>"><b>Negative votes:</b><span></span></p>
 							<!--<p><b>Consensus:</b> awesome</p>
 							<p><b>Influenced ideas:</b> 2</p>
 							<p><b>Shares:</b> 5</p>-->
 						</div>
+						
 						<?php the_date('m/d/y', '<span class="pub-date">', '</span>'); ?>
 						<div class="bd"><h3 class="entry-title"> <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a> </h3>
 							<?php the_content(); ?>
 							<!-- ADDS MODIFY IDEA TO THE CONTENT -->
-							<?php $wpurl = get_bloginfo ( 'wpurl' );  ?>
-							<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="widget-button modify-link">Modify Idea</a>
+							<? if (is_user_logged_in()) { ?>
+				 			<?php $wpurl = get_bloginfo ( 'wpurl' );  ?>
+							<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="modify-link widget-button">Modify Idea</a>
+					<?php }//END IF LOGGED IN  ?>
 							
 						</div>
 						<footer class="entry-meta">

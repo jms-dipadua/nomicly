@@ -82,22 +82,17 @@ get_header(); ?>
 				<?php /* Start the Loop */ ?>
 				<?php while ( have_posts() ) : the_post(); ?>
 				
-					<article class="hentry media post" id="post-<?php the_ID(); ?>">
-						<div class="img idea-stats">
-							<p><b>Positive votes:</b> 400</p>
-							<p><b>Negative votes:</b> 30</p>
-							<p><b>Consensus:</b> awesome</p>
-							<p><b>Influenced ideas:</b> 2</p>
-							<p><b>Shares:</b> 5</p>
-						</div>
-						<?php the_date('m/d/y', '<span class="pub-date">', '</span>'); ?>
-						<div class="bd"><h3 class="entry-title"> <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a> </h3>
-							<?php the_content(); ?>
-							<!-- ADDS MODIFY IDEA TO THE CONTENT -->
-							<?php $wpurl = get_bloginfo ( 'wpurl' );  ?>
-							<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="widget-button modify-link">Modify Idea</a>
+					<article class="hentry post" id="post-<?php the_ID(); ?>">
 							
-						</div>
+							<h3 class="entry-title"> <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a> </h3><?php the_date('m/d/y', '<span class="pub-date">', '</span>'); ?>
+								<?php the_content(); ?>
+								<!-- ADDS MODIFY IDEA TO THE CONTENT -->
+								<? if (is_user_logged_in()) { ?>
+								<?php $wpurl = get_bloginfo ( 'wpurl' );  ?>
+								<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="modify-link widget-button">Modify Idea</a>
+							<?php }//END IF LOGGED IN  ?>
+
+						<div id='stats_<?php the_ID(); ?>' class="vote-box"> </div>
 						<footer class="entry-meta">
 								<?php $show_sep = false; ?>
 								<?php if ( 'post' == get_post_type() ) : // Hide category and tag text for pages on Search ?>

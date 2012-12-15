@@ -228,6 +228,9 @@ p.cat-links {
 	display:block;
 	float:left;
 }
+.vote-box a:hover {
+	opacity:.7;
+}
 .agree-with, .disagree-with {
 	border:1px solid #ccc;
 	border-radius: 4px;
@@ -235,7 +238,7 @@ p.cat-links {
 }
 .agree-with {
 	background: #f8f8f8 url(images/thumbs-up.png) 5px 3px no-repeat;
-	margin-right:15px;
+	margin-right:5px;
 }
 .disagree-with {
 	background: #f8f8f8 url(images/thumbs-down.png) 5px 5px no-repeat;
@@ -976,7 +979,7 @@ a:hover {
 }
 .entry-title,
 .entry-header .entry-meta {
-	padding-right: 76px;
+	padding-right: 20px;
 }
 .entry-title {
 	clear: both;
