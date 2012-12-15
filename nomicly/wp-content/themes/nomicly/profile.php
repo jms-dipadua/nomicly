@@ -36,9 +36,10 @@ if (isset($_POST['create_topic'])) {
 					</div>
 					<div class="bd">	  
 						<?php  echo '<h3 class="entry-title">' . $current_user->user_login . '</h3>'; ?>
-						<p><b>Ideas:</b> <?php $user_id = get_current_user_id(); $post_count = count_user_posts($user_id); echo "$post_count";?></p>
-						<p><b>Topics:</b> 30</p>
-						<p><b>Reputation:</b> awesome</p>
+						<p class="sidebar-stats-topics"><b>Ideas:</b> <?php $user_id = get_current_user_id(); $post_count = count_user_posts($user_id); echo "$post_count";?></p>
+						<p class="sidebar-stats-topics"><b>Topics:</b> <?php echo count_user_topics($user_id);?></p>
+						<p class="sidebar-stats-votes"><b>Votes Available:</b><span></span></p>
+						<!--<p><b>Reputation:</b> awesome</p>-->
 					</div>
 				</div>
 	
@@ -144,11 +145,11 @@ if (isset($_POST['create_topic'])) {
 				 while ( have_posts() ) : the_post();  ?>
 				<article class="hentry media post" id="post-<?php the_ID(); ?>">
 						<div class="img idea-stats">
-							<p><b>Positive votes:</b> 400</p>
-							<p><b>Negative votes:</b> 30</p>
-							<p><b>Consensus:</b> awesome</p>
+							<p class="idea-stats-positive"><b>Positive votes:</b></p>
+							<p class="idea-stats-negative"><b>Negative votes:</b></p>
+							<!--<p><b>Consensus:</b> awesome</p>
 							<p><b>Influenced ideas:</b> 2</p>
-							<p><b>Shares:</b> 5</p>
+							<p><b>Shares:</b> 5</p>-->
 						</div>
 						<?php the_date('m/d/y', '<span class="pub-date">', '</span>'); ?>
 						<div class="bd"><h3 class="entry-title"> <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a> </h3>

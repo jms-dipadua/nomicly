@@ -356,6 +356,21 @@ function create_new_topic() {
 
 
 /*
+// COUNT USER CREATED TOPICS
+*/
+function count_user_topics ($user_id) {
+	global $wpdb;
+	$user = $user_id;
+	
+	$topic_count_query = $wpdb->get_results(
+	"SELECT count(topic_id) 
+	FROM nomicly_user_topics 
+	WHERE user_id = '$user'", ARRAY_N);
+	$topic_count = $topic_count_query[0][0];
+	return $topic_count;
+}
+
+/*
 // MODIFY IDEAS
 // to modify an idea, you just have to create a post
 // the create idea function handles all ancestry and category stuff

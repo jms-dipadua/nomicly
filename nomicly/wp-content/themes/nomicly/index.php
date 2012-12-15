@@ -36,12 +36,13 @@ get_header();
 					<div class="bd">	  
 						<h4><a href="<?php bloginfo( 'wpurl' ); ?>/user-profile/"><?php  echo $current_user->user_login ?></a></h4>
 						
-						<p><b>Ideas:</b> 
+						<p class="sidebar-stats-ideas"><b>Ideas:</b> 
 						<?php 	$user_id = get_current_user_id();
 						$post_count = count_user_posts($user_id);
 						echo "$post_count"; ?>
 						</p>
-						<p><b>Topics:</b> 30</p>
+						<p class="sidebar-stats-topics"><b>Topics:</b> <?php echo count_user_topics($user_id);?></p>
+						<p class="sidebar-stats-votes"><b>Votes Available:</b><span></span></p>
 					</div>
 				</div>
 			<!--new idea box-->	

@@ -226,6 +226,7 @@ jQuery(function() {
 						var votes_yes = response.vote_response_data.votes_yes;
 						var votes_no = response.vote_response_data.votes_no;
 						jQuery(div_stats).html('<p>Vote Successful! <br /> Current Consensus<br /> Votes Yes: '+votes_yes+'    Votes No: '+votes_no+'</p>');
+						get_available_user_votes ();
 					}// END SUCCESSFUL VOTE
 				}	// end RESPONSE 
  				  // in future let them re-vote (change vote) 
@@ -257,9 +258,9 @@ function get_available_user_votes () {
 					}
 					else {
 						var num_votes_avail = response.available_votes_data;
-						var display = "<p><b>Votes Available:</b> "+num_votes_avail+ "</p>";
+							num_votes_avail = " "+num_votes_avail;
 							// 2. append to the user box. 
-						jQuery('.profile-sidebar-box .bd').not('.author .profile-sidebar-box .bd').append(display);
+						jQuery('.sidebar-stats-votes span').html(num_votes_avail);
 		 			}
    			}  // END response
 		}); // END .ajax

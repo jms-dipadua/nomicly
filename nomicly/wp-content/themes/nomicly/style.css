@@ -225,16 +225,20 @@ p.cat-links {
 .vote-box a {
 	font-size:11px;
 	height:18px;
-	padding-left:20px;
 	display:block;
 	float:left;
 }
+.agree-with, .disagree-with {
+	border:1px solid #ccc;
+	border-radius: 4px;
+	padding: 4px 5px 4px 28px;
+}
 .agree-with {
-	background: url(images/thumbs-up.png) no-repeat;
+	background: #f8f8f8 url(images/thumbs-up.png) 5px 3px no-repeat;
 	margin-right:15px;
 }
 .disagree-with {
-	background: url(images/thumbs-down.png) no-repeat;
+	background: #f8f8f8 url(images/thumbs-down.png) 5px 5px no-repeat;
 }
 /* compare ideas */
 .compare-vote-results {
