@@ -755,7 +755,15 @@ a:hover {
 	font-size:12px;
 	color:#eee;
 }
-
+.reg-login a {
+	color:#eee;
+}
+.reg-login a.reg-link {
+	padding-right:10px;
+	border-right: 1px solid #eee;
+    margin-right: 5px;
+    padding-right: 8px;
+}
 /* =Menu
 -------------------------------------------------------------- */
 
@@ -827,7 +835,8 @@ a:hover {
 	
 }
 #access li:hover > a,
-#access a:focus {
+#access a:focus,
+.reg-login a:hover {
 	text-shadow: 0 0 16px #fff;
 	color:#fff;
 }

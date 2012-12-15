@@ -9,9 +9,35 @@
  * @since Twenty Eleven 1.0
  */
 get_header(); ?>
+		
+	<div class="full-width">
+		<!--profile box-->
+				<div class="profile-sidebar-box media" style="padding: 2%">
+				<div class="img">
+					<?php global $current_user;
+						  get_currentuserinfo();
+						  
+						  echo get_avatar( $current_user->user_email, $size = '100' );?>
+					</div>
+					<div class="bd">	  
+						<?php
+							global $post;
+							$author_id=$post->post_author;
+							$field=user_login;
+							the_author_meta( $field, $author_id );
+							echo '<h3 class="entry-title">' .the_author_meta(). '</h3>';
+							?>
+						<p><b>Ideas:</b> <?php $user_id = get_current_user_id(); $post_count = count_user_posts($user_id); echo "$post_count";?></p>
+						<p><b>Topics:</b> 30</p>
+						<p><b>Reputation:</b> awesome</p>
+					</div>
+				</div>
+	
+	</div>		
 
+		<!--start content-->
 		<section id="primary">
-			<div id="content" role="main">
+			<div id="content" role="main" class="user_feed">
 
 			<?php if ( have_posts() ) : ?>
 
@@ -25,9 +51,9 @@ get_header(); ?>
 					the_post();
 				?>
 
-				<header class="page-header">
+			<!--	<header class="page-header">
 					<h1 class="page-title author"><?php printf( __( 'Author Archives: %s', 'twentyeleven' ), '<span class="vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( get_the_author_meta( "ID" ) ) ) . '" title="' . esc_attr( get_the_author() ) . '" rel="me">' . get_the_author() . '</a></span>' ); ?></h1>
-				</header>
+				</header>-->
 
 				<?php
 					/* Since we called the_post() above, we need to
@@ -85,6 +111,12 @@ get_header(); ?>
 
 			</div><!-- #content -->
 		</section><!-- #primary -->
+		
+		<!--nav box-->
+		<div class="secondary widget-area" role="complementary">	
+			<?php if ( ! dynamic_sidebar( 'sidebar-2' ) ) ?><!--sidebar nav in showcase widget area-->
+		</div><!--end secondary-->	
 
-<?php get_sidebar(); ?>
+
+
 <?php get_footer(); ?>

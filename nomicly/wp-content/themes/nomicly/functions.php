@@ -580,7 +580,7 @@ function get_vote_record($user_id, $idea_id) {
 function get_available_votes($user_id) {
 	global $wpdb;
 	$user = $user_id;
-	$cache_count = $wpdb->get_var("SELECT num_votes_avail  FROM nomicly_user_vote_cache  WHERE user_id = '$user'");
+	$cache_count = $wpdb->get_var("SELECT num_votes_avail FROM nomicly_user_vote_cache  WHERE user_id = '$user'");
 	return $cache_count;
 } // END GET AVAILABLE VOTES
 
@@ -685,6 +685,8 @@ function change_vote($user_id, $idea_id) {
 // this section of code encompasses the ajax requests and handling. 
 */
 // embed the javascript file that makes the AJAX request
+// but it doesn't fucking work. 
+// wrote a hack into this functions.php file (first few lines)
 
 function add_nomicly_js(){  
 	wp_enqueue_script( 'nomicly.js', get_bloginfo('template_directory') . "/js/nomicly.js", array( 'jquery' ) );  
@@ -788,8 +790,22 @@ add_action('wp_ajax_nopriv_fetch_idea_consensus', 'fetch_idea_consensus' );
 
 
 function determine_user_available_votes() {
-	$user_id = $_POST['user_id'];
-	$available_votes = get_available_votes($user_id);
+	if (isset($_POST['user_id'])) {
+		$user_id = $_POST['user_id'];
+	}
+	else {
+		$user_id = get_current_user_id();
+	}	
+	// JUST TO MAKE SURE THIS DOENS'T ERROR OUT DUE TO LACK OF A UESR
+	// PUTTING IN A IS_LOGGED IN CHECK FIRST
+	// RETURNING NULL IS HOW I'VE HANDLED THIS IN THE PAST
+	// SO CONTINUING THAT HERE.
+	if ( empty($user_id) ) { 
+		$available_votes = "NULL";
+		}		
+	else {
+		$available_votes = get_available_votes($user_id);
+	}
 	
 	$available_votes_data = array (
 		"available_votes_data" => $available_votes

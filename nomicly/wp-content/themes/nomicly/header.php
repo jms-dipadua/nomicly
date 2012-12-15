@@ -78,7 +78,10 @@
 				<a href="<?php echo wp_logout_url(); ?>" class="reg-login">Logout</a>
 			<?php } 
 			else { ?>
-				<a href="<?php bloginfo( 'wpurl' ); ?>/wp-login.php?action=register" class="reg-login">Register/Login</a>
+				<span class="reg-login">
+					<a href="<?php bloginfo( 'wpurl' ); ?>/wp-login.php?action=register" class="reg-link">Register</a>
+					<a href="<?php bloginfo( 'wpurl' ); ?>/wp-login.php">Login</a>	
+				</span>			
 				
 			<?php }
 			?> 

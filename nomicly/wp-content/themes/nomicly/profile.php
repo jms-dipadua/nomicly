@@ -35,7 +35,7 @@ if (isset($_POST['create_topic'])) {
 						  echo get_avatar( $current_user->user_email, $size = '100' );?>
 					</div>
 					<div class="bd">	  
-						<?php  echo '<h3 class="entry-title">' . $current_user->user_login . '</h4>'; ?>
+						<?php  echo '<h3 class="entry-title">' . $current_user->user_login . '</h3>'; ?>
 						<p><b>Ideas:</b> <?php $user_id = get_current_user_id(); $post_count = count_user_posts($user_id); echo "$post_count";?></p>
 						<p><b>Topics:</b> 30</p>
 						<p><b>Reputation:</b> awesome</p>
@@ -173,5 +173,12 @@ if (isset($_POST['create_topic'])) {
 			
 			</div><!-- #content -->
 		</div><!-- #primary -->
+		
+		<!--logged in navbox-->
+		<?php if ( is_user_logged_in() ) { ?>		
+			<div class="secondary widget-area" role="complementary">	
+			<?php if ( ! dynamic_sidebar( 'sidebar-2' ) ) ?><!--sidebar nav in showcase widget area-->
+			</div><!--end secondary-->	
+		<?php } ?>
 
 <?php get_footer(); ?>

@@ -11,6 +11,7 @@ jQuery(function() {
 		determine_ideas_voted_on();
 	}
 
+	get_available_user_votes();
 });
 
 
@@ -235,12 +236,34 @@ jQuery(function() {
 }); // END VOTING (NON-HOT/NOT)
 
 /*
-// GET THE NUMBER OF VOTES A UERS HAS AVAILABLE (OR SHOULD THIS BE IN PHP ONLY?)
-	// - seems like this is largely handled when a person tries to vote
-	// - the argument *for* this function is to *display* the num votes to the user
-		// -- and to update the num votes after a person votes
+// GET THE NUMBER OF VOTES A UERS HAS AVAILABLE 
+// 	- doing this hear to help continue with the design patter
+// 	- such that most of the page loads, 
+// 	- then i go and get the user-specific stuff 
 */ 
-
+function get_available_user_votes () {
+	jQuery.ajax({
+			url: ajaxurl, 
+			type: "GET",
+			dataType:'json',
+			data: {
+	      		action:'determine_user_available_votes',
+      			  }, 
+ 			success:  function(response){
+					// 1. get the num votes
+					// 		-if not logged in, response = NULL (&& DO NOTHING)
+					if (response.available_votes_data == "NULL") {
+					return;
+					}
+					else {
+						var num_votes_avail = response.available_votes_data;
+						var display = "<p>Votes Available: "+num_votes_avail+ "</p>";
+							// 2. append to the user box. 
+						jQuery('.profile-sidebar-box').append(display);
+		 			}
+   			}  // END response
+		}); // END .ajax
+} // END GET_AVAILABLE_USER_VOTES
 
 /*
 // NEW IDEA POLLING
