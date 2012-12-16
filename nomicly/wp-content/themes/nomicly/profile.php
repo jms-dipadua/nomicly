@@ -137,7 +137,8 @@ if (isset($_POST['create_topic'])) {
 			// only get posts from this author and exclude the user profile page
 			$query_args = array(
 					'author' => $user_id,
-					'exclude' => 59
+					'exclude' => 59,
+					'paged' => get_query_var('paged')
 					);
 				query_posts( $query_args ); 
 				global $wpdb;

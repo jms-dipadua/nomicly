@@ -273,7 +273,7 @@ function register_user_vote() {
 					// append the consensus to the stats box
 						var votes_yes = response.vote_response_data.votes_yes;
 						var votes_no = response.vote_response_data.votes_no;
-						jQuery(div_stats).html('<p>Vote Successful! <br /> Current Consensus<br /> Votes Yes: '+votes_yes+'    Votes No: '+votes_no+'</p>');
+						jQuery(div_stats).html('<div class="idea-stats"><p>Vote Successful!<br /> <span class="votes-yes"><b>Votes Yes: </b>'+votes_yes+'</span><span class="votes-no"><b>Votes No:</b> '+votes_no+'</span></p></di>');
 						get_available_user_votes ();
 					}// END SUCCESSFUL VOTE
 				}	// end RESPONSE 
