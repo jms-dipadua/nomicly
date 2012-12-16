@@ -639,9 +639,12 @@ function increase_available_votes($user_id, $award_amount) {
 	}
 // 3. if NOT, award votes to user
 	//	a. calc max award
-	// 	b. if amount > max, set new_vote_total = max_votes
+	// 	b. if award_amount > max_votes, set new_vote_total = max_votes
 	//		-- OTHERWISE, set new_vote_total = award_amount + old_amount
 	//	c. then award
+	//		-- NOTE, Quirky BUG:
+				// have to calc the 'new total' 
+				// because: num_votes_avail = num_votes_avail+'$amount' isn't supported
 	$max_award_amount = $max_votes - $avail_votes;
 		if ($amount > $max_award_amount) {
 			$new_vote_total = $max_award_amount;
@@ -649,12 +652,6 @@ function increase_available_votes($user_id, $award_amount) {
 		else {
 			$new_vote_total = $amount + $avail_votes;
 		}
-	/*
-	// 	BUG
-	//	- APPEARS YOU CAN'T USE THE +$AMOUNT. HAVE TO PASS IN AN ACTUAL NUMBER
-	//	- NEXT STEP 
-			-- TRY TO USE EXTRAPOLATIVE KEYS: %d, etc. 
-	*/
 	$query = "UPDATE nomicly_user_vote_cache
 			SET num_votes_avail = '$new_vote_total', updated_at = '$date' 
 			WHERE user_id = '$user'";
@@ -700,6 +697,7 @@ function decrease_available_votes($user_id) {
 	*/
 function get_user_max_votes($user_id) {
 	global $wpdb;
+	$table_user_vote_cache = $wpdb -> prefix.'user_vote_cache';
 	$user = $user_id;
 	$max_votes = $wpdb->get_var("SELECT max_votes FROM $table_user_vote_cache WHERE user_id = '$user'"); 
 	return $max_votes;

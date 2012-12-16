@@ -211,9 +211,9 @@ function nomicly_award_votes() {
 		// 	-- later versions may need to deal w/ status
 		//	-- status is *not* really supported in WP at this time...
 	global $wpdb;
-	$table = $wpdb ->prefix."users";
+	$table = $wpdb ->prefix."user_vote_cache";
 	$award_amount = 10;
-	$user_ids = $wpdb->get_col("SELECT ID FROM nomicly_users");
+	$user_ids = $wpdb->get_col("SELECT user_id FROM $table");
 	if ( $user_ids ) {
 		foreach ( $user_ids as $user_id ) { 	
 		// GIVE THEM VOTES

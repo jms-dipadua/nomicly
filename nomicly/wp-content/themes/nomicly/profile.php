@@ -194,8 +194,8 @@ if (isset($_POST['create_topic'])) {
 			<?php twentyeleven_content_nav( 'nav-below' ); ?>
 				<?php
 				if (!have_posts()) {
-				 		echo "Looks like you haven't created any ideas! <br /> 
-				 		  That makes us a Sad Panda. :( <br />";
+				 		echo "<p style='padding:10px'>Looks like you haven't created any ideas! <br /> 
+				 		  That makes us a Sad Panda. :( </p>";
 				 		} // END NO POSTS FOR USER	
 					?>
 					

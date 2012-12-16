@@ -19,15 +19,7 @@ if(isset($_POST['modify_idea'])) {
 	<div id="secondary" class="widget-area" role="complementary">		
 
 			<!--related ideas box-->
-				<div class="widget recent-ideas-sidebox">	
-					<h3>Related Ideas</h3>
-					<ul>
-						<li><a href="">This is a related idea link</a></li>
-						<li><a href="">This is a related idea link</a></li>
-						<li><a href="">This is a related idea link</a></li>
-					</ul>
-					<p><a href="" class="widget-button">View all</a></p>
-				</div>
+				<div class="widget recent-ideas-sidebox"><?php related_posts(); ?></div>
 
 			</div><!--end secondary-->
 		<?php } ?>	
