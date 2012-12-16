@@ -42,14 +42,15 @@ function grant_new_user_votes ($user_id) {
 	$table_user_cache = $wpdb->prefix."user_vote_cache";
 	$award_amount = 10;
 	
-	//POPULATE INTO USER_VOTE_CACHE
+	//  POPULATE INTO USER_VOTE_CACHE
+	//  && GIVE THEM VOTES
 		$initial_user_data = array (
 		'user_id' => $user,
-		'created_at' => $date
+		'num_votes_avail' => $award_amount,
+		'created_at' => $date,
+		'updated_at' => $date
 		);
 		$wpdb->insert( $table_user_cache, $initial_user_data );
-	// GIVE THEM VOTES
-		increase_available_votes($user, $award_amount);
 } // END NEW USER VOTE GRANT
 
 
@@ -699,7 +700,7 @@ function get_user_max_votes($user_id) {
 	global $wpdb;
 	$table_user_vote_cache = $wpdb -> prefix.'user_vote_cache';
 	$user = $user_id;
-	$max_votes = $wpdb->get_var("SELECT max_votes FROM $table_user_vote_cache WHERE user_id = '$user'"); 
+	$max_votes = $wpdb->get_var("SELECT max_votes FROM nomicly_user_vote_cache WHERE user_id = '$user'"); 
 	return $max_votes;
 } // END GET MAX VOTES
 

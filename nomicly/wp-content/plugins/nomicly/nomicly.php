@@ -187,7 +187,7 @@ function award_initial_votes() {
 	global $wpdb;
 	$table_users = $wpdb ->prefix."users";
 	$table_user_cache = $wpdb ->prefix."user_vote_cache";
-	$award_amount = 10;
+	$award_amount = 1;
 	$date = date('Y-m-d H:i:s');
 
 	$user_ids = $wpdb->get_col("SELECT ID FROM nomicly_users");
@@ -195,12 +195,14 @@ function award_initial_votes() {
 		foreach ( $user_ids as $user_id ) { 	
 		//POPULATE INTO USER_VOTE_CACHE
 			$initial_user_data = array (
-			'user_id' => $user_id,
-			'created_at' => $date
-			);
+				'user_id' => $user_id,
+				'num_votes_avail' => $award_amount,
+				'created_at' => $date,
+				'updated_at' => $date
+				);
 			$wpdb->insert( $table_user_cache, $initial_user_data );
 		// GIVE THEM VOTES
-			increase_available_votes($user_id, $award_amount);
+		//	increase_available_votes($user_id, $award_amount);
 		}// END FOR EACH
 	}// USERS EXIST
 }// END AWARD INITIAL VOTES
@@ -212,7 +214,7 @@ function nomicly_award_votes() {
 		//	-- status is *not* really supported in WP at this time...
 	global $wpdb;
 	$table = $wpdb ->prefix."user_vote_cache";
-	$award_amount = 10;
+	$award_amount = 1;
 	$user_ids = $wpdb->get_col("SELECT user_id FROM $table");
 	if ( $user_ids ) {
 		foreach ( $user_ids as $user_id ) { 	
