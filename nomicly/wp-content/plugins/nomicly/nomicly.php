@@ -21,9 +21,17 @@ Detailed Overview:
 /*
 // BUG/WHERE I LEFT OFF
 // - cron created successfully
-// - @ activation, get header outputs
-// - suspect it has something to do with calling functions in the functions.php file
-// - not populating user_vote_cache or awarding votes
+// - creates tables
+// - populates users
+// - awards votes 	
+	// NOTE:
+		// THE CRON JOB WILL RUN WHEN THIS IS INITIALIZED
+		// BUT IT RUNS *AFTER* THE SETUP FUNCTIONS COMPLETE 
+		// 		(note 1 sec diff between created_at and updated_at...)
+		// DON'T KNOW WHY...maybe because the "time stamp" for running still matches?
+		// TO AVOID GRANTING TOO MANY VOTES::
+		// - THE INITIALIZATION GRANTS USERS 0 VOTES
+		// - THE CRON THEN RUNS AND GRANTS USERS 10 VOTES. 
 */
 
 
@@ -54,8 +62,8 @@ function nomicly_activation() {
 
 // CRON SETUP
 	create_award_votes_cron();
-// AWARD INITIAL VOTES	
-	award_initial_votes();
+// POPULATE USER_VOTE_CACHE	
+	initialize_user_vote_cache();
 
 }//end of nomicly_activiation
 
@@ -181,13 +189,13 @@ function create_award_votes_cron() {
 // v1.0
 */
 
-function award_initial_votes() {
+function initialize_user_vote_cache() {
 	// 1. get all users
 	// 2. populate them into the user_vote_cache table w/ 10 votes each
 	global $wpdb;
 	$table_users = $wpdb ->prefix."users";
 	$table_user_cache = $wpdb ->prefix."user_vote_cache";
-	$award_amount = 1;
+	$award_amount = 0;
 	$date = date('Y-m-d H:i:s');
 
 	$user_ids = $wpdb->get_col("SELECT ID FROM nomicly_users");
@@ -214,7 +222,7 @@ function nomicly_award_votes() {
 		//	-- status is *not* really supported in WP at this time...
 	global $wpdb;
 	$table = $wpdb ->prefix."user_vote_cache";
-	$award_amount = 1;
+	$award_amount = 10;
 	$user_ids = $wpdb->get_col("SELECT user_id FROM $table");
 	if ( $user_ids ) {
 		foreach ( $user_ids as $user_id ) { 	

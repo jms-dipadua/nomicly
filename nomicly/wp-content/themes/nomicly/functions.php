@@ -31,28 +31,12 @@ return $query_variables;
 }
 
 /*
-// ADD USERS TO THE USER VOTE CACHE 
+//	REGISTRATION AUGMENTATION FOR VOTING
+//	ADD USERS TO THE USER VOTE CACHE 
 // 	&& GIVE NEW VOTES TO NEW USERS AFTER REGISTERING
+// 	- ACTUAL FUNCTION DOWN WITH THE REST OF THE CUSTOM VOTING STUFF
 */
 add_action( 'user_register', 'grant_new_user_votes' ); 
-
-function grant_new_user_votes ($user_id) {
-	global $wpdb;
-	$user = $user_id;
-	$table_user_cache = $wpdb->prefix."user_vote_cache";
-	$award_amount = 10;
-	
-	//  POPULATE INTO USER_VOTE_CACHE
-	//  && GIVE THEM VOTES
-		$initial_user_data = array (
-		'user_id' => $user,
-		'num_votes_avail' => $award_amount,
-		'created_at' => $date,
-		'updated_at' => $date
-		);
-		$wpdb->insert( $table_user_cache, $initial_user_data );
-} // END NEW USER VOTE GRANT
-
 
 /*
 /// CREATE NEW IDEAS
@@ -385,9 +369,9 @@ function count_user_topics ($user_id) {
 	$user = $user_id;
 	
 	$topic_count_query = $wpdb->get_results(
-	"SELECT count(topic_id) 
-	FROM nomicly_user_topics 
-	WHERE user_id = '$user'", ARRAY_N);
+		"SELECT count(topic_id) 
+		FROM nomicly_user_topics 
+		WHERE user_id = '$user'", ARRAY_N);
 	$topic_count = $topic_count_query[0][0];
 	return $topic_count;
 }
@@ -457,9 +441,30 @@ function get_children_posts() {
 /* 
 // CUSTOM VOTING SECTION
 */
-	/*
-	* RECORD_IDEA_VOTE - records the person's choice on an idea
-	*/
+
+/*
+// GRANT NEWLY REGISTERED USERS SOME VOTES
+*/
+function grant_new_user_votes ($user_id) {
+	global $wpdb;
+	$user = $user_id;
+	$table_user_cache = $wpdb->prefix."user_vote_cache";
+	$award_amount = 10;
+	
+	//  POPULATE INTO USER_VOTE_CACHE
+	//  && GIVE THEM VOTES
+		$initial_user_data = array (
+		'user_id' => $user,
+		'num_votes_avail' => $award_amount,
+		'created_at' => $date,
+		'updated_at' => $date
+		);
+		$wpdb->insert( $table_user_cache, $initial_user_data );
+} // END NEW USER VOTE GRANT
+
+/*
+* RECORD_IDEA_VOTE - records the person's choice on an idea
+*/
 function record_idea_vote() {
 	global $wpdb;
 	$table_user_idea_votes = $wpdb->prefix."user_idea_votes"; 
@@ -487,9 +492,9 @@ function record_idea_vote() {
 	return $new_consensus;	
 } // END RECORD IDEA VOTE
 
-	/*
-	// GET CURRENT CONSENSUS
-	*/
+/*
+// GET CURRENT CONSENSUS
+*/
 function get_current_consensus($idea_id) {
 	global $wpdb;
 	//$table = $wpdb -> prefix."idea_consensus";
@@ -571,12 +576,12 @@ function update_idea_consensus($idea_id, $vote_type) {
 	return $current_idea_stats;
 } // END UPDATE CONSENSUS
 
-	/*
-	// GET_VOTE_RECORD - determine whether a person has voted on a specific idea or not
-	// TRUE = HAS VOTED = 1
-	// FALSE = NOT VOTED = 0
-			// also returns the vote data (yes/no, date, etc) if TRUE
-	*/
+/*
+// GET_VOTE_RECORD - determine whether a person has voted on a specific idea or not
+// TRUE = HAS VOTED = 1
+// FALSE = NOT VOTED = 0
+		// also returns the vote data (yes/no, date, etc) if TRUE
+*/
 function get_vote_record($user_id, $idea_id) {
 	global $wpdb;
 	$table = $wpdb ->prefix."user_idea_votes";
