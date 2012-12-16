@@ -67,7 +67,7 @@ footer, header, hgroup, menu, nav, section {
 
 /* utility */
 /* ====== media ====== */
-.media {margin:10px; padding-bottom:10px;}
+.media {margin:10px 10px 10px 0; padding-bottom:10px;}
 .media, .bd {overflow:hidden; _overflow:visible; zoom:1;}
 .media .img {float:left; margin-right: 10px;}
 .media .img img{display:block;border-radius:3px;}
@@ -224,10 +224,7 @@ p.cat-links {
 
 }
 .vote-box a {
-	font-size:11px;
-	height:18px;
-	display:block;
-	float:left;
+	
 }
 .vote-box a:hover {
 	opacity:.7;
@@ -236,6 +233,11 @@ p.cat-links {
 	border:1px solid #ccc;
 	border-radius: 4px;
 	padding: 4px 5px 4px 28px;
+	margin-bottom:10px;
+	font-size:11px;
+	height:18px;
+	display:block;
+	float:left;
 }
 .agree-with {
 	background: #f8f8f8 url(images/thumbs-up.png) 5px 3px no-repeat;
@@ -243,6 +245,13 @@ p.cat-links {
 }
 .disagree-with {
 	background: #f8f8f8 url(images/thumbs-down.png) 5px 5px no-repeat;
+}
+.votes-yes {
+	margin-right:10px;
+	color:#368944;
+}
+.votes-no {
+	color:#ff4444;
 }
 /* compare ideas */
 .compare-vote-results {

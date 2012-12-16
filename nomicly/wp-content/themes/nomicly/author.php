@@ -85,8 +85,12 @@ get_header(); ?>
 					<article class="hentry post" id="post-<?php the_ID(); ?>">
 						<header class="entry-header">
 							<span class="pub-date"><?php the_time('m/d/y'); ?></span>
-							<h3 class="entry-title"> <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a> </h3>
-							</header>
+								<div class="media">
+										<div class="bd">
+											<h1 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf( esc_attr__( 'Permalink to %s', 'twentyeleven' ), the_title_attribute( 'echo=0' ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h1>
+										</div>
+									</div>
+							</header><!-- .entry-header -->
 								<?php the_content(); ?>
 								<!-- ADDS MODIFY IDEA TO THE CONTENT -->
 								<? if (is_user_logged_in()) { ?>

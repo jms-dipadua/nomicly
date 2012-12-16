@@ -155,13 +155,12 @@ if (isset($_POST['create_topic'])) {
 						<span class="pub-date"><?php the_time('m/d/y'); ?></span>
 						<div class="bd"><h3 class="entry-title"> <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a> </h3>
 							<?php the_content(); ?>
-							<!-- ADDS MODIFY IDEA TO THE CONTENT -->
+						</div>
+						<!-- ADDS MODIFY IDEA TO THE CONTENT -->
 							<? if (is_user_logged_in()) { ?>
 				 			<?php $wpurl = get_bloginfo ( 'wpurl' );  ?>
 							<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="modify-link widget-button">Modify Idea</a>
 					<?php }//END IF LOGGED IN  ?>
-							
-						</div>
 						<footer class="entry-meta">
 								<?php $show_sep = false; ?>
 								<?php if ( 'post' == get_post_type() ) : // Hide category and tag text for pages on Search ?>

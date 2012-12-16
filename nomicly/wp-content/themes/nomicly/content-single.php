@@ -15,7 +15,7 @@
 	<header class="entry-header">
 	<span class="pub-date"><?php the_time('m/d/y'); ?></span>
 		<div class="media">
-				<div class="feed-gravatar img"> <? echo get_avatar( get_the_author_meta('user_email'), $size = '48'); ?><a href="<?php bloginfo( 'wpurl' ); ?>/user-profile/"><?php  the_author(); ?></a> </div>
+				<div class="feed-gravatar img"> <? echo get_avatar( get_the_author_meta('user_email'), $size = '48'); ?><a href="<?php echo get_author_posts_url(get_the_author_meta( 'ID' )); ?>"><?php the_author_meta('display_name'); ?></a> </div>
 				<div class="bd">
 				
 					<h1 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf( esc_attr__( 'Permalink to %s', 'twentyeleven' ), the_title_attribute( 'echo=0' ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h1>
@@ -29,7 +29,9 @@
 	<?php $wpurl = get_bloginfo ( 'wpurl' );  ?>
 			<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="widget-button modify-link">Modify Idea</a>
 	<?php }//END IF LOGGED IN  ?>
-
+		
+		<div id='stats_<?php the_ID(); ?>' class="vote-box"> </div>
+		
 		<?php the_content(); ?>
 		<?php wp_link_pages( array( 'before' => '<div class="page-link"><span>' . __( 'Pages:', 'twentyeleven' ) . '</span>', 'after' => '</div>' ) ); ?>
 	</div><!-- .entry-content -->

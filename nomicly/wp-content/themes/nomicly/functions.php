@@ -30,6 +30,28 @@ $query_variables[] = 'idea';
 return $query_variables;
 }
 
+/*
+// ADD USERS TO THE USER VOTE CACHE 
+// 	&& GIVE NEW VOTES TO NEW USERS AFTER REGISTERING
+*/
+function grant_new_user_votes ($user_id) {
+	global $wpdp;
+	$user = $user_id;
+	$table_user_cache = $wpdb -> prefix."_user_vote_cache";
+	$award_amount = 10;
+	
+	//POPULATE INTO USER_VOTE_CACHE
+		$initial_user_data = array (
+		'user_id' => $user,
+		'created_at' => $date
+		);
+		$wpdb->insert( $table_user_cache, $initial_user_data );
+	// GIVE THEM VOTES
+		increase_available_votes($user_id, $award_amount);
+} // END NEW USER VOTE GRANT
+
+//add_action( 'user_register', 'grant_new_user_votes' ); 
+
 
 /*
 /// CREATE NEW IDEAS

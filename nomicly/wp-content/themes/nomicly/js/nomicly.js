@@ -12,7 +12,7 @@ jQuery(function() {
 // 	GETTING VOTER RECORDS AND VOTE CONSENSUS
 // 	ALSO SETS UP PROCESSING USER VOTES
 */
-	if (jQuery('.home, .category, .author').length > 0) {
+	if (jQuery('.home, .category, .author, .single-post').length > 0) {
 		determine_ideas_voted_on();
 		register_user_vote();
 	}
@@ -176,7 +176,7 @@ function determine_ideas_voted_on() {
 								else {
 								var vote_type = 'Disagreed';
 								}
-							jQuery(div_stats).append('<p>Current Consensus<br /> Votes Yes: '+votes_yes+'   Votes No: '+votes_no+'   <br /> You '+vote_type+' with this idea.</p>');
+							jQuery(div_stats).append('<div class="idea-stats"><p><span class="votes-yes"><b>Votes Yes:</b> '+votes_yes+'   </span><span class="votes-no"><b>Votes No:</b> '+votes_no+'   </span><br /> You '+vote_type+' with this idea.</p></div>');
 						} // end RESPONSE - GET STATS
 						}); // END -GET STATS AJAX
  				  // in future let them re-vote (change vote) 
@@ -392,6 +392,7 @@ jQuery(function() {
 */
 jQuery(function() {
 	jQuery('#primary').delegate('#get_next_ideas', 'click', function() {
+	jQuery('.compare-vote-results, .compare-results-box').hide();
 		jQuery.ajax({
 			url: ajaxurl, 
 			type: "get",
