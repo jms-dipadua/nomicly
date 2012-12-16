@@ -34,10 +34,12 @@ return $query_variables;
 // ADD USERS TO THE USER VOTE CACHE 
 // 	&& GIVE NEW VOTES TO NEW USERS AFTER REGISTERING
 */
+add_action( 'user_register', 'grant_new_user_votes' ); 
+
 function grant_new_user_votes ($user_id) {
-	global $wpdp;
+	global $wpdb;
 	$user = $user_id;
-	$table_user_cache = $wpdb -> prefix."_user_vote_cache";
+	$table_user_cache = $wpdb->prefix."user_vote_cache";
 	$award_amount = 10;
 	
 	//POPULATE INTO USER_VOTE_CACHE
@@ -47,10 +49,8 @@ function grant_new_user_votes ($user_id) {
 		);
 		$wpdb->insert( $table_user_cache, $initial_user_data );
 	// GIVE THEM VOTES
-		increase_available_votes($user_id, $award_amount);
+		increase_available_votes($user, $award_amount);
 } // END NEW USER VOTE GRANT
-
-//add_action( 'user_register', 'grant_new_user_votes' ); 
 
 
 /*
@@ -639,12 +639,16 @@ function increase_available_votes($user_id, $award_amount) {
 	}
 // 3. if NOT, award votes to user
 	//	a. calc max award
-	// 	b. if amount > max, set the amount = to max
+	// 	b. if amount > max, set new_vote_total = max_votes
+	//		-- OTHERWISE, set new_vote_total = award_amount + old_amount
 	//	c. then award
 	$max_award_amount = $max_votes - $avail_votes;
 		if ($amount > $max_award_amount) {
-			$amount = $max_award_amount;
+			$new_vote_total = $max_award_amount;
 			}	
+		else {
+			$new_vote_total = $amount + $avail_votes;
+		}
 	/*
 	// 	BUG
 	//	- APPEARS YOU CAN'T USE THE +$AMOUNT. HAVE TO PASS IN AN ACTUAL NUMBER
@@ -652,7 +656,7 @@ function increase_available_votes($user_id, $award_amount) {
 			-- TRY TO USE EXTRAPOLATIVE KEYS: %d, etc. 
 	*/
 	$query = "UPDATE nomicly_user_vote_cache
-			SET num_votes_avail = num_votes_avail+'$amount', updated_at = '$date' 
+			SET num_votes_avail = '$new_vote_total', updated_at = '$date' 
 			WHERE user_id = '$user'";
 	$update_query = mysql_query($query);
 			if (!$update_query ) {
