@@ -4,8 +4,6 @@
 */
 
 /* onload, get these functions ready */
-
-
 jQuery(function() {
 /*
 //	MAIN SETUP 
@@ -193,7 +191,6 @@ function determine_ideas_voted_on() {
 	});// END EACH
 } // END DETERMINE IDEAS VOTED ON
 
-
 /*
 // GET IDEA CONSENSUS DATA
 // 	- returns the consensus data as JSON
@@ -225,8 +222,6 @@ function get_idea_consensus_data() {
 			}); // END AJAX
 		}); // END FOR EACH
 } // END GET IDEA CONSENSUS
-
-
 
 /*
 // VOTING - MAIN FEED (I.E. NON-HOT/HOT)
@@ -345,8 +340,7 @@ jQuery(function() {
 		var setHidden = jQuery('#chosen_idea').attr('value', votedID);
 		var idea1 = jQuery('#idea0').val();
 		var idea2 = jQuery('#idea1').val();
-		//alert( jQuery(setHidden).attr('value') ) ;
-//		jQuery('#compare-ideas-submit').click();
+
 		jQuery.ajax({
 			url: ajaxurl, 
 			type: "POST",
@@ -359,16 +353,12 @@ jQuery(function() {
       		chosen_idea: votedID
 		  	 }, 
  			success:  function(response){
- 			// upon request success
- 			// present the statistics to the user
- 			// NOTE: need to create special ids/classes 
- 			// 	to identify the "voting results" 
- 			// 	that way it's easy after the user 'gets new ideas'
- 			//	to drop the stats from the page (i.e. "reset the voting booth")
+ 				// 1. determine which frontend-idea_1 (&2) match which backend_idea_1 
+ 					// -- this is needed due to sort/standardization of idea pairs
+ 				// 2. then append the stats appropriately 
+ 				if (response.idea_1 == idea1) {
       					jQuery('.content_for_0 .compare-vote-results').append('<span class="idea_1_consensus">'+response.idea_1_consensus_percentage+'</span>');
       					jQuery('.content_for_1 .compare-vote-results').append('<span class="idea_2_consensus">'+response.idea_2_consensus_percentage+'</span>');
-      					
-
       					jQuery('.compare-results-box').append("<p class='total_votes'>Total Votes: "+response.total_votes+'</p>');
       					
       					jQuery('.compare-results-box').append('<p class="next_ideas">'+response.get_next_ideas+'</p>');
@@ -378,7 +368,23 @@ jQuery(function() {
       					
       					jQuery('.content_for_0 .vote-link, .content_for_1 .vote-link').hide();
       					//todo:  instead of hiding this, remove it and then recreate it.  that would be more fool-proof
+      					}// END IDEA_1 (BACKEND) == IDEA_1 (FRONTEND)
+      				else {
+      					jQuery('.content_for_0 .compare-vote-results').append('<span class="idea_1_consensus">'+response.idea_2_consensus_percentage+'</span>');
+      					jQuery('.content_for_1 .compare-vote-results').append('<span class="idea_2_consensus">'+response.idea_1_consensus_percentage+'</span>');
+      					jQuery('.compare-results-box').append("<p class='total_votes'>Total Votes: "+response.total_votes+'</p>');
       					
+      					jQuery('.compare-results-box').append('<p class="next_ideas">'+response.get_next_ideas+'</p>');
+      					
+      					jQuery('.compare-results-box').show();
+      					jQuery('.compare-vote-results').show();
+      					
+      					jQuery('.content_for_0 .vote-link, .content_for_1 .vote-link').hide();
+      				
+      				
+      				
+      				
+      				}// END IDEA_1 (BACKEND) == IDEA_1 (FRONTEND)
    						}
 			});// END POST
 			return false;

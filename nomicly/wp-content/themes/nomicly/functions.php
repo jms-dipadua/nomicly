@@ -134,7 +134,12 @@ $table_pairs = $wpdb->prefix."hot_not_pairs";
 		$vote_id = insert_vote($pair_id, $chosen_idea);
 		update_pairs($pair_id, $idea_array, $chosen_idea);	
 	}
-	return $pair_id;
+	$pair_stats = array (
+		'pair_id' => $pair_id,
+		'idea_1' => $idea_array[0],
+		'idea_2' => $idea_array[1]
+		);
+	return $pair_stats;
 }// END NOMICLY_RECORD_VOTE()
 
 function insert_new_pair($pair) {
@@ -270,7 +275,7 @@ function get_hot_not_stats($pair) {
 	$total_votes = $idea_1_count + $idea_2_count;
 	// we don't want to return infinite results\
 	// IDEA 1
-	if ($idea_1_count >0 ) { 
+	if ($idea_1_count > 0) { 
 		$idea_1_consensus = ($idea_1_count / $total_votes) * 100;
 	}
 	else {
@@ -616,9 +621,9 @@ function get_vote_record($user_id, $idea_id) {
 	}
 } // END GET VOTE RECORD
 
-	/* 
-	// GET AVAILABLE VOTES
-	*/
+/* 
+// GET AVAILABLE VOTES
+*/
 function get_available_votes($user_id) {
 	global $wpdb;
 	$user = $user_id;
@@ -709,10 +714,10 @@ function get_user_max_votes($user_id) {
 	return $max_votes;
 } // END GET MAX VOTES
 
-	/*
-		// CHANGE VOTE - for when people change their minds
-		// NOT DONE
-	*/
+/*
+	// CHANGE VOTE - for when people change their minds
+	// NOT DONE
+*/
 function change_vote($user_id, $idea_id) {
 	global $wpdb;
 	$user = $user_id;
@@ -915,10 +920,14 @@ add_action('wp_ajax_process_user_vote', 'process_user_vote');
 // non-logged in user
 add_action('wp_ajax_nopriv_process_user_vote', 'process_user_vote' );
 
-  
 function process_hot_not_vote() {
-	$pair_id = nomicly_record_vote();
+	$temp_pair_stats = nomicly_record_vote();
+	$pair_id = $temp_pair_stats['pair_id'];
 	$pair_stats = get_hot_not_stats($pair_id);
+	// SEND BACK THE IDEAS SO WE CAN PROPERLY MATCH STATS ON FRONTEND
+	$pair_stats['idea_1'] = $temp_pair_stats['idea_1'];
+	$pair_stats['idea_2'] = $temp_pair_stats['idea_2'];
+	// ADD GET NEXT IDEAS BUTTON TO RESPONSE
 	$pair_stats['get_next_ideas'] = '<a href="" id="get_next_ideas" name="get_next_ideas">Get Next Ideas</a>';
 // CONVERT ARRAY TO JSON
 	$pair_stats = json_encode($pair_stats);	
