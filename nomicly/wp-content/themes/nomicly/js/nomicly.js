@@ -66,6 +66,8 @@ jQuery(function() {
       			      	
       		// then empty the form for a new idea
       		jQuery('#new_idea').val('');
+      		// UPDATE USER'S IDEA COUNT
+      		update_num_ideas_topics_count();
    			}  // END response
 		}); // END .ajax
 					return false;
@@ -278,6 +280,40 @@ function register_user_vote() {
 	return false; // so nobody goes anywhere...
 	});
 } // END VOTING (NON-HOT/NOT)
+
+
+/*
+// 	UPDATE NUMBER OF IDEAS AND TOPICS CREATED BY USERS
+//		THIS IS CALLED AFTER A PERSON CREATES A NEW IDEA OR TOPIC
+// 		MADE THIS ONE FUNCTION BECAUSE IT SEEMED EASIER AND MAY REDUCE DATA TRIPS
+//			-- DEBATABLE THEY SHOULD BE TOGETHER THOUGH...
+*/
+function update_num_ideas_topics_count() {
+	jQuery.ajax({
+			url: ajaxurl, 
+			type: "GET",
+			dataType:'json',
+			data: {
+	      		action:'fetch_user_ideas_topics_count',
+      			  }, 
+ 			success:  function(response){
+					// 1. get the num votes
+					// 		-if not logged in, response = NULL (&& DO NOTHING)
+					if (response.num_ideas_topic_data == "NULL") {
+					return;
+					}
+					else {
+						var num_ideas_created = response.num_ideas;
+						var num_topics_created = response.num_topics;
+							num_ideas_created = " "+num_ideas_created;
+							num_topics_created = " "+num_topics_created;
+							// 2. append to the user box. 
+						jQuery('.sidebar-stats-ideas span').html(num_ideas_created);
+						jQuery('.sidebar-stats-topics span').html(num_topics_created);
+		 			}
+   			}  // END response
+		}); // END .ajax
+} // END GET_AVAILABLE_USER_VOTES
 
 /*
 // GET THE NUMBER OF VOTES A UERS HAS AVAILABLE 

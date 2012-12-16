@@ -25,8 +25,8 @@ get_header(); ?>
 							$author_id=$post->post_author;
 							$field=user_login; ?>
 							<h3 class="entry-title"><?php the_author_meta( $field, $author_id ); ?> </h3>
-							<p class="sidebar-stats-ideas"><b>Ideas:</b> <?php $post_count = count_user_posts($author_id); echo "$post_count";?></p>
-							<p class="sidebar-stats-topics"><b>Topics:</b> <?php echo count_user_topics($author_id);?></p>
+							<p class="sidebar-stats-ideas"><b>Ideas:</b> <span><?php $post_count = count_user_posts($author_id); echo "$post_count";?> </span></p>
+							<p class="sidebar-stats-topics"><b>Topics:</b> <span><?php echo count_user_topics($author_id);?></span></p>
 							
 							
 							<!--<p><b>Reputation:</b> awesome</p>-->

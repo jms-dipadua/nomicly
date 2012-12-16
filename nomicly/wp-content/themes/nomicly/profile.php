@@ -36,8 +36,8 @@ if (isset($_POST['create_topic'])) {
 					</div>
 					<div class="bd">	  
 						<?php  echo '<h3 class="entry-title">' . $current_user->user_login . '</h3>'; ?>
-						<p class="sidebar-stats-topics"><b>Ideas:</b> <?php $user_id = get_current_user_id(); $post_count = count_user_posts($user_id); echo "$post_count";?></p>
-						<p class="sidebar-stats-topics"><b>Topics:</b> <?php echo count_user_topics($user_id);?></p>
+						<p class="sidebar-stats-ideas"><b>Ideas:</b> <span><?php $user_id = get_current_user_id(); $post_count = count_user_posts($user_id); echo "$post_count";?></span></p>
+						<p class="sidebar-stats-topics"><b>Topics:</b> <span><?php echo count_user_topics($user_id);?></span></p>
 						<p class="sidebar-stats-votes"><b>Votes Available:</b><span></span></p>
 						<!--<p><b>Reputation:</b> awesome</p>-->
 					</div>

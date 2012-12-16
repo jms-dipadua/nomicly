@@ -837,7 +837,7 @@ function fetch_idea_consensus() {
 	$response_data = json_encode($consensus_data);
 	// response output
 	die($response_data);	
-}
+}  // END FETCH IDEA CONSENSUS
 
 add_action('wp_ajax_fetch_idea_consensus', 'fetch_idea_consensus');
 // non-logged in user
@@ -870,11 +870,41 @@ function determine_user_available_votes() {
 	$response_data = json_encode($available_votes_data);
 	// response output
 	die($response_data);	
-}
+} // END DETERMINE USER AVAILABLE VOTES
 
 add_action('wp_ajax_determine_user_available_votes', 'determine_user_available_votes');
 // non-logged in user
 add_action('wp_ajax_nopriv_determine_user_available_votes', 'determine_user_available_votes' );
+
+function fetch_user_ideas_topics_count() {
+// 1. CHECK FOR ACTUAL USER AND GET USER_ID
+	$user_id = get_current_user_id();
+	if (empty($user_id)) {
+		$num_ideas_topic_data = array (
+			'num_ideas_topic_data' => "NULL",
+			);
+		}
+// 2. ELSE IS A USER
+	else {
+// 3. GET NUM IDEAS & NUM TOPICS
+			$num_ideas = count_user_posts($user_id);
+			$num_topics = count_user_topics($user_id);
+	$num_ideas_topic_data = array (
+		'num_ideas' => $num_ideas,
+		'num_topics' => $num_topics
+		);	
+	}
+// 4. START RETURN DATA	
+	// CONVERT  TO JSON	
+	$response_data = json_encode($num_ideas_topic_data);
+	// response output
+	die($response_data);	
+} // END GET USER IDEA & TOPIC COUNT
+
+add_action('wp_ajax_fetch_user_ideas_topics_count', 'fetch_user_ideas_topics_count');
+// non-logged in user
+add_action('wp_ajax_nopriv_fetch_user_ideas_topics_count', 'fetch_user_ideas_topics_count' );
+
 
 /*
  // PROCESS USER VOTE
