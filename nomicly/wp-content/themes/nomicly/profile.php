@@ -79,12 +79,18 @@ get_header();
 				</form> 
 			</div>
 			<!--my topics box-->
+			<!-- 
 			<div class="widget">
 				<?php
-				echo "<h3>My Topics</h3>";
+				/*
+					// BUG AS OF V0.1:
+						// -- RETURNS ALL TOPICS RATHER THAN USER SPECIFIC
+						// -- REMOVING FOR NOW
+					echo "<h3>My Topics</h3>";
 					get_user_topics($user_id);
+					*/
 				?>
-			</div>
+			</div> -->
 			<!--end topic box-->
 			<?php	} else {
 	    		echo '<div class="widget"><h3><a href="../wp-login.php?action=register">Register</a> or <a href="../wp-login.php">Login</a> to Create New Ideas</h3></div>';

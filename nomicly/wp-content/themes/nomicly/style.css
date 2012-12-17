@@ -811,7 +811,10 @@ a:hover {
 	margin: 0 0 0 -0.8125em;
 	padding-left: 0;
 }
-#access li {
+.home-link {
+	font-size:13px;
+}
+#access li, .home-link {
 	float: left;
 	position: relative;
 	top:6px;
@@ -859,7 +862,8 @@ a:hover {
 }
 #access li:hover > a,
 #access a:focus,
-.reg-login a:hover {
+.reg-login a:hover,
+.home-link a:hover {
 	text-shadow: 0 0 16px #fff;
 	color:#fff;
 }
@@ -869,7 +873,9 @@ a:hover {
 #access .current-menu-item > a,
 #access .current-menu-ancestor > a,
 #access .current_page_item > a,
-#access .current_page_ancestor > a {
+#access .current_page_ancestor > a,
+.home #access .home-link a,
+.category #access .topic-nav-item a {
 	font-weight: bold;
 	color:#63b2ec;
 	background:#000;
@@ -2726,7 +2732,7 @@ p.comment-form-comment {
 	#site-hd {
 		margin-right:10px;
 	}
-	#access ul {
+	#access ul, .home-link, .reg-login {
 		font-size: 12px;
 	}
 	#access li {

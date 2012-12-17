@@ -18,6 +18,29 @@ get_header();
 <!--logged in sidebar-->
 	<?php if ( is_user_logged_in() ) { ?>
 			<div id="secondary" class="widget-area" role="complementary">		
+			
+				<!--profile box-->
+				<div class="profile-sidebar-box widget media">
+				<div class="img">
+					<?php 
+						global $current_user;
+						get_currentuserinfo();
+						  
+						  echo get_avatar( $current_user->user_email, $size = '42' );?>
+					</div>
+					<div class="bd">	  
+						<h4><a href="<?php bloginfo( 'wpurl' ); ?>/user-profile/"><?php  echo $current_user->user_login ?></a></h4>
+						
+						<p class="sidebar-stats-ideas"><b>Ideas:</b> <span>
+						<?php 	$user_id = get_current_user_id();
+						$post_count = count_user_posts($user_id);
+						echo "$post_count"; ?> </span>
+						</p>
+						<p class="sidebar-stats-topics"><b>Topics:</b> <span><?php echo count_user_topics($user_id);?></span></p>
+						<p class="sidebar-stats-votes"><b>Votes Available:</b><span></span></p>
+					</div>
+				</div>
+				<!--create topic-->
 				<div class="widget">
 					<?php
 					//get category information
@@ -42,7 +65,7 @@ get_header();
 					<h3>Create A New Idea</h3>
 					<textarea rows="2" cols="20" name="new_idea" id="new_idea" value=""></textarea>		
 					<input type="hidden" name="category_id" id="category_id" value="'.$category_id.'" />
-					<input type="submit" name="create" value="Create" class="widget-button" />
+					<input type="submit" name="create" class="idea_submit_button" value="Create" class="widget-button" />
 					</form>';  ?>
 				
 				</div>
@@ -76,6 +99,7 @@ get_header();
 
 
 				<?php /* Start the Loop */ ?>
+				<div id="fresh-idea"></div>
 				<?php while ( have_posts() ) : the_post(); ?>
 						
 					<?php

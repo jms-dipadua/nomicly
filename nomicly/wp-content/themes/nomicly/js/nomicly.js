@@ -66,7 +66,8 @@ jQuery(function() {
  			// upon request success
  			// append new idea to top of existing ideas
  				// later you can also pole for other new ideas and append those too
-      			//alert(response.idea_1_data.ID);
+      			// POTENTIAL: improve "responsiveness" by appending idea *before* response
+      				// ...helps resolve the 4s issue...
 			// returns full array of the new post
 			// so you have title, id, link, cat, etc	
       			var theURL = response.new_idea_data.guid;
