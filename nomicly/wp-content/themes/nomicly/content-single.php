@@ -44,9 +44,9 @@
 			/* translators: used between list items, there is a space after the comma */
 			$tag_list = get_the_tag_list( '', __( ', ', 'twentyeleven' ) );
 			if ( '' != $tag_list ) {
-				$utility_text = __( 'This idea addresses %1$s and tagged %2$s.', 'twentyeleven' );
+				$utility_text = __( 'This idea addresses: %1$s and tagged %2$s.', 'twentyeleven' );
 			} elseif ( '' != $categories_list ) {
-				$utility_text = __( 'This idea addresses %1$s.', 'twentyeleven' );
+				$utility_text = __( 'This idea addresses: %1$s.', 'twentyeleven' );
 			} 
 
 			printf(

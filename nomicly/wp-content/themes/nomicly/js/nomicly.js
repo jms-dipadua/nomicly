@@ -22,9 +22,16 @@ jQuery(function() {
 // SET UP THE CURRENT, LOGGED-IN USER PROFILE PAGE TO GET IDEA CONSENSUS	
 */
 	if (jQuery('.page-template-profile-php').length > 0) {
-	get_idea_consensus_data();
+		get_idea_consensus_data();
 	}
-
+/* hide related posts widget if it's empty */
+	if (jQuery('.single-post').length > 0) {
+		related_posts_empty();
+	}
+	if (jQuery('.page-template-topics-php').length > 0) {
+		//hide topic name and truncate description, paste into topic name hidden field
+		shorten_topic_name();
+	}
 });
 
 
@@ -51,18 +58,20 @@ jQuery(function() {
       			category_id: cat_id,
       			user_id: user_id
       			  }, 
+      		 beforeSend: function () {
+      		 	// TELL USER WE HAVE NEW IDEA
+				jQuery('#fresh-idea').html('<div class="hentry"><p>Saving New Idea...</p></div>');
+      		 },
  		success:  function(response){
  			// upon request success
  			// append new idea to top of existing ideas
  				// later you can also pole for other new ideas and append those too
       			//alert(response.idea_1_data.ID);
 			// returns full array of the new post
-			// so you have title, id, link, cat, etc
-				// TELL USER WE HAVE NEW IDEA
-				jQuery('#new_idea').val('Saving New Idea...');
+			// so you have title, id, link, cat, etc	
       			var theURL = response.new_idea_data.guid;
       			// PRESENT THE NEW IDEA
-      			jQuery('#fresh-idea').load(theURL +" #article_content");
+      			jQuery('#fresh-idea').load(theURL +" .hentry");
       			      	
       		// then empty the form for a new idea
       		jQuery('#new_idea').val('');
@@ -472,3 +481,23 @@ jQuery(function() {
 	}); // END VOTE-LINK CLICKED
 });  // END GET NEW IDEAS
 
+function related_posts_empty() {
+	if( !jQuery.trim( jQuery('.related-posts-widget').html() ).length ) {
+		jQuery('.related-posts-widget').hide();
+	}
+}
+
+function shorten_topic_name() {
+	jQuery('#new-topic-submit').click(function() {
+		var description = jQuery('#new-topic-description').val();
+		
+		var shortText = jQuery.trim(description).substring(0, 100).split(" ").slice(0, -1).join(" ");
+		
+		jQuery('#new-topic-name').val(shortText);
+		if ( description == '' ){
+			alert( "Please enter a topic name");
+			return false;
+		}
+
+	});
+}

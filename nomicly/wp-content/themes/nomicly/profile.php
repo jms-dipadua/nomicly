@@ -71,12 +71,11 @@ if (isset($_POST['create_topic'])) {
 				<form method ="post" action ="#">
 					<!-- should make this a drop down to select 'idea' or 'topic' -->
 					<h3>Create A New Topic</h3>
-					Topic Name: <input type="text" name="new_topic_name" value="" /> <br />
+					<input type="hidden" name="new_topic_name" value="" id="new-topic-name"/> 
 					Topic Description: 		
-					<textarea rows="2" cols="20" name="new_topic" value="">
-					</textarea>
+					<textarea rows="2" cols="20" name="new_topic" value="" id="new-topic-description"></textarea>
 					<!-- maybe include a dropdown of all the topics too? -->
-					<input type="submit" name="create_topic" value="New Topic" class="widget-button" />
+					<input type="submit" name="create_topic" value="New Topic" class="widget-button" id="new-topic-submit" />
 				</form> 
 			</div>
 			<!--my topics box-->

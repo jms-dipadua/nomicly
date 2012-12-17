@@ -1,14 +1,30 @@
 <?php
  require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-add_action('wp_head','pluginname_ajaxurl');
-	function pluginname_ajaxurl() {?>
+// THIS GETS THE AJAX URL SET FOR ALL PAGES (BUT LOGIN)
+add_action('wp_head','create_ajaxurl');
+// THIS GETS THE AJAX URL SET FOR THE LOGIN PAGE
+add_action('login_enqueue_scripts', 'create_ajaxurl');
+//////
+	function create_ajaxurl() {?>
 		<script type="text/javascript">
 		var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
 		</script>
 	<?
 	}
 
+// REDIRECT WORK
+add_action('admin_enqueue_scripts', 'redirect_non_admins');
+
+function redirect_non_admins () {
+	if( !current_user_can('create_users')) {
+		$new_location = "http://www.jamesdipadua.com/experimental/nomicly";
+		$stats = 302;
+		wp_redirect( $new_location, $status );
+		exit;
+	} 
+	return;
+} // END REDIRECT NON ADMINS
 
 /*
 // this is for getting custom post types

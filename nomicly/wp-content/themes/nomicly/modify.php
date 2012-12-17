@@ -14,18 +14,7 @@ if(isset($_POST['modify_idea'])) {
 	}
 ?>
 
-	<!--logged in sidebar, minus navbox which is after #primary-->
-	<?php if ( is_user_logged_in() ) { ?>
-	<div id="secondary" class="widget-area" role="complementary">		
-
-			<!--related ideas box-->
-				<div class="widget recent-ideas-sidebox"><?php related_posts(); ?></div>
-
-			</div><!--end secondary-->
-		<?php } ?>	
-	<!--end logged in sidebar-->
-		
-		
+				
 		
 		<div id="primary">
 			<div id="content" role="main">
@@ -63,7 +52,7 @@ if(isset($_POST['modify_idea'])) {
 						if ( $categories_list ):
 					?>
 					<p class="cat-links">
-						<?php printf( __( '<span class="%1$s">Issues addressed:</span> %2$s', 'twentyeleven' ), 'entry-utility-prep entry-utility-prep-cat-links', $categories_list );
+						<?php printf( __( '<span class="%1$s">This idea addresses:</span> %2$s', 'twentyeleven' ), 'entry-utility-prep entry-utility-prep-cat-links', $categories_list );
 						$show_sep = true; ?>
 					</p>
 					<?php endif; // End if categories ?>

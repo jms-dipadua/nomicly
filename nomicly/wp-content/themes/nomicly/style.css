@@ -1,7 +1,7 @@
 /*
 Theme Name: Nomicly
 Theme URI: http://www.jamesdipadua.com/
-Author: James DiPadua, further (extensive) credit goes to Twenty-Eleven Team
+Author: James DiPadua, further (extensive) credit goes to Twenty-Eleven Team && Adria Mooney
 Author URI: http://jamesdipadua.com/
 Description: A tweaked version of Twenty-Eleven to facilitate experimental implementation of Nomicly.
 Version: 0.1
@@ -131,7 +131,12 @@ body {
 	position:relative;
 	z-index:100000;
 }
-/* nomicly widgets and styles */
+
+/* 
+	// NOMICLY WIDGETS AND STYLES
+	// THIS CONTAINS MOST OF THE CHANGES NEEDED TO SUPPORT NOMICLY 
+*/
+
 .widget {
 	background:#fff;
 	box-shadow: 0 0 2px #000;
@@ -716,7 +721,7 @@ a:hover {
 #branding {
 	position: fixed;
 	z-index: 10000000;
-	top:0px;
+	top:-6px;
 	width: 100%;
 	margin: 0px auto 0 auto;
 	float:left;
@@ -866,6 +871,10 @@ a:hover {
 #access .current_page_item > a,
 #access .current_page_ancestor > a {
 	font-weight: bold;
+	color:#63b2ec;
+	background:#000;
+	border-right: 1px solid #222;
+	border-left: 1px solid #222;
 }
 
 /* Search Form */

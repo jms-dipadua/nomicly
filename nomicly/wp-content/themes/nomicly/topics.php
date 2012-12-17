@@ -29,11 +29,10 @@ get_header();
 			<form method ="post" action ="#">
 			<!-- should make this a drop down to select 'idea' or 'topic' -->
 			<h3>Create A New Topic</h3><br />
-			<p>Topic Name: <input type="text" name="new_topic_name" value="" /> </p>
-			Topic Description: 
-			<textarea rows="2" cols="20" name="new_topic" value="">
-			</textarea>
-			<input type="submit" name="create_topic" value="Add Topic" class="widget-button" />
+			<input type="hidden" name="new_topic_name" value="" id="new-topic-name"/> 	
+					<textarea rows="2" cols="20" name="new_topic" value="" id="new-topic-description"></textarea>
+					<!-- maybe include a dropdown of all the topics too? -->
+					<input type="submit" name="create_topic" value="New Topic" class="widget-button" id="new-topic-submit" />
 			</form>  
 		</div>  
 	</div>

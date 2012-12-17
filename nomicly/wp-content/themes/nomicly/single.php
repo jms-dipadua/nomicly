@@ -26,7 +26,7 @@ get_header(); ?>
 		<!--navbox and related posts-->
 			
 			<div class="secondary widget-area" role="complementary">	
-				<div class="widget"><?php related_posts(); ?></div>
+			<div class="widget related-posts-widget"><?php related_posts(); ?></div>
 				<?php if ( ! dynamic_sidebar( 'sidebar-2' ) ) ?><!--sidebar nav in showcase widget area-->
 			</div><!--end secondary-->	
 			
