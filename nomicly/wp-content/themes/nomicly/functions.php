@@ -385,11 +385,15 @@ function create_new_topic() {
 /*
 // GET TOPICS CREATED BY A SPECIFIC USER
 */
-function get_user_topics() {
+function get_user_topics($user_id) {
 	global $wpdb;
 	$table_user_topics = $wpdb->prefix."user_topics";
-	$user_id = get_current_user_id();
-	$topic_query_results = $wpdb->get_col("SELECT topic_id from $table_user_topics WHERE user_id = '$user_id'", 'ARRAY_N'); 
+	$user = $user_id;
+	$topic_query_results = $wpdb->get_col(
+		"SELECT topic_id 
+		FROM $table_user_topics 
+		WHERE user_id = '$user_id'",
+		ARRAY_N); 
 	// collapse the results for the next query
 if (!empty($topic_query_results)) {
 	$user_topics = $topic_query_results[0];

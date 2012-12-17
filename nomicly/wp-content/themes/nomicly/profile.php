@@ -82,7 +82,7 @@ get_header();
 			<div class="widget">
 				<?php
 				echo "<h3>My Topics</h3>";
-					get_user_topics();
+					get_user_topics($user_id);
 				?>
 			</div>
 			<!--end topic box-->
