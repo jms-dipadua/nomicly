@@ -970,7 +970,7 @@ function process_user_vote () {
 	// NOT LOGGED IN
 	// SHOULD THIS MOVE TO ITS OWN FUNCTION/SPECIAL-CASE ? (it's duplicate code)
 	if (empty($user_id)) {
-		$no_vote_message = "Please <a href='http://jamesdipadua.com/experimental/nomicly/wp-login.php'>Login</a> or <a href='http://jamesdipadua.com/experimental/nomicly/wp-login.php?action=register'>Register</a> to Vote.";
+		$no_vote_message = 'Please <a href="'.get_bloginfo( 'wpurl' ).'/wp-login.php">Login</a> or <a href="'.get_bloginfo( 'wpurl' ).'/wp-login.php?action=register" class="reg-link">Register</a> to Vote.';
 		$vote_response_data = array(
 				"vote_response_data" => "no-vote",
 				"vote_message" => $no_vote_message
