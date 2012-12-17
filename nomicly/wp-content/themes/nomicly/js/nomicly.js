@@ -488,15 +488,19 @@ function related_posts_empty() {
 	}
 }
 
+//shortText truncates the description.  
 function shorten_topic_name() {
 	jQuery('#new-topic-submit').click(function() {
 		var description = jQuery('#new-topic-description').val();
 		
-		var shortText = jQuery.trim(description).substring(0, 100).split(" ").slice(0, -1).join(" ");
+// This won't work for now.  
+// We need a better way to truncate the description using an algorithm.
+
+		//var shortText = jQuery.trim(description).substring(0, 100).split(" ").slice(0, -1).join(" ");		
 		
-		jQuery('#new-topic-name').val(shortText);
+		jQuery('#new-topic-name').val(description);
 		if ( description == '' ){
-			alert( "Please enter a topic name");
+			alert( "Please enter a topic.");
 			return false;
 		}
 
