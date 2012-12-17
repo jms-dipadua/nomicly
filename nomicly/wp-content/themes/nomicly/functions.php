@@ -18,7 +18,7 @@ add_action('admin_enqueue_scripts', 'redirect_non_admins');
 
 function redirect_non_admins () {
 	if( !current_user_can('create_users')) {
-		$new_location = "http://www.jamesdipadua.com/experimental/nomicly";
+		$new_location = get_bloginfo( 'wpurl' );
 		$stats = 302;
 		wp_redirect( $new_location, $status );
 		exit;
