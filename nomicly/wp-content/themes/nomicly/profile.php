@@ -15,8 +15,8 @@ get_header();
 	nomicly_new_idea();
 	}
 
-// process topic posting (LATER)
-if (isset($_POST['create_topic'])) {
+// process topic posting 
+ if (isset($_POST['create_topic'])) {
 	create_new_topic();
 	}
 
@@ -82,34 +82,7 @@ if (isset($_POST['create_topic'])) {
 			<div class="widget">
 				<?php
 				echo "<h3>My Topics</h3>";
-				///GET THE TOPICS FROM THIS UER
-				// QUERY USER_TOPICS
-				// GET THE TOPIC_IDS (ARRAY)
-				// THEN FOR EACH ENTRY, GRAB THE CATEGORY AND DISPLAY IT...
-				global $wpdb;
-				$table_user_topics = $wpdb->prefix."user_topics";
-				$topic_query_results = $wpdb->get_col("SELECT topic_id from $table_user_topics WHERE user_id = '$user_id'", 'ARRAY_N'); 
-				// collapse the results for the next query
-			if (!empty($topic_query_results)) {
-				$user_topics = $topic_query_results[0];
-				$user_topics = implode(",", $user_topics);
-				$args=array(
-				  'orderby' => 'name',
-				  'order' => 'ASC',
- 			  	  'hide_empty' => 0,
- 			  	  'include' => $user_topics
- 			  	);
-				$categories=get_categories($args);
-
-				foreach($categories as $category) { 
-					echo '<p><a href="' . get_category_link( $category->term_id ) . '" title="' . sprintf( __( "View %s" ), $category->name ) . '" ' . '>' . $category->description.'</a> </p>'; }
-					//echo '<p> Description:'. $category->description . '</p>';  
-
-					}// END USER TOPIC DISPLAY
-				else {
-					echo "<p>You haven't created any topics. <br /> 
-				 		  See how Nomicly can help solve problems by creating a discussion topic.</p>";
-				 	}// END NO TOPICS BY USER
+					get_user_topics();
 				?>
 			</div>
 			<!--end topic box-->

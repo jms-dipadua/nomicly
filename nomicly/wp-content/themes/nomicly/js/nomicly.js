@@ -28,7 +28,7 @@ jQuery(function() {
 	if (jQuery('.single-post').length > 0) {
 		related_posts_empty();
 	}
-	if (jQuery('.page-template-topics-php').length > 0) {
+	if (jQuery('.page-template-topics-php, .page-template-profile-php').length > 0) {
 		//hide topic name and truncate description, paste into topic name hidden field
 		shorten_topic_name();
 	}

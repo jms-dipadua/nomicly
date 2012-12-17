@@ -383,6 +383,36 @@ function create_new_topic() {
 }// END CREATE NEW TOPIC
 
 /*
+// GET TOPICS CREATED BY A SPECIFIC USER
+*/
+function get_user_topics() {
+	global $wpdb;
+	$table_user_topics = $wpdb->prefix."user_topics";
+	$user_id = get_current_user_id();
+	$topic_query_results = $wpdb->get_col("SELECT topic_id from $table_user_topics WHERE user_id = '$user_id'", 'ARRAY_N'); 
+	// collapse the results for the next query
+if (!empty($topic_query_results)) {
+	$user_topics = $topic_query_results[0];
+	$user_topics = implode(",", $user_topics);
+	$args=array(
+	  'orderby' => 'name',
+	  'order' => 'ASC',
+	  'hide_empty' => 0,
+	  'include' => $user_topics
+	);
+	$categories=get_categories($args);
+
+	foreach($categories as $category) { 
+		echo '<p><a href="' . get_category_link( $category->term_id ) . '" title="' . sprintf( __( "View %s" ), $category->name ) . '" ' . '>' . $category->description.'</a> </p>'; }
+		//echo '<p> Description:'. $category->description . '</p>';  
+
+		}// END USER TOPIC DISPLAY
+	else {
+		echo "<p>You haven't created any topics. <br /> 
+			  See how Nomicly can help solve problems by creating a discussion topic.</p>";
+		}// END NO TOPICS BY USER
+} // END GET USER TOPICS
+/*
 // COUNT USER CREATED TOPICS
 */
 function count_user_topics ($user_id) {
