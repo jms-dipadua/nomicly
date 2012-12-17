@@ -107,6 +107,9 @@ function nomicly_new_idea () {
 	}
 	// UPDATE POST TERMS
 	wp_set_post_terms($new_post_id, $category_id, 'category', FALSE);
+	
+	// PUT IDEA INTO IDEA_CONSENSUS SO USERS WON'T GET 'NULL' ON UN-VOTED-FOR IDEAS 
+	initialize_idea_consensus($new_post_id);
 
 		return $new_post_id;
 // BUG
