@@ -364,7 +364,7 @@ function create_new_topic() {
 	$post = array(
 	  'comment_status' => 'open',  // 'closed' means no comments.
 	  'ping_status'    => 'closed',  // 'closed' means pingbacks or trackbacks turned off
-	  'post_author'    => $user_id , // user ID of  author.
+	  'post_author'    => 3 , // 3 == USER 'nomicly' ON "nomic.ly"
 	  'post_date'      => $date,  //The time post was made.
 	  'post_date_gmt'  => $date , //The time post was made, in GMT. (just using same time)
 	  'post_name'      => $post_name, // The name (slug) for your post
