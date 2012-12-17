@@ -14,10 +14,10 @@ get_header(); ?>
 		<!--profile box-->
 				<div class="profile-sidebar-box media" style="padding: 2%">
 				<div class="img">
-					<?php global $current_user;
-						  get_currentuserinfo();
+					<?php global $post;
+							$author_id=$post->post_author;
 						  
-						  echo get_avatar( $current_user->user_email, $size = '100' );?>
+						  echo get_avatar( $author_id, $size = '100' );?>
 					</div>
 					<div class="bd">	  
 						<?php
