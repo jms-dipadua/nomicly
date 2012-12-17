@@ -44,7 +44,7 @@
 			</div>.entry-meta -->
 			<?php endif; ?>
 
-			<?php if ( comments_open() && ! post_password_required() ) : ?>
+
 			<!--<div class="comments-link">
 				<?php comments_popup_link( '<span class="leave-reply">' . __( 'Reply', 'twentyeleven' ) . '</span>', _x( '1', 'comments number', 'twentyeleven' ), _x( '%', 'comments number', 'twentyeleven' ) ); ?>
 			</div>-->
@@ -52,7 +52,7 @@
 				 <?php $wpurl = get_bloginfo ( 'wpurl' );  ?>
 			<a href="<?php echo "$wpurl";?>/modify/?idea=<?php the_ID(); ?>" class="modify-link widget-button">Modify Idea</a>
 					<?php }//END IF LOGGED IN  ?>
-			<?php endif; ?>
+
 			<div id='stats_<?php the_ID(); ?>' class="vote-box"> </div>
 
 		<?php if ( is_search() ) : // Only display Excerpts for Search ?>
