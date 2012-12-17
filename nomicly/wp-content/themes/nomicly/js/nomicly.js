@@ -496,9 +496,9 @@ function shorten_topic_name() {
 // This won't work for now.  
 // We need a better way to truncate the description using an algorithm.
 
-		//var shortText = jQuery.trim(description).substring(0, 100).split(" ").slice(0, -1).join(" ");		
+		var shortText = jQuery.trim(description).substring(0, 200).split(" ").slice(0, -1).join(" ");		
 		
-		jQuery('#new-topic-name').val(description);
+		jQuery('#new-topic-name').val(shortText);
 		if ( description == '' ){
 			alert( "Please enter a topic.");
 			return false;
