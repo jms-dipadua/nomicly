@@ -10,12 +10,12 @@
 get_header(); ?>
 
 		<section id="primary">
-			<div id="content" role="main">
+			<div id="content" role="main" class="the_feed">
 
 			<?php if ( have_posts() ) : ?>
 
-				<header class="page-header">
-					<h1 class="page-title"><?php printf( __( 'Search Results for: %s', 'twentyeleven' ), '<span>' . get_search_query() . '</span>' ); ?></h1>
+				<header class="page-header widget">
+					<h2 class="entry-title"><?php printf( __( 'Search Results for: %s', 'twentyeleven' ), '<span>' . get_search_query() . '</span>' ); ?></h2>
 				</header>
 
 				<?php twentyeleven_content_nav( 'nav-above' ); ?>
@@ -37,7 +37,7 @@ get_header(); ?>
 
 			<?php else : ?>
 
-				<article id="post-0" class="post no-results not-found">
+				<article id="post-0" class="post no-results not-found widget">
 					<header class="entry-header">
 						<h1 class="entry-title"><?php _e( 'Nothing Found', 'twentyeleven' ); ?></h1>
 					</header><!-- .entry-header -->
@@ -52,6 +52,12 @@ get_header(); ?>
 
 			</div><!-- #content -->
 		</section><!-- #primary -->
+		
+		
+			<div class="secondary widget-area" role="complementary">	
+			<?php if ( ! dynamic_sidebar( 'sidebar-2' ) ) ?><!--sidebar nav in showcase widget area-->
+			</div><!--end secondary-->	
 
-<?php get_sidebar(); ?>
+
+
 <?php get_footer(); ?>
