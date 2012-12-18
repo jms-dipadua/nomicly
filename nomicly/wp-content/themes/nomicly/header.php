@@ -68,6 +68,7 @@
 </head>
 
 <body <?php body_class(); ?>>
+<?php include_once("analyticstracking.php") ?>
 
 <header id="branding" role="banner">
 	

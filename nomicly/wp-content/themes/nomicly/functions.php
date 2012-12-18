@@ -711,7 +711,7 @@ function increase_available_votes($user_id, $award_amount) {
 				// because: num_votes_avail = num_votes_avail+'$amount' isn't supported
 	$max_award_amount = $max_votes - $avail_votes;
 		if ($amount > $max_award_amount) {
-			$new_vote_total = $max_award_amount;
+			$new_vote_total = $max_award_amount + $avail_votes;
 			}	
 		else {
 			$new_vote_total = $amount + $avail_votes;
@@ -1685,4 +1685,3 @@ function twentyeleven_body_classes( $classes ) {
 	return $classes;
 }
 add_filter( 'body_class', 'twentyeleven_body_classes' );
-
