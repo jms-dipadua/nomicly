@@ -123,27 +123,22 @@ get_header();
 		<?php if ( !is_user_logged_in() ) { ?>		
 		<div id="secondary" class="widget-area" role="complementary">	
 			<div class="widget">	
-				<h3>The Short Summary</h3>
-				<p>Nomicly is a place to <b>create ideas and to build consensus</b>.<p>
+				<h3>Nomicly is a place to <b>create ideas and to build consensus</b>.</h3>
 			</div>
 			<div class="widget">	
 				<h3>Create Ideas</h3>
 				<p>You can create an idea about anything you'd like.</p>
-				
 				<p>If you see an idea from someone else that triggers an idea of your own, you can modify the original idea. </p>
-				
 				<p>To create an idea to address a specific topic or solve a problem, first go to the <a href="<?php get_bloginfo( 'wpurl' ); ?>/topics">Topics page</a> where all ideas are organized by <a href="<?php get_bloginfo( 'wpurl' ); ?>/topics">Topic</a>. </p>
 			</div>
 				
 			<div class="widget">	
 				<h3>Build Consensus</h3>
-				<p>Nomicly helps identify good ideas (and the bad ones) with your help.</p>
-				
+				<p>Nomicly helps identify good ideas (and the bad ones) with your help.</p>		
 				<p>For each idea, you can either Thumbs Up or Thumbs Down it, helping identify the best ideas and solutions to the toughest problems. </p>
 			</div>
 			<div class="widget">	
-				<h3>Want to make Nomicly better?</h3>
-				
+				<h3>Want to make Nomicly better?</h3>		
 				<p>Please suggest improvements for Nomicly <a href="<?php get_bloginfo( 'wpurl' ); ?>category/nomicly-improvements/">here</a>. It's <a href="<?php get_bloginfo( 'wpurl' ); ?>category/nomicly-improvements/">Nomicly for Nomicly</a>.</p>
 			</div>
 			<div class="widget">	
