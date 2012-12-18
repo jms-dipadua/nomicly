@@ -124,7 +124,7 @@ get_header();
 		<div id="secondary" class="widget-area" role="complementary">	
 			<div class="widget">	
 				<h3>The Short Summary</h3>
-				<p>Nomicly is a place to create ideas that solve real world problems and to build consensus around the best ideas.<p>
+				<p>Nomicly is a place to <b>create ideas and to build consensus</b>.<p>
 			</div>
 			<div class="widget">	
 				<h3>Create Ideas</h3>
@@ -132,7 +132,7 @@ get_header();
 				
 				<p>If you see an idea from someone else that triggers an idea of your own, you can modify the original idea. </p>
 				
-				<p>To create an idea to address a specific topic or solve a problem, first go to the Topics page where all ideas are organized by Topic. </p>
+				<p>To create an idea to address a specific topic or solve a problem, first go to the <a href="<?php get_bloginfo( 'wpurl' ); ?>/topics">Topics page</a> where all ideas are organized by <a href="<?php get_bloginfo( 'wpurl' ); ?>/topics">Topic</a>. </p>
 			</div>
 				
 			<div class="widget">	
@@ -144,7 +144,7 @@ get_header();
 			<div class="widget">	
 				<h3>Want to make Nomicly better?</h3>
 				
-				<p>Please suggest improvements for Nomicly here. It's Nomicily for Nomicly.</p>
+				<p>Please suggest improvements for Nomicly <a href="<?php get_bloginfo( 'wpurl' ); ?>category/nomicly-improvements/">here</a>. It's <a href="<?php get_bloginfo( 'wpurl' ); ?>category/nomicly-improvements/">Nomicly for Nomicly</a>.</p>
 			</div>
 			<div class="widget">	
 			<?php	$wpurl = get_bloginfo ( 'wpurl' );  
