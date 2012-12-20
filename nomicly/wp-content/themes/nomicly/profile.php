@@ -62,7 +62,9 @@ get_header();
 						<form method ="post" action ="#">
 						<h3>Create A New Idea</h3>
 						<textarea rows="2" cols="20" name="new_idea" id="new_idea" value=""></textarea>
+						<span class="topic-select">Topic:<?php wp_dropdown_categories(); ?></span>
 						<input type="hidden" name="user_id" id="user_id" value="<?php echo "$user_id"; ?>" />
+						<input type="hidden" name="category_id" id="category_id" value="" />
 						<div><input type="submit" name="create" class="idea_submit_button" value="Create" /></div>
 					</form>    
 				</div>
@@ -102,7 +104,7 @@ get_header();
 
 		<div id="primary">
 			<div id="content" role="main" class="user_feed">
-				
+			
 			<?php 
 			/* GUTS OF USER PROFILE PAGE
 			// verify user is logged in
@@ -120,7 +122,8 @@ get_header();
 					);
 				query_posts( $query_args ); 
 				global $wpdb;
-					echo "<h2 class='user-hd entry-title'>My Ideas</h2>";			
+					echo "<h2 class='user-hd entry-title'>My Ideas</h2><div id='fresh-idea'></div><div id='idea-holder'></div>";	
+							
 				 while ( have_posts() ) : the_post();  ?>
 				<article class="hentry media post" id="post-<?php the_ID(); ?>">
 						<div class="img idea-stats">

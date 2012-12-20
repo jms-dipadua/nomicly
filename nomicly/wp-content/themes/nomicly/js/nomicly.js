@@ -47,6 +47,10 @@ jQuery(function() {
 	var idea = jQuery('#new_idea').val();
 	var cat_id = jQuery('#category_id').val();
 	var user_id = jQuery('#user_id').val();
+	var setTopic = jQuery('.topic-select #cat').val();
+		if ( jQuery('.topic-select #cat').length > 0 ) {
+			cat_id = setTopic;
+		}
 	
 		jQuery.ajax({
 			url: ajaxurl, 
@@ -71,8 +75,17 @@ jQuery(function() {
 			// returns full array of the new post
 			// so you have title, id, link, cat, etc	
       			var theURL = response.new_idea_data.guid;
+      			var theTitle = response.new_idea_data.post_title;
       			// PRESENT THE NEW IDEA
-      			jQuery('#fresh-idea').load(theURL +" .hentry");
+      			jQuery('#fresh-idea').load(theURL +" .hentry", function() {
+      				//get fresh idea content that is loaded
+      				var fresh_idea = jQuery('#fresh-idea').html();
+      				//prepend idea to idea holder so you can load more and it won't replace the first one
+      				jQuery(fresh_idea).prependTo('#idea-holder');
+      				// empty fresh idea div so you don't have duplicate content
+      				jQuery('#fresh-idea').empty();
+      				//add another function here to run determine_ideas_voted_on on #idea-holder only
+      			});
       			      	
       		// then empty the form for a new idea
       		jQuery('#new_idea').val('');

@@ -300,6 +300,12 @@ p.cat-links {
 .search .not-found {
 	padding:15px;
 }
+/* topic styles */
+.topic-select select {
+	width: 100%;
+	margin-bottom:5px;
+}
+
 /* end nomicly widgets */
 /*nomicly structures */
 
@@ -1008,6 +1014,9 @@ a:hover {
 }
 #content.user_feed .hentry:last-child {
 	border-bottom:0;
+}
+#content.user_feed #idea-holder .hentry:last-child {
+	border-bottom: 1px solid #DDDDDD;
 }
 .user_feed .hentry {
 	margin: 0;

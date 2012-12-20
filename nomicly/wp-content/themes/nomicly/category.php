@@ -65,7 +65,8 @@ get_header();
 					<h3>Create Idea For This Topic</h3>
 					<textarea rows="2" cols="20" name="new_idea" id="new_idea" value=""></textarea>		
 					<input type="hidden" name="category_id" id="category_id" value="'.$category_id.'" />
-					<input type="submit" name="create" class="idea_submit_button" value="Create" class="widget-button" />
+					<input type="hidden" name="user_id" id="user_id" value="'.$user_id.'" />
+					<input type="submit" name="create" class="idea_submit_button" value="Create" />
 					</form>';  ?>
 				
 				</div>
@@ -100,6 +101,7 @@ get_header();
 
 				<?php /* Start the Loop */ ?>
 				<div id="fresh-idea"></div>
+				<div id="idea-holder"></div>
 				<?php while ( have_posts() ) : the_post(); ?>
 						
 					<?php

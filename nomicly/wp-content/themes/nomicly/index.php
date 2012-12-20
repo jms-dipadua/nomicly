@@ -48,10 +48,12 @@ get_header();
 			<!--new idea box-->	
 				<div class="widget new-idea-sidebox">	
 					<?php $user_id = get_current_user_id(); ?>
-						<form method ="post" action ="#">
+						<form method ="post" action ="#" id="new-idea-form">
 						<h3>Create A New Idea</h3>
 						<textarea rows="2" cols="20" name="new_idea" id="new_idea" value=""></textarea>
+						<span class="topic-select">Topic:<?php wp_dropdown_categories(); ?></span>
 						<input type="hidden" name="user_id" id="user_id" value="<?php echo "$user_id"; ?>" />
+						<input type="hidden" name="category_id" id="category_id" value="" />
 						<div><input type="submit" name="create" class="idea_submit_button" value="Create" /></div>
 					</form>    
 				</div>
@@ -94,6 +96,7 @@ get_header();
 				<?php /* Start the Loop */ ?>
 	
 		<div id="fresh-idea"></div>
+		<div id="idea-holder"></div>
 				<?php while ( have_posts() ) : the_post(); ?>
 				<?php get_template_part( 'content', get_post_format() ); ?>
 				<?php endwhile; ?>

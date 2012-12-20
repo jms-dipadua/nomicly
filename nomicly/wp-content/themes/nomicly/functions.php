@@ -115,7 +115,7 @@ function nomicly_new_idea () {
 		$post_parent = $_POST['post_parent'];
 		}
 	else {
-	$post_parent = 0;
+		$post_parent = 0;
 	}
 	//make the title safe for mysql
 	$post_title = wp_strip_all_tags($_POST['new_idea']);	
