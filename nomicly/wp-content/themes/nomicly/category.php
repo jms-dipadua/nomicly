@@ -62,7 +62,7 @@ get_header();
 						$category_id = implode (",", $category_id);		
 						echo 
 					'<form method ="post" action ="#">
-					<h3>Create A New Idea</h3>
+					<h3>Create Idea For This Topic</h3>
 					<textarea rows="2" cols="20" name="new_idea" id="new_idea" value=""></textarea>		
 					<input type="hidden" name="category_id" id="category_id" value="'.$category_id.'" />
 					<input type="submit" name="create" class="idea_submit_button" value="Create" class="widget-button" />

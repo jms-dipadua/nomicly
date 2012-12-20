@@ -55,6 +55,50 @@ return $query_variables;
 add_action( 'user_register', 'grant_new_user_votes' ); 
 
 /*
+//	PROFILE EDITING
+*/
+	// EMAIL
+function update_user_email($user, $email) {
+	require_once( ABSPATH . WPINC . '/registration.php');
+	$user = $user_id;
+	$new_email = $email;
+	$udpate = wp_update_user( array ('ID' => $user_id, 'user_email' => $new_email) ) ;
+	if(!$update) {
+		$message = "Failed to Save New Email";
+	}
+	else {
+		$message = "New Email Saved";
+	}
+	return $message;
+} // END UPDATE EMAIL
+
+	// PASSWORD
+function update_user_password($user, $password_old, $password_new) {
+	require_once( ABSPATH . WPINC . '/registration.php');
+	$user_id = $user;
+	//$current_password = get_user_password($user_id);
+	$old_password = password_encode($password_old);
+	// VERIFY PASSWORDS MATCH
+	if (!$old_password == $current_password) {
+		$message = "Sorry, the password you provided as your current password does not match. Please try again.";
+	} // END NO MATCH
+	else {
+		$new_password = password_encode($password_new);
+		
+		$udpate = wp_update_user( array ('ID' => $user_id, 'user_password' => $new_password) ) ;
+		if(!$update) {
+			$message = "Failed to Save New Password";
+		}
+		else {
+			$message = "New Password Saved";
+		}
+	} // END SUCCESS + passwords match
+	return $message;
+} // END UPDATE PASSWORD
+
+
+
+/*
 /// CREATE NEW IDEAS
 */
 
