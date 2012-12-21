@@ -73,35 +73,55 @@ function update_user_email($user, $email) {
 } // END UPDATE EMAIL
 
 	// PASSWORD
-function update_user_password($user, $password_old, $password_new) {
+	//	- this function assumes the password was a verified match
+	//	- see verify_user_password_authorization()
+	
+	/*
+	//	BUG
+	//		- look into user cookie stuff. wp_set_cookies()
+	// 		- current bug may have to do with cookies. 
+	//		- when user logs in password may check pass + some secret cookie key ? or is used in the hashing?
+	//		- ALSO, why the fuck is it saying 'not saved' when the database is updating!? WTF@!??
+	*/
+function update_user_password($user, $password_new) {
 	require_once( ABSPATH . WPINC . '/registration.php');
 	$user_id = $user;
-	//$current_password = get_user_password($user_id);
-	$old_password = password_encode($password_old);
-	// VERIFY PASSWORDS MATCH
-	if (!$old_password == $current_password) {
-		$message = "Sorry, the password you provided as your current password does not match. Please try again.";
-	} // END NO MATCH
-	else {
-		$new_password = password_encode($password_new);
-		
-		$udpate = wp_update_user( array ('ID' => $user_id, 'user_password' => $new_password) ) ;
-		if(!$update) {
+	$new_password = wp_hash_password($password_new);
+	$udpate = wp_update_user( array ('ID' => $user_id, 'user_pass' => $new_password) );
+		if($update != $user_id) {
 			$message = "Failed to Save New Password";
 		}
 		else {
 			$message = "New Password Saved";
 		}
-	} // END SUCCESS + passwords match
 	return $message;
 } // END UPDATE PASSWORD
 
-
+/*
+// VERIFY USER PASSWORD MATCHES
+//	- this function will make sure the posted passwords match
+//	- response 0 = FALSE, 1 = TRUE
+*/
+function verify_user_password_authorization($user, $password_old) {
+	$user_id = $user;
+	$user_data = get_user_by('id', $user_id);
+	$claimed_old_password = $password_old;
+		// PASSWORD is stored as hashed version so just need to get it.
+	$actual_current_pass = $user_data -> user_pass;	
+	
+	$status_check = wp_check_password( $claimed_old_password, $actual_current_pass, $user_id );
+	if ($status_check) {
+		$match_status = 1; // 1 = TRUE  
+	}
+	else {
+		$match_status = 0; // 0 = FALSE 
+	}	
+	return $match_status;
+} // END VERIFY USER PASSWORD MATCH
 
 /*
 /// CREATE NEW IDEAS
 */
-
 function nomicly_new_idea () {
 	global $wpdb;
 //need to get user info to connect the topic/idea to the user 
@@ -164,7 +184,6 @@ function nomicly_new_idea () {
 /*
 ** THE FOLLOWING IS FOR THE HOT OR NOT GAME
 */
-
 function nomicly_record_vote() {
  global $wpdb;
 
@@ -366,7 +385,7 @@ function get_hot_not_stats($pair) {
 		'idea_2_consensus_percentage' => $idea_2_consensus_percentage,
 	);
 	return $pair_vote_history;
-}
+} // END GET HOT NOT STATS
 
 /* 
 //  CREATE NEW TOPICS FROM WITHIN NOMICLY
@@ -476,7 +495,7 @@ function count_user_topics ($user_id) {
 		WHERE user_id = '$user'", ARRAY_N);
 	$topic_count = $topic_count_query[0][0];
 	return $topic_count;
-}
+} //END COUNT USER TOPICS
 
 /*
 // MODIFY IDEAS
@@ -629,7 +648,7 @@ function initialize_idea_consensus($idea_id) {
 		);
 	$wpdb->insert( $table_idea_consensus, $initial_idea_data );
 	return;
-} // END
+} // END INSERT IDEA INTO CONSENSUS TABLE
 
  /*
  // UPDATE_IDEA_CONSENSUS - update the consensus for an idea based on a vote
@@ -850,6 +869,52 @@ function add_nomicly_js(){
 // add the nomicly_js file to the initialization
 add_action( 'init', 'add_nomicly_js' );  
 
+
+/*
+// USERS AND USER PROFILE STUFF
+*/
+function change_user_email() {
+
+
+}
+
+add_action('wp_ajax_change_user_email', 'change_user_email');
+// non-logged in user
+add_action('wp_ajax_nopriv_change_user_email', 'change_user_email' );
+
+// CHANCE PASSWORD
+function change_user_password() {
+	$user_id = get_current_user_id();
+	$claimed_current_pass = $_POST['claimed_current_pass'];
+	$requested_new_pass = $_POST['requested_new_pass'];
+// VERIFY PASSWORDS MATCH
+	//$pass_match_status = verify_user_password_authorization($user_id, $claimed_current_pass);
+	$pass_match_status = 1;
+	$pass_match_status = intval($pass_match_status);
+	if ($pass_match_status == 0) {
+		$message = "Sorry, the password you provided as your current password does not match our records. Please try again.";
+	} // OTHERWISE
+	if ($pass_match_status == 1) {
+	// UPDATE: RESPONSE AS MESSAGE
+		$message = update_user_password($user_id, $requested_new_pass);
+	}
+// FOR NOW, JUST RETURNS MESSAGE
+// MAY WANT IN FUTURE TO RETURN A TYPE (i.e. ability to enum reason in response)
+	$pass_change_data = array(
+			'password_change_message' => $message
+		);
+	$response_data = json_encode($pass_change_data);
+	die($response_data);
+} //END CHANGE USER PASSWORD
+
+add_action('wp_ajax_change_user_password', 'change_user_password');
+// non-logged in user
+add_action('wp_ajax_nopriv_change_user_password', 'change_user_password' );
+
+
+/*
+//	IDEA SECTION
+*/
 function create_new_idea () {
 	$new_idea_id = nomicly_new_idea();
 	//get the content for that idea using get_post();

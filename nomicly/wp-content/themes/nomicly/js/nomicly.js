@@ -32,6 +32,11 @@ jQuery(function() {
 		//hide topic name and truncate description, paste into topic name hidden field
 		shorten_topic_name();
 	}
+	
+	jQuery('.submit_pass_change').click(function() {
+		change_user_password();
+		return false;
+	});
 });
 
 
@@ -390,6 +395,47 @@ function get_available_user_votes () {
 */
 
 
+/*
+// 	USER PROFILE SECTION
+*/
+// CHANGE USER EMAIL
+
+
+// CHANGE USER PASSWORD
+function change_user_password() {
+	// 1. string compare new and repeated passwords
+	var requested_new_password = jQuery('#new_password').val();
+	var repeated_new_pass = jQuery('#repeated_password').val();
+	var claimed_current_password = jQuery('#claimed_current_password').val();
+	
+	// CHECK ENTERED PASSWORDS MATCH
+		if (requested_new_password != repeated_new_pass) {
+			var response_message = "Sorry, the new password you provided do not match. Please verify your new password and try again."
+			jQuery('#profile_help_response_area').html(response_message);
+			return;
+		} // END DON'T MATCH
+		// 2. SEND TO BACKEND FOR PROCESSING
+		else {
+			jQuery.ajax({
+				url: ajaxurl, 
+				type: "POST",
+				dataType:'json',
+				data: {
+					action:'change_user_password',
+					claimed_current_pass: claimed_current_password,
+					requested_new_pass: requested_new_password
+					  }, 
+				success:  function(response){
+					// CHANGE PROCESSED BY SERVER
+					var response_message = response.password_change_message;
+					jQuery('#profile_help_response_area').html(response_message);
+				}	// end RESPONSE 		
+			});//end ajax
+			} //END ELSE, PROVIDED PASSWORDS MATCH
+			// APPEND THE RESPONSE MESSAGE
+			//return false;
+} // END CHANGE USER PASSWORD
+	
 /*
 // PROCESS HOT OR NOT VOTES
 */

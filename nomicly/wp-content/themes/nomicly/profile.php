@@ -34,12 +34,21 @@ get_header();
 						  
 						  echo get_avatar( $current_user->user_email, $size = '100' );?>
 					</div>
+					<div id="profile_help_response_area">  </div>
 					<div class="bd">	  
 						<?php  echo '<h3 class="entry-title">' . $current_user->user_login . '</h3>'; ?>
 						<p class="sidebar-stats-ideas"><b>Ideas:</b> <span><?php $user_id = get_current_user_id(); $post_count = count_user_posts($user_id); echo "$post_count";?></span></p>
 						<p class="sidebar-stats-topics"><b>Topics:</b> <span><?php echo count_user_topics($user_id);?></span></p>
 						<p class="sidebar-stats-votes"><b>Votes Available:</b><span></span></p>
 						<!--<p><b>Reputation:</b> awesome</p>-->
+						<!-- ACCOUNT SETTINGS -->
+						<form action="#" method="post" id="password_change_form">
+						Change Password<br />
+						Current Password:  <input type="password" id="claimed_current_password" value="" /><br />
+						New Password:  <input type="password" id="new_password" value="" /><br />
+						Repeat New Password:  <input type="password" id="repeated_password" value="" /><br />
+						<input type="submit" class="submit_pass_change" value="Save" />
+						</form>
 					</div>
 				</div>
 	
