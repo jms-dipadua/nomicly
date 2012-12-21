@@ -548,10 +548,11 @@ function get_idea_ancestry($idea) {
 			);
 		}
 	else {
+		$ancestry_post_data = get_post($ancestor_id);
 		$ancestry_data = array (
 			'ancestor_status' => 1, // GOT 'EM
-			'url' => get_bloginfo( 'wpurl' ).$idea_data -> post_name,
-			'title' >= $idea_data -> post_title
+			'url' => get_bloginfo( 'wpurl' ).'/'.$ancestry_post_data -> post_name,
+			'title' => $ancestry_post_data -> post_title
 			);	
 		}
 	return $ancestry_data;
