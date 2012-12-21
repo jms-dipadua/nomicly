@@ -12,8 +12,16 @@ jQuery(function() {
 */
 	if (jQuery('.home, .category, .author, .single-post').length > 0) {
 		determine_ideas_voted_on();
-		register_user_vote();
-	}
+	// THIS FUNCTION NEEDS A LITTLE CLEAN UP. HOW IT'S CALLED ISN'T QUITE RIGHT
+		register_user_vote(); 
+		}
+
+/*
+//	 get idea ancestry and progeny
+*/
+	get_idea_ancestry();
+	// get_idea_progeny(); 
+
 /*
 // GET NUMBER OF AVAILABLE VOTES
 */
@@ -24,6 +32,7 @@ jQuery(function() {
 	if (jQuery('.page-template-profile-php').length > 0) {
 		get_idea_consensus_data();
 	}
+	
 /* hide related posts widget if it's empty */
 	if (jQuery('.single-post').length > 0) {
 		related_posts_empty();
@@ -220,6 +229,42 @@ function determine_ideas_voted_on() {
 		}//end check for div_stats content
 	});// END EACH
 } // END DETERMINE IDEAS VOTED ON
+
+/*
+// GET IDEA ANCESTRY
+*/
+function get_idea_ancestry() {
+	jQuery('article').each(function() {
+		var idea_data = jQuery(this).attr('id');
+		var idea_array = idea_data.split('-');
+		var idea = idea_array[1];
+	jQuery.ajax({
+				url: ajaxurl, 
+				type: "get",
+				dataType:'json',
+				data: {
+					action:'fetch_idea_ancestry',
+					idea_id: idea,
+					  }, 
+				success:  function(response){
+					// NO ANCESTORS == 0 --> DO NOTHING
+					if (response.ancestry_data.ancestor_status == 0 ) {
+						return;
+						}
+					else {
+						var url = response.ancestry_data.url;
+						var title = response.ancestry_data.title;
+					// I (jms) would personally like to see a show/hide here...
+						jQuery('#ancestry_'+idea).parent().prepend('Original Idea:  ');
+						jQuery('#ancestry_'+idea).append(title);
+						jQuery('#ancestry_'+idea).attr('href', url);
+					}
+	
+				} // end RESPONSE - GET STATS
+			}); // END AJAX
+		}); // END FOR EACH
+} // END GET IDEA CONSENSUS
+
 
 /*
 // GET IDEA CONSENSUS DATA
