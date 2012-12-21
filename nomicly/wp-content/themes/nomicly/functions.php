@@ -534,11 +534,29 @@ function nomicly_update_term_relationships ($object_id, $cat_id) {
 
 
 /*
-* THIS IS FOR ANCESTRY INFORMATION AND FOR MAKING CHILD IDEAS FROM ANOTHER IDEA
-function get_children_posts() {
+* GET ANCESTRY INFORMATION
+// 	NOTE: THIS IS JUST BASIC, 1-LEVEL ANCESTRY
+// 	- NEED TO WRITE SO IT CAN RECURSIVELY COLLECT A FULL ANCESTRY TREE.
+*/
+function get_idea_ancestry($idea) {
+	$idea_id = $idea;
+	$idea_data = get_post($idea_id); 	
+	$ancestor_id = $idea_data -> post_parent;
+	if (empty($ancestor_id)) {
+		$ancestry_data = array (
+			'ancestor_status' => 0 // FALSE, NULL, NONE, NADDA
+			);
+		}
+	else {
+		$ancestry_data = array (
+			'ancestor_status' => 1, // GOT 'EM
+			'url' => get_bloginfo( 'wpurl' ).$idea_data -> post_name,
+			'title' >= $idea_data -> post_title
+			);	
+		}
+	return $ancestry_data;
+}// END GET ANCESTORS
 
-}
-/*
 
 /* 
 // CUSTOM VOTING SECTION
@@ -939,6 +957,22 @@ function fetch_idea_consensus() {
 add_action('wp_ajax_fetch_idea_consensus', 'fetch_idea_consensus');
 // non-logged in user
 add_action('wp_ajax_nopriv_fetch_idea_consensus', 'fetch_idea_consensus' );
+
+function fetch_idea_ancestry() {
+	$idea_id = $_GET['idea_id'];
+	$idea_ancestry = get_idea_ancestry($idea_id);
+	$ancestry_data = array (
+		"ancestry_data" => $idea_ancestry
+		);
+	// CONVERT  TO JSON	
+	$response_data = json_encode($ancestry_data);
+	// response output
+	die($response_data);	
+}  // END FETCH IDEA CONSENSUS
+
+add_action('wp_ajax_fetch_idea_ancestry', 'fetch_idea_ancestry');
+// non-logged in user
+add_action('wp_ajax_nopriv_fetch_idea_ancestry', 'fetch_idea_ancestry' );
 
 
 function determine_user_available_votes() {

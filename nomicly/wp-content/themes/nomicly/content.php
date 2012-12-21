@@ -78,6 +78,10 @@
 				<?php printf( __( '<span class="%1$s">This idea addresses:</span> %2$s', 'twentyeleven' ), 'entry-utility-prep entry-utility-prep-cat-links', $categories_list );
 				$show_sep = true; ?>
 			</span>
+				<span class="ancestry-links">
+				<a href="" id="ancestors_<?php the_ID(); ?>">&nbsp;</a>
+				<a href="" id="children_<?php the_ID(); ?>">&nbsp;</a>
+				</span>
 			<?php endif; // End if categories ?>
 			<?php
 				/* translators: used between list items, there is a space after the comma */
