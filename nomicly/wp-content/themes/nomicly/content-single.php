@@ -76,5 +76,12 @@
 			</div><!-- #author-description -->
 		</div><!-- #author-info -->
 		<?php endif; ?>
+		<!--ancestry links -->
+		<div class="ancestry-toggle-div">
+			<p class="ancestry-links" id="ancestry-links_<?php the_ID(); ?>">
+				<span class="ancestry-label"></span><a class="ancestry-link"></a>
+			</p>
+		</div>
+		
 	</footer><!-- .entry-meta -->
 </article><!-- #post-<?php the_ID(); ?> -->
