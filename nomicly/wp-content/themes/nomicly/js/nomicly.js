@@ -233,32 +233,60 @@ function get_idea_ancestry() {
 		var idea_data = jQuery(this).attr('id');
 		var idea_array = idea_data.split('-');
 		var idea = idea_array[1];
-	jQuery.ajax({
-				url: ajaxurl, 
-				type: "get",
-				dataType:'json',
-				data: {
-					action:'fetch_idea_ancestry',
-					idea_id: idea,
-					  }, 
-				success:  function(response){
-					// NO ANCESTORS == 0 --> DO NOTHING
-					if (response.ancestry_data.ancestor_status == 0 ) {
-						return;
+		//check for scripts-done so you don't do all these more than once, due to infinite scroll
+		if (!jQuery(this).hasClass("scripts-done")) {
+		jQuery.ajax({
+					url: ajaxurl, 
+					type: "get",
+					dataType:'json',
+					data: {
+						action:'fetch_idea_ancestry',
+						idea_id: idea,
+						  }, 
+					success:  function(response){
+						// NO ANCESTORS == 0 --> DO NOTHING
+						if (response.ancestry_data.ancestor_status == 0 ) {
+							return;
+							}
+						else {
+							var url = response.ancestry_data.url;
+							//set variables
+							var ancestry_ID = '#ancestry-links_'+idea;
+							var ancestry_toggle_ID = 'ancestry-links-toggle_'+idea;
+							var idea_ID = 'ancestry_'+idea;
+							var title = response.ancestry_data.title;
+							var ancestry_link = jQuery(ancestry_ID+' .ancestry-link');
+							//build link and append it based on ajax response
+							jQuery(ancestry_link).attr('href', url);
+							jQuery(ancestry_link).attr('id', idea_ID);
+							jQuery(ancestry_link).html(title);
+							//jQuery(ancestry_link).parent().find('.ancestry-label').html('Original Idea: ');
+							//add toggle link if ancestry is present
+							jQuery(ancestry_link).parent().parent().prepend("<a class='ancestry-toggle' href=''>View Original Idea</a>");
+							jQuery('.ancestry-toggle').attr('id', ancestry_toggle_ID);
+							
 						}
-					else {
-						var url = response.ancestry_data.url;
-						var title = response.ancestry_data.title;
-					// I (jms) would personally like to see a show/hide here...
-						jQuery('#ancestry_'+idea).parent().prepend('Original Idea:  ');
-						jQuery('#ancestry_'+idea).append(title);
-						jQuery('#ancestry_'+idea).attr('href', url);
-					}
-	
-				} // end RESPONSE - GET STATS
-			}); // END AJAX
+		
+					} // end RESPONSE - GET STATS
+				}); // END AJAX
+				jQuery(this).addClass('scripts-done');
+			}//end scripts done check
 		}); // END FOR EACH
-} // END GET IDEA CONSENSUS
+		//show ancestry click event
+		jQuery('#content').delegate('.ancestry-toggle', 'click', function () {
+			jQuery(this).text("Hide Original Idea");
+			jQuery(this).parent().find('.ancestry-link, .ancestry-label').show();
+			jQuery(this).attr('class', 'ancestry-toggled');
+			return false;
+		});//end click
+		//hide ancestry click event
+		jQuery('#content').delegate('.ancestry-toggled', 'click', function () {
+			jQuery(this).text("View Original Idea");
+			jQuery(this).parent().find('.ancestry-link, .ancestry-label').hide();
+			jQuery(this).attr('class', 'ancestry-toggle');
+			return false;
+		});//end click
+} // END GET IDEA ANCESTRY
 
 
 /*

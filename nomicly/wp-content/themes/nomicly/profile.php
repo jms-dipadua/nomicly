@@ -169,6 +169,11 @@ get_header();
 								</span>
 								<?php endif; // End if $tags_list ?>
 								<?php endif; // End if 'post' == get_post_type() ?>
+									<div class="ancestry-toggle-div">
+										<p class="ancestry-links" id="ancestry-links_<?php the_ID(); ?>">
+											<span class="ancestry-label"></span><a class="ancestry-link"></a>
+										</p>
+									</div>
 						</footer>
 				</article>
 				
