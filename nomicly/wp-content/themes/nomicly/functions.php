@@ -84,6 +84,8 @@ function update_user_email($user, $email) {
 
 	// 	BUG -2 
 	//	 - User loggout after changing password. :(
+		// wp_set_user_auth () ??? would that help prevent logouts? 
+		// 	maybe wp_clear_auth and then wp_set_user_auth ()?
 	*/
 function update_user_password($user, $password_new) {
 	require_once( ABSPATH . WPINC . '/registration.php');	
@@ -106,7 +108,7 @@ function update_user_password($user, $password_new) {
 			$message = "Failed to Save New Password";
 		}
 		else {
-			$message = "New Password Saved<br /> For security reasons, you will need to re-log in to make further changes.";
+			$message = "New Password Saved";
 			wp_set_auth_cookie( $user_id, 'TRUE' );
 		}
 	return $message;
@@ -908,8 +910,14 @@ add_action( 'init', 'add_nomicly_js' );
 // USERS AND USER PROFILE STUFF
 */
 function change_user_email() {
-
-
+	$user_id = get_current_user_id();
+	$requested_new_email = $_POST['new_email'];
+	$message = update_user_email($user, $requested_new_email);
+	$email_change_data = array(
+			'email_change_message' => $message
+		);
+	$response_data = json_encode($email_change_data);
+	die($response_data);
 }
 
 add_action('wp_ajax_change_user_email', 'change_user_email');

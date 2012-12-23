@@ -46,6 +46,13 @@ jQuery(function() {
 		change_user_password();
 		return false;
 	});
+	
+		jQuery('.profile-sidebar-box').delegate('.submit_email_change','click', function() {
+		change_user_email();
+		return false;
+	});
+
+
 });
 
 
@@ -471,11 +478,48 @@ function get_available_user_votes () {
 /*
 // 	USER PROFILE SECTION
 */
+
 // CHANGE USER EMAIL
+function change_user_email() {	
+	// CLEAR HELP AREA
+	clear_profile_help_area ();
+
+	// 1. string compare new and repeated emails
+	var new_email = jQuery('#new_email').val();
+	var repeated_new_email = jQuery('#repeated_email').val();
+		if (new_email != repeated_new_email) {
+			var response_message = "Sorry, the new emails you provided do not match. Please verify the spelling of both and try again."
+	// BUG:
+		// - NEED TO CHECK FOR VALIDATION BUT IT'S SUCH A POA 
+		// 	- if user screws it up. oh, well.
+			jQuery('#profile_help_response_area').html(response_message);
+			return;
+		} // END DON'T MATCH
+		// 2. SEND TO BACKEND FOR PROCESSING
+		else {
+			jQuery.ajax({
+				url: ajaxurl, 
+				type: "POST",
+				dataType:'json',
+				data: {
+					action:'change_user_email',
+					requested_new_email: new_email
+					  }, 
+				success:  function(response){
+					// CHANGE PROCESSED BY SERVER
+					var response_message = response.email_change_message;
+					jQuery('#profile_help_response_area').html(response_message);
+				}	// end RESPONSE 		
+			});//end ajax
+	} //END ELSE, PROVIDED PASSWORDS MATCH
+} // END CHANGE USER PASSWORD
+
 
 
 // CHANGE USER PASSWORD
 function change_user_password() {
+	// CLEAR HELP AREA
+	clear_profile_help_area();
 	// 1. string compare new and repeated passwords
 	var requested_new_password = jQuery('#new_password').val();
 	var repeated_new_pass = jQuery('#repeated_password').val();
@@ -504,11 +548,18 @@ function change_user_password() {
 					jQuery('#profile_help_response_area').html(response_message);
 				}	// end RESPONSE 		
 			});//end ajax
-			} //END ELSE, PROVIDED PASSWORDS MATCH
-			// APPEND THE RESPONSE MESSAGE
-			//return false;
+	} //END ELSE, PROVIDED PASSWORDS MATCH		
 } // END CHANGE USER PASSWORD
-	
+
+
+/*
+// HELPER FUNCTIONS
+*/
+// CLEAR THE HELP AREA
+function clear_profile_help_area() {
+	jQuery('.profile_help_response_area').html('');
+	return;
+}
 /*
 // PROCESS HOT OR NOT VOTES
 */
