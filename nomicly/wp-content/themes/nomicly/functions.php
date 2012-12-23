@@ -78,21 +78,36 @@ function update_user_email($user, $email) {
 	
 	/*
 	//	BUG
-	//		- look into user cookie stuff. wp_set_cookies()
-	// 		- current bug may have to do with cookies. 
-	//		- when user logs in password may check pass + some secret cookie key ? or is used in the hashing?
-	//		- ALSO, why the fuck is it saying 'not saved' when the database is updating!? WTF@!??
+	//		- inclination would be to use wp_update_user()
+	//		- BUT that has a MAJOR bug:  shortens the password on insert!!! 
+	//		- to avoid this, i just use $wpdb -> update().
+
+	// 	BUG -2 
+	//	 - User loggout after changing password. :(
 	*/
 function update_user_password($user, $password_new) {
-	require_once( ABSPATH . WPINC . '/registration.php');
-	$user_id = $user;
+	require_once( ABSPATH . WPINC . '/registration.php');	
+//	$new_pass = $password_new;
 	$new_password = wp_hash_password($password_new);
-	$udpate = wp_update_user( array ('ID' => $user_id, 'user_pass' => $new_password) );
-		if($update != $user_id) {
+	
+	global $wpdb;
+	$table_users = $wpdb->prefix."users";
+	$user_id = $user;
+	
+	$update_data = array (
+		'user_pass' => $new_password
+		);
+	$where = array (
+		'ID' => $user_id
+		);	
+	
+	$update = $wpdb->update( $table_users, $update_data, $where, $format = null, $where_format = null );
+		if(!$update) {
 			$message = "Failed to Save New Password";
 		}
 		else {
-			$message = "New Password Saved";
+			$message = "New Password Saved<br /> For security reasons, you will need to re-log in to make further changes.";
+			wp_set_auth_cookie( $user_id, 'TRUE' );
 		}
 	return $message;
 } // END UPDATE PASSWORD
@@ -110,11 +125,11 @@ function verify_user_password_authorization($user, $password_old) {
 	$actual_current_pass = $user_data -> user_pass;	
 	
 	$status_check = wp_check_password( $claimed_old_password, $actual_current_pass, $user_id );
-	if ($status_check) {
-		$match_status = 1; // 1 = TRUE  
+	if ($status_check == FALSE) {
+		$match_status = 0; // 0 = FALSE 
 	}
 	else {
-		$match_status = 0; // 0 = FALSE 
+		$match_status = 1; // 1 = TRUE  
 	}	
 	return $match_status;
 } // END VERIFY USER PASSWORD MATCH
@@ -907,9 +922,7 @@ function change_user_password() {
 	$claimed_current_pass = $_POST['claimed_current_pass'];
 	$requested_new_pass = $_POST['requested_new_pass'];
 // VERIFY PASSWORDS MATCH
-	//$pass_match_status = verify_user_password_authorization($user_id, $claimed_current_pass);
-	$pass_match_status = 1;
-	$pass_match_status = intval($pass_match_status);
+	$pass_match_status = verify_user_password_authorization($user_id, $claimed_current_pass);
 	if ($pass_match_status == 0) {
 		$message = "Sorry, the password you provided as your current password does not match our records. Please try again.";
 	} // OTHERWISE
@@ -918,7 +931,7 @@ function change_user_password() {
 		$message = update_user_password($user_id, $requested_new_pass);
 	}
 // FOR NOW, JUST RETURNS MESSAGE
-// MAY WANT IN FUTURE TO RETURN A TYPE (i.e. ability to enum reason in response)
+// 	- easy refactor to include a reason/response-type too (enum)
 	$pass_change_data = array(
 			'password_change_message' => $message
 		);

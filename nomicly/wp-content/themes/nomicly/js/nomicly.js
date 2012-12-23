@@ -42,7 +42,7 @@ jQuery(function() {
 		shorten_topic_name();
 	}
 	
-	jQuery('.submit_pass_change').click(function() {
+	jQuery('.profile-sidebar-box').delegate('.submit_pass_change','click', function() {
 		change_user_password();
 		return false;
 	});
