@@ -60,9 +60,20 @@ add_action( 'user_register', 'grant_new_user_votes' );
 	// EMAIL
 function update_user_email($user, $email) {
 	require_once( ABSPATH . WPINC . '/registration.php');
-	$user = $user_id;
+	global $wpdb;
+	$table_users = $wpdb -> prefix."users";
+	$user_id = $user;
 	$new_email = $email;
-	$udpate = wp_update_user( array ('ID' => $user_id, 'user_email' => $new_email) ) ;
+	
+	$update_data = array (
+		'user_email' => $new_email
+		);
+	$where = array (
+		'ID' => $user_id
+		);	
+	
+	$update = $wpdb->update( $table_users, $update_data, $where, $format = null, $where_format = null );
+
 	if(!$update) {
 		$message = "Failed to Save New Email";
 	}
@@ -89,7 +100,6 @@ function update_user_email($user, $email) {
 	*/
 function update_user_password($user, $password_new) {
 	require_once( ABSPATH . WPINC . '/registration.php');	
-//	$new_pass = $password_new;
 	$new_password = wp_hash_password($password_new);
 	
 	global $wpdb;
@@ -911,8 +921,8 @@ add_action( 'init', 'add_nomicly_js' );
 */
 function change_user_email() {
 	$user_id = get_current_user_id();
-	$requested_new_email = $_POST['new_email'];
-	$message = update_user_email($user, $requested_new_email);
+	$requested_new_email = $_POST['requested_new_email'];
+	$message = update_user_email($user_id, $requested_new_email);
 	$email_change_data = array(
 			'email_change_message' => $message
 		);
