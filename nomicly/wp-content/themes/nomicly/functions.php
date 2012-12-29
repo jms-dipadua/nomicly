@@ -38,7 +38,6 @@ function my_wp_mail_from($content_type) {
 
 add_filter('wp_mail_from','my_wp_mail_from');
 add_filter('wp_mail_from_name','my_wp_mail_from_name');
-
 /*
 // this is for getting custom post types
 // and displaying them on the home page
@@ -494,7 +493,7 @@ function create_new_topic() {
 function get_user_topics($user_id) {
 	global $wpdb;
 	$table_user_topics = $wpdb->prefix."user_topics";
-	$user = $user_id;
+	//$user = $user_id;
 	$topic_query_results = $wpdb->get_col(
 		"SELECT topic_id 
 		FROM $table_user_topics 
@@ -908,6 +907,104 @@ function change_vote($user_id, $idea_id) {
 				}	
 				*/
 } // END CHANGE VOTE
+
+/*
+// NOTIFICATIONS
+// 		POSSIBLE REUSABLE FUNCTIONS:
+//		a.  get_user_topics
+//		b.  get_current_consensus
+//	 CONSTRAINING ISSUE IS THAT THESE ARE NOT PERIOD-BASED. THEY JUST GET THE CURRENT STATE, SO THERE'S NO HISTORICAL PERSPECTIVE
+*/
+
+// GET LIST
+function get_user_note_list($period_type) {
+// USE PERIOD TYPE TO DETERMINE WHAT USERS TO RETURN
+// 0 = NO CONTACT, 1 = DAILY, 2 = WEEKLY
+
+	return $user_note_list; // ARRAY OF USERS (AS IDs)
+} // END GET LIST
+
+// GET USER EMAIL
+function get_user_email ($user) {
+	
+	return $user_email;
+} // END GET USER EMAIL
+
+// GENERATE NOTIFICATION
+function generate_notification ($user_note_list) {
+// loop through each user in the list
+	foreach ($user_note_list as $user_id) {
+		$ideas = get_ideas_created($user_id);
+		// get activity for each of these
+		foreach ($ideas as $idea) {
+		
+		// get consensus stuff
+		// format it too
+		// append it to an array (or it will it be a hash?)
+		
+			}
+		$topics = get_topics_created($user_id);
+		$notification_data = array (
+			'user_id' => $user_id,
+			'ideas' => $ideas
+			);
+		
+		send_notification($notification_data);
+	}
+	
+} // END GENERATE NOTIFICATION
+
+// SEND NOTIFICATION
+function send_notification($notification_data) {
+	
+
+} // END SEND NOTIFICATION
+
+// GET IDEAS CREATED
+function get_ideas_created ($user) {
+
+} // END GET IDEAS CREATED
+
+// GET TOPICS CREATED
+function get_topics_created ($user) {
+
+} // END GET TOPICS CREATED
+
+// GET MOST LIKED IDEAS
+function get_most_liked_ideas ($user) {
+
+} // END GET MOST LIKED IDEAS
+
+// MOST DISLIKED IDEAS
+function get_most_disliked_ideas ($user) {
+
+} // END MOST DISLIKED IDEAS
+
+// NUM AGREED
+function get_num_agreed ($idea) {
+
+} // END NUM AGREED
+
+// get_num_disagreed
+function get_num_disagreed ($idea) {
+
+} // END get_num_disagreed
+
+// get_new_topic_ideas
+function get_new_topic_ideas ($topic) {
+
+} // END get_new_topic_ideas
+
+// get similar people
+function get_similar_people ($user) {
+
+} // END get_similar_people 
+
+// get_contrarians
+function get_contrarians ($user) {
+
+} // END get_new_topic_ideas
+
 
 
 /* 
