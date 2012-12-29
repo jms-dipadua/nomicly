@@ -13,7 +13,7 @@ add_action('login_enqueue_scripts', 'create_ajaxurl');
 	<?
 	}
 
-// REDIRECT WORK
+// END REDIRECT WORK
 add_action('admin_enqueue_scripts', 'redirect_non_admins');
 
 function redirect_non_admins () {
@@ -25,6 +25,19 @@ function redirect_non_admins () {
 	} 
 	return;
 } // END REDIRECT NON ADMINS
+
+/***** email notifications custom email *****/
+function my_wp_mail_from_name($name) {
+    return 'Nomicly';
+}
+
+//email from email function
+function my_wp_mail_from($content_type) {
+  return 'support@nomic.ly';
+}
+
+add_filter('wp_mail_from','my_wp_mail_from');
+add_filter('wp_mail_from_name','my_wp_mail_from_name');
 
 /*
 // this is for getting custom post types
