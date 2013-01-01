@@ -31,6 +31,8 @@ jQuery(function() {
 */
 	if (jQuery('.page-template-profile-php').length > 0) {
 		get_idea_consensus_data();
+		// edit profile settings
+		edit_profile_settings();
 	}
 	
 /* hide related posts widget if it's empty */
@@ -482,19 +484,24 @@ function get_available_user_votes () {
 // CHANGE USER EMAIL
 function change_user_email() {	
 	// CLEAR HELP AREA
-	clear_profile_help_area ();
+	clear_profile_help_area();
 
 	// 1. string compare new and repeated emails
 	var new_email = jQuery('#new_email').val();
 	var repeated_new_email = jQuery('#repeated_email').val();
 		if (new_email != repeated_new_email) {
-			var response_message = "Sorry, the new emails you provided do not match. Please verify the spelling of both and try again."
+			var response_message = "The emails do not match."
 	// BUG:
 		// - NEED TO CHECK FOR VALIDATION BUT IT'S SUCH A POA 
 		// 	- if user screws it up. oh, well.
-			jQuery('#profile_help_response_area').html(response_message);
+			jQuery('#email-response').html(response_message);
 			return;
 		} // END DON'T MATCH
+		if (new_email == '' || repeated_new_email == '') {
+			var response_message = "The emails do not match."
+			jQuery('#email-response').html(response_message);
+			return;
+		}
 		// 2. SEND TO BACKEND FOR PROCESSING
 		else {
 			jQuery.ajax({
@@ -508,7 +515,9 @@ function change_user_email() {
 				success:  function(response){
 					// CHANGE PROCESSED BY SERVER
 					var response_message = response.email_change_message;
-					jQuery('#profile_help_response_area').html(response_message);
+					jQuery('#email-response').html(response_message);
+					jQuery('#email_change_form .current-email').html(new_email);
+					clear_profile_form();
 				}	// end RESPONSE 		
 			});//end ajax
 	} //END ELSE, PROVIDED PASSWORDS MATCH
@@ -527,10 +536,15 @@ function change_user_password() {
 	
 	// CHECK ENTERED PASSWORDS MATCH
 		if (requested_new_password != repeated_new_pass) {
-			var response_message = "Sorry, the new password you provided do not match. Please verify your new password and try again."
-			jQuery('#profile_help_response_area').html(response_message);
+			var response_message = "The passwords do not match."
+			jQuery('#password-response').html(response_message);
 			return;
 		} // END DON'T MATCH
+		if (requested_new_password == '' || repeated_new_pass == '') {
+			var response_message = "The passwords do not match."
+			jQuery('#password-response').html(response_message);
+			return;
+		}
 		// 2. SEND TO BACKEND FOR PROCESSING
 		else {
 			jQuery.ajax({
@@ -545,7 +559,8 @@ function change_user_password() {
 				success:  function(response){
 					// CHANGE PROCESSED BY SERVER
 					var response_message = response.password_change_message;
-					jQuery('#profile_help_response_area').html(response_message);
+					jQuery('#password-response').html(response_message);
+					clear_profile_form();
 				}	// end RESPONSE 		
 			});//end ajax
 	} //END ELSE, PROVIDED PASSWORDS MATCH		
@@ -558,6 +573,10 @@ function change_user_password() {
 // CLEAR THE HELP AREA
 function clear_profile_help_area() {
 	jQuery('.profile_help_response_area').html('');
+	return;
+}
+function clear_profile_form() {
+	jQuery('#repeated_password, #new_password, #claimed_current_password, #new_email, #repeated_email').val('');
 	return;
 }
 /*
@@ -687,5 +706,26 @@ function shorten_topic_name() {
 			return false;
 		}
 
+	});
+}
+
+//edit profile settings email and password
+function edit_profile_settings() {
+	jQuery('.profile-settings-trigger').click(function() {
+		jQuery('.profile-settings-menu').toggle();
+		return false;
+	});
+	jQuery('.profile-settings-menu a').click(function() {
+		clear_profile_help_area();
+		clear_profile_form();
+		var showThis = jQuery(this).attr('href');
+		jQuery(showThis).show();
+		jQuery('.profile-settings-menu').hide();
+		return false;
+	});
+	jQuery('.close-pop-trigger').click(function() {
+		var showThis = jQuery(this).attr('href');
+		jQuery(showThis).hide();
+		return false;
 	});
 }

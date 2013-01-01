@@ -90,7 +90,7 @@ function login_header($title = 'Log In', $message = '', $wp_error = '') {
 	</head>
 	<body class="login<?php if ( wp_is_mobile() ) echo ' mobile'; ?>">
 	<div id="login">
-		<h1><a href="<?php echo esc_url( $login_header_url ); ?>" title="<?php echo esc_attr( $login_header_title ); ?>"><?php bloginfo( 'name' ); ?></a></h1>
+		<h1><a href="<?php echo bloginfo( 'wpurl' ); ?>"><?php bloginfo( 'name' ); ?></a></h1>
 	<?php
 
 	unset( $login_header_url, $login_header_title );

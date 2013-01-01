@@ -74,6 +74,9 @@ footer, header, hgroup, menu, nav, section {
 	padding-left: 5px;
 	color:pink;
 }
+.message {
+	color:#ff4444;
+}
 .media {margin:10px 10px 10px 0; padding-bottom:10px;}
 .media, .bd {overflow:hidden; _overflow:visible; zoom:1;}
 .media .img {float:left; margin-right: 10px;}
@@ -150,6 +153,13 @@ body {
 	box-shadow: 0 0 2px #000;
 	border-radius:4px;
 	padding: 4%;	
+}
+.plain-widget {
+	background:#fff;
+	border-radius:4px;
+}
+.box-padding {
+	padding: 2%;
 }
 .profile-sidebar-box p {
 	margin-bottom:0;
@@ -325,6 +335,88 @@ p.cat-links {
 }
 .ancestry-links {
 	margin-bottom:0;
+}
+/* profile page */
+.profile-sidebar-box {
+	
+}
+.profile-settings {
+	background:url(images/gear-icon.png) top right no-repeat;
+	float:right;
+	width:200px;
+	height:30px;
+	position:relative;
+	margin-bottom:-30px;
+	top:8px;
+	right:8px;
+}
+.profile-settings-trigger {
+	display:block;
+	width:30px;
+	height:30px;
+	float:right;
+}
+.profile-settings-menu {
+	background:#eee;
+	position:absolute;
+	font-size:.8em;
+	padding: 3%;
+	border-radius:4px;
+	border:1px solid #ccc;
+	right:0;
+	bottom:-53px;
+	display:none;
+}
+.profile-settings-menu a {
+	display:block;
+}
+#email_change_form, #password_change_form {
+	position:absolute;
+	z-index:1000000;
+	right:0;
+	top:55px;
+	display:none;
+	padding: 2%;
+	background:#eee;
+}
+.profile-settings-form label {
+	width:170px;
+	display:block;
+	float:left;
+	text-align:right;
+	padding-right:5px;
+	font-size:.9em;
+}
+.profile-settings-form p {
+	margin-bottom:7px;
+	clear:both;
+	float:left;
+}
+.profile-settings-form p.first {
+	margin-top:10px;
+}
+.profile-settings-form p.profile-settings-save {
+	float:none;
+}
+.profile-settings-form .current-email {
+	font-size:.75em;
+	color:#666;
+	float:right;
+	display:block;
+	position:relative;
+	top:1px;
+}
+.profile-settings-form input, .close-pop-trigger {
+	float:right;
+}
+.close-pop-trigger {
+	position:absolute;
+	top:5px;
+	right:10px;
+	font-size:.8em;
+}
+.page-template-profile-php #main {
+	position:relative;
 }
 /* end nomicly widgets */
 /*nomicly structures */
@@ -2561,12 +2653,12 @@ p.comment-form-comment {
 		display: block;
 		position: static;
 	}
-	.singular .hentry {
+	/*.singular .hentry {
 		padding: 1.625em 0 0;
-	}
+	} 
 	.singular.page .hentry {
 		padding: 1.625em 0 0;
-	}
+	}*/
 	.singular.page .plain-page .hentry {
 		padding: 2% 6%;
 	}
@@ -2617,7 +2709,7 @@ p.comment-form-comment {
 	}
 
 }
-@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+@media only screen and (min-width: 320px) and (max-width: 480px) {
 	body {
 		padding: 0;
 	}
@@ -2627,7 +2719,16 @@ p.comment-form-comment {
 	#branding {
 		border-top: none;
 	}
-
+	#access a {
+		line-height: 2.333em;
+    	padding: 0 1em;
+	}
+	#access li, .reg-login {
+		font-size:11px;
+	}
+	.reg-login {
+		top:12px;
+	}
 }
 
 

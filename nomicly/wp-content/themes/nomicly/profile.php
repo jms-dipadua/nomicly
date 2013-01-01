@@ -25,44 +25,57 @@ get_header();
 
 
 <?php if ( is_user_logged_in() ) { ?>
-	<div class="full-width">
+	<div class="full-width plain-widget">
+	
+		<div class="profile-settings">
+			<a href="#" class="profile-settings-trigger"></a>
+			<div class="profile-settings-menu">
+				<a href="#email_change_form">Change Email</a>
+				<a href="#password_change_form">Change Password</a>
+			</div>
+		</div>
+		
 		<!--profile box-->
-				<div class="profile-sidebar-box media" style="padding: 2%">
+				<div class="profile-sidebar-box media box-padding">
+
 				<div class="img">
 					<?php global $current_user;
 						  get_currentuserinfo();
 						  
 						  echo get_avatar( $current_user->user_email, $size = '100' );?>
 					</div>
-					<div id="profile_help_response_area">  </div>
+
 					<div class="bd">	  
+						
+						
+						
 						<?php  echo '<h3 class="entry-title">' . $current_user->user_login . '</h3>'; ?>
-						<p>Current Email:	<?php  echo $current_user->user_email; ?></p>
+						
 
 						<p class="sidebar-stats-ideas"><b>Ideas:</b> <span><?php $user_id = get_current_user_id(); $post_count = count_user_posts($user_id); echo "$post_count";?></span></p>
 						<p class="sidebar-stats-topics"><b>Topics:</b> <span><?php echo count_user_topics($user_id);?></span></p>
 						<p class="sidebar-stats-votes"><b>Votes Available:</b><span></span></p>
 						<!--<p><b>Reputation:</b> awesome</p>-->
 						<!-- ACCOUNT SETTINGS -->
-						<form action="#" method="post" id="email_change_form">
-						Change Email<br />
-						New Email:  <input type="text" id="new_email" value="" /><br />
-						Repeat New Email:  <input type="text" id="repeated_email" value="" /><br />
-						<input type="submit" class="submit_email_change" value="Save" /> 
+						<form action="#" method="post" id="email_change_form" class="widget profile-settings-form">
+							<a href="#email_change_form" id="cancel_email" class="close-pop-trigger">Close</a>
+							<div id="email-response" class="message profile_help_response_area"></div>
+							<p class="first"><label>Current Email:</label> <em class="current-email"><?php  echo $current_user->user_email; ?></em></p>
+							<p><label>New Email:</label>  <input type="text" id="new_email" value="" /></p>
+							<p><label>Confirm New Email:</label>  <input type="text" id="repeated_email" value="" /></p>
+							<p class="profile-settings-save"><input type="submit" class="submit_email_change widget-button" value="Save" /> </p>
 						</form>
-						<!-- PRESUMABLY NEED SOMETHING LIKE THIS TO HIDE THE FORM -->
-						<p><a href="" id="cancel_email">Cancel & Close</a></p>
+					
 
-
-						<form action="#" method="post" id="password_change_form">
-						Change Password<br />
-						Current Password:  <input type="password" id="claimed_current_password" value="" /><br />
-						New Password:  <input type="password" id="new_password" value="" /><br />
-						Repeat New Password:  <input type="password" id="repeated_password" value="" /><br />
-						<input type="submit" class="submit_pass_change" value="Save" />
+						<form action="#" method="post" id="password_change_form" class="widget profile-settings-form">
+						<a href="#password_change_form" id="cancel_passord" class="close-pop-trigger">Close</a>
+						<div id="password-response" class="message profile_help_response_area"></div>
+						<p class="first"><label>Current Password:</label><input type="password" id="claimed_current_password" value="" /></p>
+						<p><label>New Password:</label> <input type="password" id="new_password" value="" /></p>
+						<p><label>Confirm New Password:</label> <input type="password" id="repeated_password" value="" /></p>
+						<p class="profile-settings-save"><input type="submit" class="submit_pass_change widget-button" value="Save" /></p>
 						</form>
-						<!-- PRESUMABLY NEED SOMETHING LIKE THIS TO HIDE THE FORM -->
-						<p><a href="" id="cancel_password">Cancel & Close</a></p>
+						
 					</div>
 				</div>
 	
