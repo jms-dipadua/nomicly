@@ -87,12 +87,12 @@ function update_user_email($user, $email) {
 	$update = $wpdb->update( $table_users, $update_data, $where, $format = null, $where_format = null );
 
 	if(!$update) {
-		$message = "Failed to Save New Email";
+		$type = 0;  // NO UPDATE, ERROR...
 	}
 	else {
-		$message = "New Email Saved";
+		$type = 1; // SUCCESSFUL UPDATE
 	}
-	return $message;
+	return $type;
 } // END UPDATE EMAIL
 
 	// PASSWORD
@@ -1032,10 +1032,18 @@ add_action( 'init', 'add_nomicly_js' );
 function change_user_email() {
 	$user_id = get_current_user_id();
 	$requested_new_email = $_POST['requested_new_email'];
-	$message = update_user_email($user_id, $requested_new_email);
-	$email_change_data = array(
-			'email_change_message' => $message
-		);
+	$response_type = update_user_email($user_id, $requested_new_email);
+	if ($response_type == 0) {
+		$email_change_data = array(
+				'email_change_message' => "Error saving email."
+			);
+		}
+	else {
+		$email_change_data = array(
+				'email_change_message' => "New email saved.",
+				'new_email' => $requested_new_email
+			);	
+		}
 	$response_data = json_encode($email_change_data);
 	die($response_data);
 }
@@ -1052,7 +1060,7 @@ function change_user_password() {
 // VERIFY PASSWORDS MATCH
 	$pass_match_status = verify_user_password_authorization($user_id, $claimed_current_pass);
 	if ($pass_match_status == 0) {
-		$message = "Sorry, the password you provided as your current password does not match our records. Please try again.";
+		$message = "Current Password does not match our records.";
 	} // OTHERWISE
 	if ($pass_match_status == 1) {
 	// UPDATE: RESPONSE AS MESSAGE
