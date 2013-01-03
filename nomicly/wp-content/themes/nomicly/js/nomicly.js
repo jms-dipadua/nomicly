@@ -43,19 +43,18 @@ jQuery(function() {
 		//hide topic name and truncate description, paste into topic name hidden field
 		shorten_topic_name();
 	}
-	
+	//update password ajax
 	jQuery('.profile-sidebar-box').delegate('.submit_pass_change','click', function() {
 		change_user_password();
 		return false;
 	});
-	
+	//update email ajax
 		jQuery('.profile-sidebar-box').delegate('.submit_email_change','click', function() {
 		change_user_email();
 		return false;
 	});
 
-
-});
+});//end ready function that loads all functions
 
 
 /*

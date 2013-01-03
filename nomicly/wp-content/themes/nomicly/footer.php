@@ -29,6 +29,15 @@
 			<!--<div id="footer-search"><?php get_search_form(); ?></div>-->
 	</footer><!-- #colophon -->
 	
+	<!--social widget-->
+	<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-50e34b6d14e77c15"></script>
+	<script type="text/javascript">
+		var addthis_share = { url_transforms : { shorten: { twitter: 'bitly' } }, shorteners : { bitly : {} } }
+	</script>
+
+	<!--end social widget-->
+	
+	
 </div><!-- #page -->
 
 </div><!--end .body-wrap-->

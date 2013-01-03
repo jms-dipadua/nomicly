@@ -955,7 +955,7 @@ add_action('wp_ajax_change_user_email', 'change_user_email');
 // non-logged in user
 add_action('wp_ajax_nopriv_change_user_email', 'change_user_email' );
 
-// CHANCE PASSWORD
+// CHANGE PASSWORD
 function change_user_password() {
 	$user_id = get_current_user_id();
 	$claimed_current_pass = $_POST['claimed_current_pass'];

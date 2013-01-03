@@ -101,6 +101,13 @@ footer, header, hgroup, menu, nav, section {
 	padding: 15px 0;
 }
 
+.right {
+	float:right;
+}
+.left {
+	float:left;
+}
+
 /* =Structure
 ----------------------------------------------- */
 
@@ -233,9 +240,10 @@ p.cat-links {
 	display:none;
 }
 .idea-stats {
-	background: #eee;
+	background: #F8FBFD;
+    border: 1px solid #D8D8D8;
+    border-radius: 4px;
 	padding: 10px;
-	border:1px solid #ccc;
 	margin-bottom:10px;
 	float:left;
 }
@@ -254,7 +262,6 @@ p.cat-links {
 	opacity:.7;
 }
 .agree-with, .disagree-with {
-	border:1px solid #ccc;
 	border-radius: 4px;
 	padding: 4px 5px 4px 28px;
 	margin-bottom:10px;
@@ -264,11 +271,15 @@ p.cat-links {
 	float:left;
 }
 .agree-with {
-	background: #f8f8f8 url(images/thumbs-up.png) 5px 3px no-repeat;
+	background: #b9e3c0 url(images/thumbs-up.png) 5px 3px no-repeat;
 	margin-right:5px;
+	color: #368944;
+	border:1px solid #368944;
 }
 .disagree-with {
-	background: #f8f8f8 url(images/thumbs-down.png) 5px 5px no-repeat;
+	background: #fee url(images/thumbs-down.png) 5px 5px no-repeat;
+	color: #ff4444;
+	border:1px solid #ff4444;
 }
 .votes-yes {
 	margin-right:10px;
@@ -302,6 +313,10 @@ p.cat-links {
     padding: 5px 14px;
     position: relative;
     top: -5px;
+}
+.page-template-hot-or-not-php #primary {
+	position: relative;
+    z-index: 1000000;
 }
 /* search page styles */
 .search .widget .entry-title {
@@ -386,6 +401,8 @@ p.cat-links {
 	text-align:right;
 	padding-right:5px;
 	font-size:.9em;
+	position:relative;
+	top:4px;
 }
 .profile-settings-form p {
 	margin-bottom:7px;
@@ -404,7 +421,7 @@ p.cat-links {
 	float:right;
 	display:block;
 	position:relative;
-	top:1px;
+	top:6px;
 }
 .profile-settings-form input, .close-pop-trigger {
 	float:right;
@@ -808,6 +825,7 @@ textarea {
 }
 input[type=text] {
 	padding: 3px;
+	line-height:1;
 }
 input#s {
 	background: url(images/search.png) no-repeat 5px 6px;
@@ -2696,6 +2714,9 @@ p.comment-form-comment {
 		width: 100%;
 		height: auto;
 	}
+	.the_feed .entry-title, .widget .entry-title, .single-post article .entry-title, #compare-ideas-form article .entry-title, .user_feed .entry-title {
+		font-size:16px;
+	}
 
 }
 @media (max-width: 450px) {
@@ -2716,6 +2737,9 @@ p.comment-form-comment {
 	#page {
 		margin-top: 0;
 	}
+	#main {
+		padding: 6.625em 0 0;
+	}
 	#branding {
 		border-top: none;
 	}
@@ -2729,6 +2753,32 @@ p.comment-form-comment {
 	.reg-login {
 		top:12px;
 	}
+	#site-hd {
+		float:none;
+		width:110px;
+	}
+	#access li {
+		top:0;
+		margin-bottom:2px;
+	}
+	.home-link {
+		margin-left:13px;
+	}
+	.widget-button, .the_feed .modify-link, .single-post .hentry .modify-link, .user_feed .modify-link, .agree-with, .disagree-with, .idea_submit_button {
+		margin-right:0;
+		float:none;
+		display:block;
+		text-align:center;
+	}
+	.submit_modifed_idea, .idea_submit_button,
+	#new-topic-submit {
+		width:100%;
+	}
+	.idea-stats {
+		padding:5px;
+		width:95%;
+	}
+	
 }
 
 
