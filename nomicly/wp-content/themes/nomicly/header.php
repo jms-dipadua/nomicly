@@ -48,6 +48,24 @@
 <link rel="profile" href="http://gmpg.org/xfn/11" />
 <link rel="stylesheet" type="text/css" media="all" href="<?php bloginfo( 'stylesheet_url' ); ?>" />
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
+
+<!-- Facebook Opengraph Meta Tags -->
+<?php if (have_posts()):while(have_posts()):the_post();endwhile;endif;?>
+<meta property="fb:admins" content="695711347" />
+<meta property="og:url" content="<?php the_permalink() ?>" />
+<?php if (is_front_page()){ ?>
+<meta property="og:site_name" content="Nomicly. Share Ideas, Build Consensus." />
+<meta property="og:type" content="website" />
+<?php } elseif (is_page() && has_post_thumbnail( $post_id ))  { ?>
+<meta property="og:title" content="<?php single_post_title(''); ?>" />
+<meta property="og:type" content="article" />
+<?php } else { ?>
+<!-- For pages that do not have a thumbnail / featured image, set site's main logo image and default description -->
+<meta property="og:title" content="<?php single_post_title(''); ?>" />
+<meta property="og:type" content="article" />
+<?php } ?>
+
+
 <!--[if lt IE 9]>
 <script src="<?php echo get_template_directory_uri(); ?>/js/html5.js" type="text/javascript"></script>
 <![endif]-->
@@ -109,7 +127,7 @@
 				<?php /* Our navigation menu. If one isn't filled out, wp_nav_menu falls back to wp_page_menu. The menu assigned to the primary location is the one used. If one isn't assigned, the menu with the lowest ID is used. */ ?>
 				<h1 id="site-hd"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?><span class="alpha">alpha</span></a></h1>
 				
-				<li class="menu-item home-link"><a href="<?php echo esc_url( home_url( '/' ) ); ?>">Home</a></li>
+				<ul><li class="menu-item home-link"><a href="<?php echo esc_url( home_url( '/' ) ); ?>">Home</a></li></ul>
 				<?php wp_nav_menu( array( 'theme_location' => 'primary' ) ); ?>
 				
 			</nav><!-- #access -->

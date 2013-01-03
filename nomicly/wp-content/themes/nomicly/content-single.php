@@ -37,6 +37,14 @@
 	</div><!-- .entry-content -->
 	</div> <!-- #article_content --> 
 	<footer class="entry-meta">
+			<div class="right">
+			<!-- AddThis Button BEGIN -->
+				<div class="addthis_toolbox addthis_default_style ">
+				<a class="addthis_button_twitter" addthis:url="<?php the_permalink(); ?>" addthis:title="<?php the_title(); ?>"></a>
+				<a href="http://www.facebook.com/sharer.php?u=<?php the_permalink(); ?>" target="_blank"><img src="<?php bloginfo('template_directory'); ?>/images/facebook-icon.png" alt="share on facebook" /></a>
+				</div>
+			<!-- AddThis Button END -->
+			</div>
 		<?php
 			/* translators: used between list items, there is a space after the comma */
 			$categories_list = get_the_category_list( __( ', ', 'twentyeleven' ) );
