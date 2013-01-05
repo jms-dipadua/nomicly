@@ -999,7 +999,7 @@ function generate_notification ($user_list, $period) {
 		else {
 			$counter = 1;  // RESET FOR REUSE 
 			foreach ($topics as $topic) {
-				$topic_description = $topic['description'];
+				$topic_description = $topic->description;
 				// get # topics
 				// get # ideas created for those topics
 				// format it too
@@ -1010,7 +1010,7 @@ function generate_notification ($user_list, $period) {
 */
 		// START FORMATTING EMAIL CONTENT
 			$content_formatted .= implode('<br />', $ideas_formatted);
-		//	$content_formatted .= implode('<br />', $topics_formatted);
+//			$content_formatted .= implode('<br />', $topics_formatted);
 	
 			$notification_data = array (
 				'user_id' => $user_id,
@@ -1022,6 +1022,7 @@ function generate_notification ($user_list, $period) {
 			send_notification($notification_data); 
 			// because it's a loop, need to unset this for use w/ other users
 			unset($ideas_formatted);
+//			unset($topics_formatted);
 		} // END LOOP THROUGH EACH USER TO BE EMAILED
 	}// END USER NOTE LIST EXISTS
 } // END GENERATE NOTIFICATION
