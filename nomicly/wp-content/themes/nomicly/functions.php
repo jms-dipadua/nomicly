@@ -908,6 +908,7 @@ function change_vote($user_id, $idea_id) {
 				*/
 } // END CHANGE VOTE
 
+
 /*
 // NOTIFICATIONS
 // 		POSSIBLE REUSABLE FUNCTIONS:
@@ -917,61 +918,265 @@ function change_vote($user_id, $idea_id) {
 */
 
 // GET LIST
-function get_user_note_list($period_type) {
+function get_user_note_list($sub_type) {
 // USE PERIOD TYPE TO DETERMINE WHAT USERS TO RETURN
 // 0 = NO CONTACT, 1 = DAILY, 2 = WEEKLY
-
-	return $user_note_list; // ARRAY OF USERS (AS IDs)
+	global $wpdb;
+	$table_note_prefs = $wpdb->prefix."user_note_prefs";
+	$user_note_list = $wpdb->get_col("SELECT user_id FROM $table_note_prefs WHERE sub_type = '$sub_type'");
+	/*	if (!$user_note_list) {
+				$user_note_list = array (
+					'user_note_response' => "Error"
+					);
+			} 
+		*/
+		return $user_note_list; // ARRAY OF USERS (AS IDs)
 } // END GET LIST
 
 // GET USER EMAIL
 function get_user_email ($user) {
+	global $wpdb;
+	$table_users = $wpdb -> prefix."users";
 	
+	$user_email = $wpdb -> get_var("SELECT user_email FROM $table_users WHERE ID = $user");
+		/* 
+			if (!$user_email) {
+			$user_email = array (
+				'user_email_response' => 'Error'
+			);
+		}	
+	*/
 	return $user_email;
 } // END GET USER EMAIL
 
 // GENERATE NOTIFICATION
-function generate_notification ($user_note_list) {
+function generate_notification ($user_list, $period) {
+// IF THERE ARE PEOPLE TO EMAIL
+	if ($user_list) {
+		$report_date_range = get_report_date_range($period);
+
 // loop through each user in the list
-	foreach ($user_note_list as $user_id) {
-		$ideas = get_ideas_created($user_id);
-		// get activity for each of these
-		foreach ($ideas as $idea) {
-		
-		// get consensus stuff
-		// format it too
-		// append it to an array (or it will it be a hash?)
-		
-			}
-		$topics = get_topics_created($user_id);
-		$notification_data = array (
-			'user_id' => $user_id,
-			'ideas' => $ideas
-			);
-		
-		send_notification($notification_data);
-	}
+	foreach ($user_list as $user_id) {
+		$user_data = get_userdata($user_id);
+		$user_email = $user_data -> user_email;
+		$user_name = $user_data -> user_nicename;
+		$content_formatted = "<p><strong>Dear $user_name,</strong></p> <p>Other people find your ideas interesting! Details below. <br /> Reporting Period: ".$report_date_range['end_date']." to ".$report_date_range['reporting_date']." </p>";
+	// GET NEW IDEAS
+		$ideas = get_ideas_created($user_id, $report_date_range);
+		if(empty($ideas)) {
+			 $ideas_formatted[0] = "<h2>Your Ideas Activity Summary</h2>";		
+			 $ideas_formatted[1] = "<p>No ideas created for this time period.</p>";		
+		} // NO NEW IDEAS
+		else {
+			$ideas_formatted[0] = "<h2>Your Ideas Activity Summary</h2>";		
+		//	$idea_count = count($ideas);
+		//	$ideas_formmatted[0] .= "<p>Total New Ideas: $idea_count</p>";
+			// get activity for each of these
+			$counter = 1;
+			foreach ($ideas as $idea) {
+				$idea_id = $idea -> ID;				
+				$idea_title = $idea -> post_title;
+			// get consensus stuff
+				$idea_consensus = get_current_consensus($idea_id);
+				$total_votes = $idea_consensus['total_votes'];
+				$yes_votes = $idea_consensus['votes_yes'];
+				$no_votes = $idea_consensus['votes_no'];
+			// format it too				
+				$ideas_formatted[$counter] = "<p><strong>$idea_title</strong>: <br /> Total Votes: $total_votes <br /> Yes Votes: $yes_votes   No Votes: $no_votes</p>";
+				$counter++;		
+				}  // END IDEAS LOOP
+			} // END NEW IDEAS CREATED
+
+		/*
+		// TOPICS SECTION
+		*/
+/*
+	$topics_formatted[0] = "<h2>Topics Activity Summary</h2>";
+	$topics = get_topics_created($user_id, $report_date_range);
+		if(empty($topics)) {
+			$topics_formatted[1] = "<p>No new topics created for this time period.</p>";		
+			} // NO TOPICS CREATED FOR TIME PERIOD
+		else {
+			$counter = 1;  // RESET FOR REUSE 
+			foreach ($topics as $topic) {
+				$topic_description = $topic['description'];
+				// get # topics
+				// get # ideas created for those topics
+				// format it too
+				$topics_formatted[$counter] .= "<p>$topic_description</p>";
+					$counter++;		
+					} // END TOPICS LOOP
+				} // TOPICS EXIST
+*/
+		// START FORMATTING EMAIL CONTENT
+			$content_formatted .= implode('<br />', $ideas_formatted);
+		//	$content_formatted .= implode('<br />', $topics_formatted);
 	
+			$notification_data = array (
+				'user_id' => $user_id,
+				'user_name' => $user_name,
+				'user_email' => $user_email,
+				'content' => $content_formatted,
+				'emailed_at' => date('Y-m-d H:i:s')
+				);		
+			send_notification($notification_data); 
+		} // END LOOP THROUGH EACH USER TO BE EMAILED
+	}// END USER NOTE LIST EXISTS
 } // END GENERATE NOTIFICATION
 
 // SEND NOTIFICATION
 function send_notification($notification_data) {
-	
+	$to = $notification_data['user_email'];
+	$subject = "Nomicly Activity Report on Your Ideas";
+	$from = "support@nomic.ly";
+	$content = $notification_data['content'];
+	$headers  = 'MIME-Version: 1.0' . "\r\n";
+	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+	$headers .= "From: ".$from." \r\n";
+	//$headers .= "From: ".$from." \r\n"."BCC: james@nomic.ly \r\n";
 
+	$send = wp_mail($to, $subject, $content, $headers);
+	if (!$send) {
+		$response = 0;
+		}
+	else {
+		$response = 1;
+		// UPDATE THE USER_NOTE_TABLE WITH MOST RECENT LAST_EMAILED_AT...
+		$update = update_user_note_record($notification_data['user_id'], $notification_data['emailed_at']);		
+			if ($update == 0) {
+				$response = 3;
+			}
+		}
+	return $response;
 } // END SEND NOTIFICATION
 
-// GET IDEAS CREATED
-function get_ideas_created ($user) {
+function update_user_note_record($user, $date) {
+	global $wpdb;
+	$table = $wpdb->prefix."user_note_prefs";
+	
+	$update_data = array (
+		'last_emailed' => $date
+		);
+	$where = array (
+		'user_id' => $user
+		);
+	$update = $wpdb->update( $table, $update_data, $where, $format = null, $where_format = null );
+	if (!$update) {
+		$response = 0; // ERROR, SOMETHING BROKE
+		}
+	else {
+		$response = 1; // SUCCESSFUL
+		}
+	return $response;
+}
 
+/*
+// GET REPORT DATE RANGE
+*/
+function get_report_date_range ($period) {
+	$reporting_date = date('Y-m-d');  // what we share w/ the user
+	$start_date = date('Y-m-d H:m:s', strtotime('+8 hours')); // account for GMT... :(
+		if ($period == 1) {	
+			$end_date = date('Y-m-d', strtotime('-1 day'));
+			}
+		else {
+			$end_date = date('Y-m-d', strtotime('-7 days'));
+			}	
+	$time_period = array (
+		'start_date' => $start_date,
+		'end_date' => $end_date,
+		'reporting_date' => $reporting_date
+		);
+	return $time_period;
+} // END DATE RANGE
+
+// GET IDEAS CREATED
+function get_ideas_created ($user, $time_period) {
+	global $wpdb;
+	$start_date = $time_period['start_date'];
+	$end_date = $time_period['end_date'];
+// GETTING THE RANGE ONLY
+// poor support in get_posts() so making two roundtrips to server...
+	$relevant_ideas = $wpdb->get_col(
+		"SELECT ID FROM nomicly_posts 
+		WHERE post_date 
+		BETWEEN '$end_date' AND '$start_date' 
+		AND post_author = $user");
+	if (!empty($relevant_ideas)) {	
+		// GET THE NEW IDEAS IN POST OBJECT FORMAT
+		$relevant_ideas = implode(',', $relevant_ideas);			
+			$post_args = array (
+				'author' => $user,
+				'orderby' => 'post_date',
+				'order'   => 'DESC',
+				'include' => $relevant_ideas
+			); 
+			$ideas = get_posts( $post_args );
+		} // HAS NEW IDEAS FOR PERIOD
+	return $ideas;	
 } // END GET IDEAS CREATED
 
-// GET TOPICS CREATED
-function get_topics_created ($user) {
+function get_topics_created ($user,$report_date_range) {
+	global $wpdb;
+	$start_date = $report_date_range['start_date'];
+	$end_date = $report_date_range['end_date'];
+	$table_user_topics = $wpdb -> prefix."user_topics";
+	$table_topics = $wpdb -> prefix."term_taxonomy";
+// LOOKS LIKE JOINS WERE COMPLICATING THE DATA OUTPUT
+// SO GOING OT MAKE TWO TRIPS TO DB... :(
+	$topics = $wpdb -> get_col(
+		"SELECT topic_id 
+		FROM $table_user_topics 
+		WHERE user_id = $user
+		AND created_at BETWEEN '$end_date' AND '$start_date'"
+		);
+		// PREP DATA
+			// for now using get_category
+			// future should be to explore get_term
+			// last attempt here worked but was outputting header errors (typically a sign something is wrong)
+			/*
+					$counter = 0;
+		$taxonomy = 'category';
+		foreach ($topics as $topic) {
+			$term_id = $topic[0];
+			$term_data = get_term($term_id, $taxonomy);
+			$topic_data[$counter] = $term_data;
+			$counter++;
+			$last_topic = $term_data -> description;
+		}	// END OF TOPIC DATA PREP
+		*/
+	if ($topics) {
+		// going to loop through each and create an array of the topic data 
+		$counter = 0;
+//		$taxonomy = 'category';
+		foreach ($topics as $topic) {
+			$term_id = $topic[0];
+			$term_data = get_category($term_id);
+			$topic_data[$counter] = $term_data;
+			$counter++;
+			$last_topic = $term_data -> description;
+		}	// END OF TOPIC DATA PREP
+	} // END TOPICS EXIST
+	$to = "james.dipadua@gmail.com";
+	$subject = "debug email - getting topics";
+	$from = "support@nomic.ly";
+	$content = "this is an email from inside get_topics_created. start date = $start_date. end date = $end_date.   term id = $term_id.   if topic_data, = 1 -->  ".print_r($topic_data)."<br /> last topic description = $last_topic";
+	$headers = "From: ".$from." \r\n";
+	
+	$send = wp_mail($to, $subject, $content, $headers);
 
+
+	return $topic_data;
 } // END GET TOPICS CREATED
 
+/*
 // GET MOST LIKED IDEAS
-function get_most_liked_ideas ($user) {
+	// takes in idea_array
+	// loops through each and gets the vote type
+	// collates all votes for a specific type (like getting the consensus for an idea but relative only to that time period)
+	// --> will want "votes this week" and then total votes" --> will make a call to current_consensus()
+*/
+function get_most_liked_ideas ($idea_array) {
 
 } // END GET MOST LIKED IDEAS
 
@@ -1003,7 +1208,8 @@ function get_similar_people ($user) {
 // get_contrarians
 function get_contrarians ($user) {
 
-} // END get_new_topic_ideas
+} // END get_contrarians
+
 
 
 

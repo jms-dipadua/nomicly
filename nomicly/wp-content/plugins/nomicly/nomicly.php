@@ -38,6 +38,7 @@ Detailed Overview:
 // INITIALIZATION
 register_activation_hook(__FILE__, 'nomicly_activation');
 add_action('nomicly_vote_award_hourly', 'nomicly_award_votes');
+add_action('nomicly_user_report_daily', 'nomicly_reporting');
 
 // DEACTIVATION
 register_deactivation_hook(__FILE__, 'nomicly_deactivation');
@@ -59,12 +60,20 @@ function nomicly_activation() {
 		nomicly_create_hot_not_pairs_db();
 // USER TOPICS
  		nomicly_create_user_topics_db();
+// USER NOTIFICATION PREFERENCES 
+		nomicly_create_user_note_pref_db();
 
 // CRON SETUP
+	// AWARD VOTES
 	create_award_votes_cron();
+	// REPORTS
+	create_daily_report_cron();
 // POPULATE USER_VOTE_CACHE	
 	initialize_user_vote_cache();
-
+// POPULATE USER NOTIFICATION PREFS
+	initialize_user_note_prefs();
+// TESTING
+	nomicly_reporting();
 }//end of nomicly_activiation
 
 function nomicly_user_idea_votes_db() {
@@ -93,7 +102,7 @@ function nomicly_create_user_vote_cache_db() {
 global $wpdb;
 $table_user_vote_cache = $wpdb->prefix."user_vote_cache";
 
-	$sql = "CREATE TABLE $table_user_vote_cache (
+	$sql = "CREATE TABLE IF NOT EXISTS $table_user_vote_cache (
 	user_id int NOT NULL,
 	num_votes_avail int NOT NULL DEFAULT '10',
 	max_votes int NOT NULL DEFAULT '20',
@@ -174,6 +183,22 @@ dbDelta($sql);
 
 }// END CREATE USER_TOPICS_DB
 
+function nomicly_create_user_note_pref_db() {
+require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+global $wpdb;
+$table_user_note_prefs = $wpdb->prefix."user_note_prefs";
+
+$sql = "CREATE TABLE IF NOT EXISTS $table_user_note_prefs (
+  user_id INT NOT NULL,
+  sub_type ENUM ('0','1','3'),
+  updated_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  last_emailed DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY user_id (user_id)
+);";
+
+dbDelta($sql);
+} // END CREATE NOTIFICATION PREFERENCES
+
 /*
 //	CRON JOB STUFF
 // v1.0
@@ -181,14 +206,75 @@ dbDelta($sql);
 function create_award_votes_cron() {
 	$time = date('H:i:s');
 		wp_schedule_event($time, 'hourly', 'nomicly_vote_award_hourly');
-}
+}  // HOURLY VOTES
 
+function create_daily_report_cron() {
+//	$time = '08:45:00';
+	$time = date('H:i:s');
+		wp_schedule_event($time, 'daily', 'nomicly_user_report_daily');
+}  // DAILY REPORTS
 
 /*
-//	AWARD VOTES + SUPPORT
+//	AWARD VOTES 
 // v1.0
 */
 
+function nomicly_award_votes() {
+	// 1. get all users
+	// 2. give them 10 votes each
+		// 	-- later versions may need to deal w/ status
+		//	-- status is *not* really supported in WP at this time...
+	global $wpdb;
+	$table = $wpdb ->prefix."user_vote_cache";
+	$award_amount = 10;
+	$user_ids = $wpdb->get_col("SELECT user_id FROM $table");
+	if ( $user_ids ) {
+		foreach ( $user_ids as $user_id ) { 	
+		// GIVE THEM VOTES
+			increase_available_votes($user_id, $award_amount);
+		}
+	}
+} // END AWARD VOTES
+
+/*
+//	USER NOTIFICATIONS 
+// 	v1.0
+*/
+function nomicly_reporting (){
+	$send_type = date('w');
+ 	$send_type = intval($send_type);
+	// NOT ON SAT / SUN
+	/* if ($send_type == ( 0 xor 6 )) { 
+		return;
+	}
+	else */ if ($send_type == 5) {
+	 // 5 = FRIDAY
+	 // SEND TO WEEKLY
+		$sub_type = 2;
+		$sub_list = get_user_note_list($sub_type);
+		$period = 7;
+		generate_notification($sub_list, $period);
+	// SEND TO DAILY
+		$sub_type = 1;
+		$sub_list = get_user_note_list($sub_type);
+		$period = 1;
+		generate_notification($sub_list, $period);
+	}
+	else { //SEND TO DAILY SUBSCRIBERS
+			$sub_type = 1;
+			$sub_list = get_user_note_list($sub_type);
+			$period = 1;
+			generate_notification($sub_list, $period);
+		}
+} // END DAILY
+
+
+/*
+// TABLE INITIALIZATION
+	// putting data into tables
+*/
+	// USER VOTE CACHE
+	// PUTTING USERS INTO TABLE + GIVING VOTES
 function initialize_user_vote_cache() {
 	// 1. get all users
 	// 2. populate them into the user_vote_cache table w/ 10 votes each
@@ -209,28 +295,31 @@ function initialize_user_vote_cache() {
 				'updated_at' => $date
 				);
 			$wpdb->insert( $table_user_cache, $initial_user_data );
-		// GIVE THEM VOTES
-		//	increase_available_votes($user_id, $award_amount);
 		}// END FOR EACH
 	}// USERS EXIST
-}// END AWARD INITIAL VOTES
+}// END USER VOTE CACHE
 
-function nomicly_award_votes() {
+// COMPLETE USER_NOTIFICATION_DB SETUP
+function initialize_user_note_prefs() {
 	// 1. get all users
-	// 2. give them 10 votes each
-		// 	-- later versions may need to deal w/ status
-		//	-- status is *not* really supported in WP at this time...
+	// 2. populate them into the user_note_prefs table w/ daily email subscription
 	global $wpdb;
-	$table = $wpdb ->prefix."user_vote_cache";
-	$award_amount = 10;
-	$user_ids = $wpdb->get_col("SELECT user_id FROM $table");
+	$table_user_note_prefs = $wpdb ->prefix."user_note_prefs";
+	$date = date('Y-m-d H:i:s');
+
+	$user_ids = $wpdb->get_col("SELECT ID FROM nomicly_users");
 	if ( $user_ids ) {
 		foreach ( $user_ids as $user_id ) { 	
-		// GIVE THEM VOTES
-			increase_available_votes($user_id, $award_amount);
-		}
-	}
-} // END AWARD VOTES
+		//POPULATE INTO USER_VOTE_CACHE
+			$initial_user_data = array (
+				'user_id' => $user_id,
+				'sub_type' => '1',
+				'updated_at' => $date
+				);
+			$wpdb->insert( $table_user_note_prefs, $initial_user_data );
+		}// END FOR EACH
+	}// USERS EXIST
+}// END USER NOTE PREF SETUP
 
 /*
 // DEACTIVATION
@@ -238,11 +327,15 @@ function nomicly_award_votes() {
 
 function nomicly_deactivation() {
 // REMOVE CRON(S)
+	// VOTES
 wp_clear_scheduled_hook('nomicly_vote_award_hourly');
+
+	// REPORTS
+wp_clear_scheduled_hook('nomicly_user_report_daily');
 
 //will need to write a db dump later
 // back up may be lame because the pairings will all be fucked.
-//for now, just drop the tables
+//for now, just drop the tables (but not really...)
 global $wpdb;
 // DB: hot or not
 $table_votes = $wpdb->prefix."hot_not_votes";
