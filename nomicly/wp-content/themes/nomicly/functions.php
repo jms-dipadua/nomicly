@@ -978,9 +978,9 @@ function generate_notification ($user_list, $period) {
 				$idea_title = $idea -> post_title;
 			// get consensus stuff
 				$idea_consensus = get_current_consensus($idea_id);
-				$total_votes = $idea_consensus['total_votes'];
 				$yes_votes = $idea_consensus['votes_yes'];
 				$no_votes = $idea_consensus['votes_no'];
+				$total_votes = $yes_votes + $no_votes;
 			// format it too				
 				$ideas_formatted[$counter] = "<p><strong>$idea_title</strong>: <br /> Total Votes: $total_votes <br /> Yes Votes: $yes_votes   No Votes: $no_votes</p>";
 				$counter++;		
@@ -1020,6 +1020,8 @@ function generate_notification ($user_list, $period) {
 				'emailed_at' => date('Y-m-d H:i:s')
 				);		
 			send_notification($notification_data); 
+			// because it's a loop, need to unset this for use w/ other users
+			unset($ideas_formatted);
 		} // END LOOP THROUGH EACH USER TO BE EMAILED
 	}// END USER NOTE LIST EXISTS
 } // END GENERATE NOTIFICATION
