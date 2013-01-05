@@ -960,7 +960,7 @@ function generate_notification ($user_list, $period) {
 		$user_data = get_userdata($user_id);
 		$user_email = $user_data -> user_email;
 		$user_name = $user_data -> user_nicename;
-		$content_formatted = "<p><strong>Dear $user_name,</strong></p> <p>Other people find your ideas interesting! Details below. <br /> Reporting Period: ".$report_date_range['end_date']." to ".$report_date_range['reporting_date']." </p>";
+		$content_formatted = "<p><strong>Dear $user_name,</strong></p> <p>Other people find your ideas interesting! Details below.</p>";
 	// GET NEW IDEAS
 		$ideas = get_ideas_created($user_id, $report_date_range);
 		if(empty($ideas)) {
