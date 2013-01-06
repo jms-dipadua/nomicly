@@ -522,6 +522,14 @@ function change_user_email() {
 	} //END ELSE, PROVIDED PASSWORDS MATCH
 } // END CHANGE USER PASSWORD
 
+/*
+//  CHANGE USER NOTIFICATION PREFERENCES 
+//		- daily emails to weekly
+//		- notification of people liking or idea crossing a threshold (v.later)
+*/
+function change_user_note_prefs () {
+
+}
 
 
 // CHANGE USER PASSWORD
