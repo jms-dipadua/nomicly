@@ -209,8 +209,8 @@ function create_award_votes_cron() {
 }  // HOURLY VOTES
 
 function create_daily_report_cron() {
-//	$time = '08:45:00';
-	$time = date('H:i:s');
+	$time = '08:45:00';
+//	$time = date('H:i:s');
 		wp_schedule_event($time, 'daily', 'nomicly_user_report_daily');
 }  // DAILY REPORTS
 
