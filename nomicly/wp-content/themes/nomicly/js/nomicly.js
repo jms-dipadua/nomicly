@@ -53,7 +53,18 @@ jQuery(function() {
 		change_user_email();
 		return false;
 	});
-
+	// UPDATE NOTIFICATION PREFERENCES
+	jQuery('.profile-sidebar-box').delegate('.submit_note_pref_change','click', function() {
+		change_user_note_prefs();
+		return false;
+	});
+	/*
+	// NOT IN USE AT THIS TIME
+	// POTENTIAL FUTURE PERFORMANCE OPTIMIZATION
+	jQuery('#note_pref_change_form').click(function() {
+		get_user_note_prefs();
+	});
+	*/
 });//end ready function that loads all functions
 
 
@@ -480,6 +491,14 @@ function get_available_user_votes () {
 // 	USER PROFILE SECTION
 */
 
+// USER NOTIFICATION PREFERENCES 
+ 		// NOT IN USE AT THIS TIME
+ 		// POTENTIAL PERFORMANCE OPTIMIZATION FOR V.NEXT
+function get_user_note_prefs() {
+
+
+}
+
 // CHANGE USER EMAIL
 function change_user_email() {	
 	// CLEAR HELP AREA
@@ -528,6 +547,8 @@ function change_user_email() {
 //		- notification of people liking or idea crossing a threshold (v.later)
 */
 function change_user_note_prefs () {
+	clear_profile_help_area();
+	var requested_note_prefs = jQuery('#user_note_prefs').val();
 
 }
 
@@ -716,7 +737,7 @@ function shorten_topic_name() {
 	});
 }
 
-//edit profile settings email and password
+// HIDE/SHOW THE PROFILE SETTINGS CHANGE FORM(S)
 function edit_profile_settings() {
 	jQuery('.profile-settings-trigger').click(function() {
 		jQuery('.profile-settings-menu').toggle();

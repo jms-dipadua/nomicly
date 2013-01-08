@@ -27,6 +27,7 @@ function redirect_non_admins () {
 } // END REDIRECT NON ADMINS
 
 /***** email notifications custom email *****/
+ // THIS IS AN ANTI-SPAM MEASURE (++ branding...)
 function my_wp_mail_from_name($name) {
     return 'Nomicly';
 }
@@ -94,6 +95,40 @@ function update_user_email($user, $email) {
 	}
 	return $type;
 } // END UPDATE EMAIL
+
+// NOTIFICATION PREFERENCES
+	 // NOTE: 1 = daily, 2 = weekly, 0 = Opt-Out
+function get_user_note_prefs() {
+	global $wpdb;
+	$user_id = get_current_user_id();
+	$table_note_prefs = $wpdb ->prefix."user_note_prefs";
+
+	$user_note_pref = $wpdb -> get_var ("SELECT sub_type FROM $table_note_prefs WHERE user_id = '$user_id'");	
+	print_r($user_note_pref);
+		return $user_note_pref;
+}
+function update_user_note_prefs($user, $note_pref) {
+	require_once( ABSPATH . WPINC . '/registration.php');
+	global $wpdb;
+	$table_user_note_prefs = $wpdb -> prefix."user_note_prefs";
+
+	$update_data = array (
+		'sub_type' => $note_pref
+		);
+	$where = array (
+		'user_id' => $user
+		);	
+	
+	$update = $wpdb->update( $table_user_note_prefs, $update_data, $where, $format = null, $where_format = null );
+
+	if(!$update) {
+		$type = 0;  // NO UPDATE, ERROR...
+	}
+	else {
+		$type = 1; // SUCCESSFUL UPDATE
+	}
+	return $type;
+} // END UPDATE USER NOTE PREFS
 
 	// PASSWORD
 	//	- this function assumes the password was a verified match
@@ -561,12 +596,10 @@ function count_user_topics ($user_id) {
 	// use a basic alert for now and make better-er later
 	// 
 */
-
 function nomicly_modify_idea ()  {
 	$new_post_id = nomicly_new_idea();
 	return $new_post_id;
 }  // END MODIFY IDEAS
-
 
 /* 
 // UPDATE TERM_RELATONSHIPS
@@ -589,7 +622,6 @@ function nomicly_update_term_relationships ($object_id, $cat_id) {
 		);
 	$wpdb->insert( $table_term_relationships, $term_data );
 }// END UPDATE_TERM_ RELATIONSHIPS
-
 
 /*
 * GET ANCESTRY INFORMATION
@@ -616,11 +648,9 @@ function get_idea_ancestry($idea) {
 	return $ancestry_data;
 }// END GET ANCESTORS
 
-
 /* 
 // CUSTOM VOTING SECTION
 */
-
 /*
 // GRANT NEWLY REGISTERED USERS SOME VOTES
 */
@@ -912,8 +942,8 @@ function change_vote($user_id, $idea_id) {
 /*
 // NOTIFICATIONS
 // 		POSSIBLE REUSABLE FUNCTIONS:
-//		a.  get_user_topics
-//		b.  get_current_consensus
+//		a.  get_user_topics  (NO)
+//		b.  get_current_consensus (YES)
 //	 CONSTRAINING ISSUE IS THAT THESE ARE NOT PERIOD-BASED. THEY JUST GET THE CURRENT STATE, SO THERE'S NO HISTORICAL PERSPECTIVE
 */
 
@@ -1260,6 +1290,34 @@ function change_user_email() {
 add_action('wp_ajax_change_user_email', 'change_user_email');
 // non-logged in user
 add_action('wp_ajax_nopriv_change_user_email', 'change_user_email' );
+
+/*
+// CHANGE USER NOTE PREF 
+*/
+	 // NOTE: 1 = daily, 2 = weekly, 0 = Opt-Out
+function change_user_note_prefs () {
+	$user_id = get_current_user_id();
+	$requested_note_prefs = $_POST['requested_note_prefs'];
+	$response_type = update_user_note_prefs($user_id, $requested_note_prefs);
+	if ($response_type == 0) {
+		$notification_change_data = array(
+				'notification_change_message' => "Error saving preferences."
+			);
+		}
+	else {
+		$notification_change_data = array(
+				'notification_change_message' => "Notification preferences saved.",
+				'new_note_prefs' => $requested_note_prefs
+			);	
+		}
+	$response_data = json_encode($notification_change_data);
+	die($response_data);
+} // END CHANGE USER NOTE PREFS
+
+add_action('wp_ajax_change_user_note_prefs', 'change_user_note_prefs');
+// non-logged in user
+add_action('wp_ajax_nopriv_change_user_note_prefs', 'change_user_note_prefs' );
+
 
 // CHANGE PASSWORD
 function change_user_password() {
