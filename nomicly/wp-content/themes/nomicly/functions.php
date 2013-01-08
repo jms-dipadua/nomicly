@@ -104,9 +104,10 @@ function get_user_note_prefs() {
 	$table_note_prefs = $wpdb ->prefix."user_note_prefs";
 
 	$user_note_pref = $wpdb -> get_var ("SELECT sub_type FROM $table_note_prefs WHERE user_id = '$user_id'");	
-	print_r($user_note_pref);
 		return $user_note_pref;
 }
+
+// UPDATE USER NOTIFICATION PREFERENCES
 function update_user_note_prefs($user, $note_pref) {
 	require_once( ABSPATH . WPINC . '/registration.php');
 	global $wpdb;

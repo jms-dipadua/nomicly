@@ -546,10 +546,22 @@ function change_user_email() {
 //		- daily emails to weekly
 //		- notification of people liking or idea crossing a threshold (v.later)
 */
-function change_user_note_prefs () {
-	clear_profile_help_area();
-	var requested_note_prefs = jQuery('#user_note_prefs').val();
-
+function change_user_note_prefs() {
+	var requested_note_prefs = 	jQuery('#note_pref_change_form input:checked').val();
+	jQuery.ajax({
+		url: ajaxurl, 
+		type: "POST",
+		dataType:'json',
+		data: {
+			action:'change_user_note_prefs',
+			requested_note_prefs: requested_note_prefs
+			  }, 
+		success:  function(response){
+			// CHANGE PROCESSED BY SERVER
+			var response_message = response.notification_change_message;
+			jQuery('#note_change_response').html(response_message);
+		}	// end RESPONSE 		
+	});//end ajax
 }
 
 

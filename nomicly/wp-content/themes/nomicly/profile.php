@@ -10,19 +10,11 @@
 // Enqueue scripts
 get_header(); 
 
-// process new idea posting 
- if (isset($_POST['create'])) {
-	nomicly_new_idea();
-	}
-
 // process topic posting 
  if (isset($_POST['create_topic'])) {
 	create_new_topic();
 	}
-
 ?>
-
-
 
 <?php if ( is_user_logged_in() ) { ?>
 	<div class="full-width plain-widget">
@@ -32,6 +24,7 @@ get_header();
 			<div class="profile-settings-menu">
 				<a href="#email_change_form">Change Email</a>
 				<a href="#password_change_form">Change Password</a>
+				<a href="#note_pref_change_form">Change Notifications</a>
 			</div>
 		</div>
 		
@@ -56,7 +49,8 @@ get_header();
 						<p class="sidebar-stats-topics"><b>Topics:</b> <span><?php echo count_user_topics($user_id);?></span></p>
 						<p class="sidebar-stats-votes"><b>Votes Available:</b><span></span></p>
 						<!--<p><b>Reputation:</b> awesome</p>-->
-						<!-- ACCOUNT SETTINGS -->
+				<!-- ACCOUNT SETTINGS -->
+					<!-- EMAIL CHANGE FORM -->
 						<form action="#" method="post" id="email_change_form" class="widget profile-settings-form">
 							<a href="#email_change_form" id="cancel_email" class="close-pop-trigger">Close</a>
 							<div id="email-response" class="message profile_help_response_area"></div>
@@ -66,7 +60,7 @@ get_header();
 							<p class="profile-settings-save"><input type="submit" class="submit_email_change widget-button" value="Save" /> </p>
 						</form>
 					
-
+					<!-- PASSWORD CHANGE FORM -->
 						<form action="#" method="post" id="password_change_form" class="widget profile-settings-form">
 						<a href="#password_change_form" id="cancel_passord" class="close-pop-trigger">Close</a>
 						<div id="password-response" class="message profile_help_response_area"></div>
@@ -75,7 +69,33 @@ get_header();
 						<p><label>Confirm New Password:</label> <input type="password" id="repeated_password" value="" /></p>
 						<p class="profile-settings-save"><input type="submit" class="submit_pass_change widget-button" value="Save" /></p>
 						</form>
-						
+					<!-- NOTIFICATION PREFERENCE CHANGE FORM -->
+						<form action="#" method="post" id="note_pref_change_form" class="widget profile-settings-form">
+						<a href="#note_pref_change_form" id="cancel_note_changes" class="close-pop-trigger">Close</a>
+						<div id="note_change_response" class="message profile_help_response_area"></div>
+						<p class="first"><label>Current Notification Settings</label></p>						
+							<?php 
+								$user_note_prefs = get_user_note_prefs();  
+								if ($user_note_prefs == 1) { ?>
+									Daily <input type="radio" name="note_prefs" id="user_note_prefs_daily" value="1" checked /> <br /> 
+									Weekly <input type="radio" name="note_prefs" id="user_note_prefs_weekly" value="2" /><br />
+									None <input type="radio" name="note_prefs" id="user_note_prefs_none" value="0" /><br />								
+								<?php }
+								else if ($user_note_prefs == 2) { ?>
+									Daily <input type="radio" name="note_prefs" id="user_note_prefs_daily" value="1" /> <br /> 
+									Weekly <input type="radio" name="note_prefs" id="user_note_prefs_weekly" value="2" checked /><br />
+									None <input type="radio" name="note_prefs" id="user_note_prefs_none" value="0" /><br />																
+								<?php }
+								else { ?>
+									Daily <input type="radio" name="note_prefs" id="user_note_prefs_daily" value="1" /> <br /> 
+									Weekly <input type="radio" name="note_prefs" id="user_note_prefs_weekly" value="2" /><br />
+									None <input type="radio" name="note_prefs" id="user_note_prefs_none" value="0" checked /><br />								
+								<? }
+							?>
+						<p class="profile-settings-save">
+							<input type="submit" class="submit_note_pref_change widget-button" value="Save" /></p>
+						</form>
+
 					</div>
 				</div>
 	

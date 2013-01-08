@@ -190,7 +190,7 @@ $table_user_note_prefs = $wpdb->prefix."user_note_prefs";
 
 $sql = "CREATE TABLE IF NOT EXISTS $table_user_note_prefs (
   user_id INT NOT NULL,
-  sub_type ENUM ('0','1','3'),
+  sub_type ENUM ('0','1','2'),
   updated_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
   last_emailed DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY user_id (user_id)

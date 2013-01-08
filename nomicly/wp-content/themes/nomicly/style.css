@@ -385,7 +385,7 @@ p.cat-links {
 .profile-settings-menu a {
 	display:block;
 }
-#email_change_form, #password_change_form {
+#email_change_form, #password_change_form, #note_pref_change_form {
 	position:absolute;
 	z-index:1000000;
 	right:0;
