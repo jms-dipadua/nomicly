@@ -420,7 +420,24 @@ function get_idea_activity ($idea, $date_range) {
 //	ACTIVE IDEAS SECTION
 	// stuff like most voted-for ideas (for a given reporting period)
 */
-
+function get_active_ideas ($date_range) {
+ global $wpdb;
+ $table = $wpdb -> prefix."user_idea_votes";
+ $start = $date_range['start_date'];
+ $end = $date_range['end_date'];
+	$active_ideas = $wpdb -> get_results (
+		"SELECT idea_id, count(vote_id) 
+		FROM $table 
+		WHERE created_at BETWEEN '$end' AND '$start'
+		GROUP BY idea_id
+		LIMIT 10"
+		);
+	if(empty($active_ideas)) {
+		$active_ideas = array ('active_ideas' => 0);
+	}
+	
+	return $active_ideas;
+} // END GET ACTIVE IDEAS
 /*
 // GET MOST LIKED IDEAS
 	// takes in idea_array
