@@ -942,7 +942,6 @@ function change_vote($user_id, $idea_id) {
 
 
 
-
 /* 
 // AJAX
 // this section of code encompasses the ajax requests and handling. 

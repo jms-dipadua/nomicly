@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Nomicly Notifications
+Plugin Name: Nomicly - Main
 Plugin URI: http://jamesdipadua.com/
 Description: Create ideas and build consensus. Change the world.
 Version: 0.1
