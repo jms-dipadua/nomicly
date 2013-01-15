@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Nomicly Notifications
+Plugin Name: Nomicly Report Notifications
 Plugin URI: http://jamesdipadua.com/
 Description: Primary notifications plugin for Nomicly 
 Version: 1.0
@@ -27,6 +27,8 @@ Detailed Overview:
 // INITIALIZATION
 register_activation_hook(__FILE__, 'nomicly_note_activation');
 add_action('nomicly_user_report_daily', 'nomicly_reporting');
+add_action( 'user_register', 'set_new_user_note_prefs' ); 
+
 
 // DEACTIVATION
 register_deactivation_hook(__FILE__, 'nomicly_note_deactivation');
@@ -47,7 +49,7 @@ function nomicly_note_activation() {
 	initialize_user_note_prefs();
 
 // TESTING
-	nomicly_reporting();
+	//nomicly_reporting();
 }//end of nomicly_activiation
 
 function nomicly_create_user_note_pref_db() {
@@ -126,15 +128,31 @@ function initialize_user_note_prefs() {
 	if ( $user_ids ) {
 		foreach ( $user_ids as $user_id ) { 	
 		//POPULATE INTO USER_VOTE_CACHE
+		// 0 = NO CONTACT, 1 = DAILY, 2 = WEEKLY
 			$initial_user_data = array (
 				'user_id' => $user_id,
-				'sub_type' => '1',
+				'sub_type' => '2',
 				'updated_at' => $date
 				);
 			$wpdb->insert( $table_user_note_prefs, $initial_user_data );
 		}// END FOR EACH
 	}// USERS EXIST
 }// END USER NOTE PREF SETUP
+
+// add new users to user notifications
+function set_new_user_note_prefs($user_id) {
+// 0 = NO CONTACT, 1 = DAILY, 2 = WEEKLY
+	global $wpdb;
+	$table = $wpdb ->prefix."user_note_prefs";
+	$date = date('Y-m-d H:i:s');
+
+	$initial_user_data = array (
+		'user_id' => $user_id,
+		'sub_type' => '2',
+		'updated_at' => $date
+		);
+	$wpdb->insert( $table, $initial_user_data );
+} // END SETUP NEW USER NOTE PREFS
 
 /*
 // DEACTIVATION
@@ -169,30 +187,28 @@ function get_user_note_list($sub_type) {
 		return $user_note_list; // ARRAY OF USERS (AS IDs)
 } // END GET LIST
 
-// GET USER EMAIL
-// 	i think this isn't being used. going to deprecate. if anything breaks, will move it to the approriate place
-		/*
-		function get_user_email ($user) {
-			global $wpdb;
-			$table_users = $wpdb -> prefix."users";
-			
-			$user_email = $wpdb -> get_var("SELECT user_email FROM $table_users WHERE ID = $user");
-				/* 
-					if (!$user_email) {
-					$user_email = array (
-						'user_email_response' => 'Error'
-					);
-				}	
-			*/
-		//	return $user_email;
-		//} // END GET USER EMAIL
-
-
 // GENERATE NOTIFICATION
 function generate_notification ($user_list, $period) {
 // IF THERE ARE PEOPLE TO EMAIL
 	if ($user_list) {
 		$report_date_range = get_report_date_range($period);
+
+	/*
+	// GENERAL NOMICLY ACTIVITY SECTION
+		// this gets stuff like the actively participated ideas
+		// (that's all it is for v1)
+		// COMMON TO ALL USERS
+		// SO DOING IT HERE (before we dig into individual users).
+	*/
+	$active_ideas = get_active_ideas($report_date_range);
+	if (!empty($active_ideas)) {
+		$active_ideas_formatted[0] = "<h3>Top Ideas on Nomicly</h3>";
+			foreach($active_ideas as $idea) {
+				$idea_id = $idea[0];
+			$idea_data = get_post($idea_id, ARRAY_A);
+			$active_ideas_formatted[$idea_id] .= "<p><a href=".$idea_data['post_name'].">".$idea_data['post_title']."</a></p>";			
+		}
+	}
 
 // loop through each user in the list
 	foreach ($user_list as $user_id) {
@@ -224,6 +240,9 @@ function generate_notification ($user_list, $period) {
 /*
 // TOPICS SECTION
 */
+	// TOPICS IS A BIT WONKY ATM SO GOING TO DEPRECATE FOR TIME BEING
+	// IT WILL BE NEEDED IN THE FUTURE THROUGH!
+/*
 	$topics_formatted[0] = "<h2>Activity Summary for Your Topics</h2>";
 	$topics = count_topics_created($user_id, $report_date_range);
 		if($topics == 0) {
@@ -240,6 +259,7 @@ function generate_notification ($user_list, $period) {
 					$counter++;		
 					} // END TOPICS LOOP
 				} // TOPICS EXIST
+*/
 	/*
 	// THEN GET ANY NEW IDEAS OR HIGHLY ACTIVE IDEAS FOR A TOPIC THE USER CREATED
 		// eventually, this will include activity for topics the user is "following"
@@ -248,8 +268,9 @@ function generate_notification ($user_list, $period) {
 
 
 		// START FORMATTING EMAIL CONTENT
-			$content_formatted .= implode('<br />', $ideas_formatted);
-			$content_formatted .= implode('<br />', $topics_formatted);
+			$content_formatted = implode('<br />', $ideas_formatted);
+	//		$content_formatted .= implode('<br />', $topics_formatted);
+			$content_formatted .= implode('<br />', $active_ideas_formatted);
 	
 			$notification_data = array (
 				'user_id' => $user_id,
@@ -292,6 +313,7 @@ function send_notification($notification_data) {
 	return $response;
 } // END SEND NOTIFICATION
 
+// UPDATE USER NOTIFICATION RECORD
 function update_user_note_record($user, $date) {
 	global $wpdb;
 	$table = $wpdb->prefix."user_note_prefs";
@@ -310,7 +332,7 @@ function update_user_note_record($user, $date) {
 		$response = 1; // SUCCESSFUL
 		}
 	return $response;
-}
+}// END UPDATE USER NOTE RECORD
 
 /*
 // GET REPORT DATE RANGE
@@ -394,7 +416,7 @@ function get_users_ideas_activity ($user, $date_range) {
 	 		$aggregate_idea_activity = implode('<br />', $ideas_activity);
 	 		}
 	 return $aggregate_idea_activity;
-} // END GET IDEAS CREATED
+} // END GET ACTIVITY FOR A *USERS* IDEAS
 
 function get_idea_activity ($idea, $date_range) {
  global $wpdb;
@@ -410,10 +432,29 @@ function get_idea_activity ($idea, $date_range) {
  	);
 
  return $recent_activity_count;
-}
+} // END GET *IDEA* ACTIVITY
 
-
-
+/*
+//	ACTIVE IDEAS SECTION
+	// stuff like most voted-for ideas (for a given reporting period)
+*/
+// GET ACTIVE IDEAS
+function get_active_ideas ($date_range) {
+ global $wpdb;
+ $table = $wpdb -> prefix."user_idea_votes";
+ $start = $date_range['start_date'];
+ $end = $date_range['end_date'];
+ 
+	$active_ideas = $wpdb -> get_results (
+		"SELECT idea_id
+		FROM $table 
+		WHERE created_at BETWEEN '$end' AND '$start'
+		GROUP BY idea_id
+		ORDER BY count(vote_id) DESC
+		LIMIT 10", ARRAY_N );
+	
+	return $active_ideas;
+} // END GET ACTIVE IDEAS
 /*
 // GET MOST LIKED IDEAS
 	// takes in idea_array
