@@ -73,25 +73,13 @@ get_header();
 						<form action="#" method="post" id="note_pref_change_form" class="widget profile-settings-form">
 						<a href="#note_pref_change_form" id="cancel_note_changes" class="close-pop-trigger">Close</a>
 						<div id="note_change_response" class="message profile_help_response_area"></div>
-						<p class="first"><label>Current Notification Settings</label></p>						
-							<?php 
-								$user_note_prefs = get_user_note_prefs();  
-								if ($user_note_prefs == 1) { ?>
-									Daily <input type="radio" name="note_prefs" id="user_note_prefs_daily" value="1" checked /> <br /> 
-									Weekly <input type="radio" name="note_prefs" id="user_note_prefs_weekly" value="2" /><br />
-									None <input type="radio" name="note_prefs" id="user_note_prefs_none" value="0" /><br />								
-								<?php }
-								else if ($user_note_prefs == 2) { ?>
-									Daily <input type="radio" name="note_prefs" id="user_note_prefs_daily" value="1" /> <br /> 
-									Weekly <input type="radio" name="note_prefs" id="user_note_prefs_weekly" value="2" checked /><br />
-									None <input type="radio" name="note_prefs" id="user_note_prefs_none" value="0" /><br />																
-								<?php }
-								else { ?>
-									Daily <input type="radio" name="note_prefs" id="user_note_prefs_daily" value="1" /> <br /> 
-									Weekly <input type="radio" name="note_prefs" id="user_note_prefs_weekly" value="2" /><br />
-									None <input type="radio" name="note_prefs" id="user_note_prefs_none" value="0" checked /><br />								
-								<? }
-							?>
+						<p class="first"><b>Email Notification Preferences</b></p>						
+							<?php $user_note_prefs = get_user_note_prefs();  ?>
+							
+									<p><input type="radio" name="note_prefs" id="user_note_prefs_daily" value="1" <?php if ($user_note_prefs == 1) { ?> checked="checked" <? } ?> /> Daily</p> 
+									<p><input type="radio" name="note_prefs" id="user_note_prefs_weekly" value="2" <?php if ($user_note_prefs == 2) { ?> checked="checked" <? } ?>/> Weekly</p>
+									<p><input type="radio" name="note_prefs" id="user_note_prefs_none" value="0" <?php if ($user_note_prefs == 0) { ?> checked="checked" <? } ?>/> None</p>							
+								
 						<p class="profile-settings-save">
 							<input type="submit" class="submit_note_pref_change widget-button" value="Save" /></p>
 						</form>

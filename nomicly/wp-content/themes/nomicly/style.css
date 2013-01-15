@@ -423,8 +423,12 @@ p.cat-links {
 	position:relative;
 	top:6px;
 }
-.profile-settings-form input, .close-pop-trigger {
+.profile-settings-form input, .close-pop-trigger,
+#note_pref_change_form .profile-settings-save input {
 	float:right;
+}
+#note_pref_change_form input {
+	float:none;
 }
 .close-pop-trigger {
 	position:absolute;
@@ -2777,6 +2781,9 @@ p.comment-form-comment {
 	.idea-stats {
 		padding:5px;
 		width:95%;
+	}
+	#email_change_form, #password_change_form, #note_pref_change_form {
+		top:73px;
 	}
 	
 }
