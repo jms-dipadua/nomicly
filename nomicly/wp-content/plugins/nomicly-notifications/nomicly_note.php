@@ -193,6 +193,23 @@ function generate_notification ($user_list, $period) {
 	if ($user_list) {
 		$report_date_range = get_report_date_range($period);
 
+	/*
+	// GENERAL NOMICLY ACTIVITY SECTION
+		// this gets stuff like the actively participated ideas
+		// (that's all it is for v1)
+		// COMMON TO ALL USERS
+		// SO DOING IT HERE.
+	*/
+	$active_ideas = get_active_ideas($report_date_range);
+	if ($active_ideas) {
+		$active_ideas_formatted['intro'] = "<h3>Top Ideas on Nomicly</h3>";
+		foreach($active_ideas as $idea_id) {
+			$idea_data = get_post($idea_id);
+			$active_ideas_formatted[$idea_id] = "<p><a href=".$idea_data -> post_name.">".$idea_data -> post_title."</a></p>";
+		}
+		$active_ideas_formated = implode("<br />", $active_ideas_formatted); 
+	}
+
 // loop through each user in the list
 	foreach ($user_list as $user_id) {
 		$user_data = get_userdata($user_id);
@@ -252,7 +269,8 @@ function generate_notification ($user_list, $period) {
 
 		// START FORMATTING EMAIL CONTENT
 			$content_formatted .= implode('<br />', $ideas_formatted);
-			$content_formatted .= implode('<br />', $topics_formatted);
+	//		$content_formatted .= implode('<br />', $topics_formatted);
+			$content_formatted .= implode('<br />', $active_ideas_formated);
 	
 			$notification_data = array (
 				'user_id' => $user_id,
@@ -420,21 +438,20 @@ function get_idea_activity ($idea, $date_range) {
 //	ACTIVE IDEAS SECTION
 	// stuff like most voted-for ideas (for a given reporting period)
 */
+// GET ACTIVE IDEAS
 function get_active_ideas ($date_range) {
  global $wpdb;
  $table = $wpdb -> prefix."user_idea_votes";
  $start = $date_range['start_date'];
  $end = $date_range['end_date'];
+ 
 	$active_ideas = $wpdb -> get_results (
-		"SELECT idea_id, count(vote_id) 
+		"SELECT idea_id
 		FROM $table 
 		WHERE created_at BETWEEN '$end' AND '$start'
 		GROUP BY idea_id
-		LIMIT 10"
-		);
-	if(empty($active_ideas)) {
-		$active_ideas = array ('active_ideas' => 0);
-	}
+		ORDER BY count(vote_id) DESC
+		LIMIT 10" );
 	
 	return $active_ideas;
 } // END GET ACTIVE IDEAS
