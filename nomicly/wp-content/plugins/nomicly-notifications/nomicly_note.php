@@ -200,31 +200,30 @@ function generate_notification ($user_list, $period) {
 		$user_email = $user_data -> user_email;
 		$user_name = $user_data -> user_nicename;
 		$content_formatted = "<p><strong>Dear $user_name,</strong></p> <p>Other people find your ideas interesting!</p>";
-	// GET NEW IDEAS
+	// IDEA RELATED REPORTING
+		$ideas_formatted[0] = "<h2>Activity Summary for Your Ideas</h2>";		
 		$idea_count = count_ideas_created($user_id, $report_date_range);
 		if($idea_count == 0) {
-			 $ideas_formatted[0] = "<h2>Activity Summary for Your Ideas</h2>";		
 			 $ideas_formatted[0] .= "<p>No ideas created for this time period.</p>";		
 		} // NO NEW IDEAS
 		else {
-			$ideas_formatted[0] = "<h2>Activity Summary for Your Ideas</h2>";	
 			$ideas_formmatted[0] .= "<p>Total New Ideas: $idea_count</p>";
 			} // END NEW IDEAS CREATED
-
-	/* After this point, we need to get activity on each of the ideas the person created, regardless of when */
+	/* 
+	// 	THEN get activity on each of the ideas the person created, regardless of when 
 		// still on user, get an array of their ideas
 		// iterate through each of the ideas looking for votes 
 		// if votes exist, get the consensus 
 		// should end with
 				// votes this period:  123
 				// current consensus:  a, b, c
-		
-		$ideas_formatted[1] = get_users_ideas_activity($user_id, $report_date_range);
+	*/
+		$ideas_formatted[1] = "<h4>Interactions With Your Ideas</h4>";
+		$ideas_formatted[1] .= get_users_ideas_activity($user_id, $report_date_range);
 
-		/*
-		// TOPICS SECTION
-		*/
-
+/*
+// TOPICS SECTION
+*/
 	$topics_formatted[0] = "<h2>Activity Summary for Your Topics</h2>";
 	$topics = count_topics_created($user_id, $report_date_range);
 		if($topics == 0) {
@@ -353,7 +352,6 @@ function count_topics_created ($user,$report_date_range) {
 	$start_date = $report_date_range['start_date'];
 	$end_date = $report_date_range['end_date'];
 	$table_user_topics = $wpdb -> prefix."user_topics";
-	$table_topics = $wpdb -> prefix."term_taxonomy";
 	$topic_count = $wpdb -> get_var(
 		"SELECT count(topic_id) 
 		FROM $table_user_topics 
@@ -370,34 +368,32 @@ function count_topics_created ($user,$report_date_range) {
 function get_users_ideas_activity ($user, $date_range) {
 	global $wpdb;
 	$query_args = array(
-		'author' => $user
+		'author' => $user,
 		);
-	query_posts( $query_args ); 						
+	query_posts( $query_args ); 	
 		while ( have_posts() ) : the_post();  
-			$idea_id = the_ID();
-			$activity = get_idea_activity($idea_id, $date_range);
-				if ($activity > 0) {
-					$idea_consensus = get_current_consensus( idea_id );
+			$idea_id = get_the_ID();
+			$activity_count = get_idea_activity($idea_id, $date_range);
+				if ($activity_count > 0) {
+					$idea_consensus = get_current_consensus($idea_id);
 					$yes_votes = $idea_consensus['votes_yes'];
 					$no_votes = $idea_consensus['votes_no'];
 					$total_votes = $yes_votes + $no_votes;
-					$recent_votes = $activity['recent_votes'];
 					// format stuff
 						// -- SHOULD BE A TABLE
 						//	  HEADINGS: idea name (as link) Recent votes, Positive Votes, Negative, Total
 						// 		if it's formatted so that each idea is a row then we can collapse them all into one object to return rather than an array
 						//		that'd be preferred.
-					 $ideas_activity[idea_id] = "<p><a href=".the_permalink()." title=".the_title_attribute().">".the_title()."</a></p>";
-					 $ideas_activity[idea_id] .= "<p><b>Recent votes:</b><span>$recent_votes</span></p>";
-					 $ideas_activity[idea_id] .= "<p><b>Positive votes:</b><span>$votes_yes</span></p>";
-					 $ideas_activity[idea_id] .= "<p><b>Negative votes:</b><span>$votes_no</span></p>";
-					 $ideas_activity[idea_id] .= "<p><b>Total votes:</b><span>$total_votes</span></p>";
+					 $ideas_activity[$idea_id] = "<p><a href=".get_permalink().">".get_the_title()."</a></p>";
+					 $ideas_activity[$idea_id] .= "<p><b>Recent Votes:</b><span> $activity_count</span></p>";
+					 $ideas_activity[$idea_id] .= "<p><b>Total Positive Votes:</b><span> $yes_votes</span></p>";
+					 $ideas_activity[$idea_id] .= "<p><b>Total Negative Votes:</b><span> $no_votes</span></p>";
 				}
-	 <endwhile>
+	endwhile;
 	 	if ($ideas_activity) {
-	 		$ideas_activity = implode('<br />', $ideas_activity);
+	 		$aggregate_idea_activity = implode('<br />', $ideas_activity);
 	 		}
-	 return $ideas_activity;
+	 return $aggregate_idea_activity;
 } // END GET IDEAS CREATED
 
 function get_idea_activity ($idea, $date_range) {
@@ -410,9 +406,9 @@ function get_idea_activity ($idea, $date_range) {
  	"SELECT count(vote_id) 
  	FROM $table 
  	WHERE idea_id = $idea 
- 	AND created_at BETWEEN '$start_date' AND '$end_date'"
+ 	AND created_at BETWEEN '$end_date' AND '$start_date'"
  	);
- 
+
  return $recent_activity_count;
 }
 
