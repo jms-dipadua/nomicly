@@ -995,7 +995,7 @@ function generate_notification ($user_list, $period) {
 	// GET NEW IDEAS
 		$ideas = get_ideas_created($user_id, $report_date_range);
 		if(empty($ideas)) {
-			 $ideas_formatted[0] = "<h2>Your Ideas Activity Summary</h2>";		
+			 $ideas_formatted[0] = "<h2>Activity Summary for Your Ideas</h2>";		
 			 $ideas_formatted[1] = "<p>No ideas created for this time period.</p>";		
 		} // NO NEW IDEAS
 		else {
