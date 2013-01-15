@@ -187,25 +187,6 @@ function get_user_note_list($sub_type) {
 		return $user_note_list; // ARRAY OF USERS (AS IDs)
 } // END GET LIST
 
-// GET USER EMAIL
-// 	i think this isn't being used. going to deprecate. if anything breaks, will move it to the appropriate place
-		/*
-		function get_user_email ($user) {
-			global $wpdb;
-			$table_users = $wpdb -> prefix."users";
-			
-			$user_email = $wpdb -> get_var("SELECT user_email FROM $table_users WHERE ID = $user");
-				/* 
-					if (!$user_email) {
-					$user_email = array (
-						'user_email_response' => 'Error'
-					);
-				}	
-			*/
-		//	return $user_email;
-		//} // END GET USER EMAIL
-
-
 // GENERATE NOTIFICATION
 function generate_notification ($user_list, $period) {
 // IF THERE ARE PEOPLE TO EMAIL
@@ -314,6 +295,7 @@ function send_notification($notification_data) {
 	return $response;
 } // END SEND NOTIFICATION
 
+// UPDATE USER NOTIFICATION RECORD
 function update_user_note_record($user, $date) {
 	global $wpdb;
 	$table = $wpdb->prefix."user_note_prefs";
@@ -332,7 +314,7 @@ function update_user_note_record($user, $date) {
 		$response = 1; // SUCCESSFUL
 		}
 	return $response;
-}
+}// END UPDATE USER NOTE RECORD
 
 /*
 // GET REPORT DATE RANGE
@@ -416,7 +398,7 @@ function get_users_ideas_activity ($user, $date_range) {
 	 		$aggregate_idea_activity = implode('<br />', $ideas_activity);
 	 		}
 	 return $aggregate_idea_activity;
-} // END GET IDEAS CREATED
+} // END GET ACTIVITY FOR A *USERS* IDEAS
 
 function get_idea_activity ($idea, $date_range) {
  global $wpdb;
@@ -432,7 +414,7 @@ function get_idea_activity ($idea, $date_range) {
  	);
 
  return $recent_activity_count;
-}
+} // END GET *IDEA* ACTIVITY
 
 /*
 //	ACTIVE IDEAS SECTION
