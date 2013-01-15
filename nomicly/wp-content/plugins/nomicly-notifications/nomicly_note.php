@@ -151,6 +151,41 @@ wp_clear_scheduled_hook('nomicly_user_report_daily');
 /*
 	// MAIN BULK FUNCTIONS
 */
+
+// GET LIST
+function get_user_note_list($sub_type) {
+// USE PERIOD TYPE TO DETERMINE WHAT USERS TO RETURN
+// 0 = NO CONTACT, 1 = DAILY, 2 = WEEKLY
+	global $wpdb;
+	$table_note_prefs = $wpdb->prefix."user_note_prefs";
+	$user_note_list = $wpdb->get_col("SELECT user_id FROM $table_note_prefs WHERE sub_type = '$sub_type'");
+	/*	if (!$user_note_list) {
+				$user_note_list = array (
+					'user_note_response' => "Error"
+					);
+			} 
+		*/
+		return $user_note_list; // ARRAY OF USERS (AS IDs)
+} // END GET LIST
+
+// GET USER EMAIL
+function get_user_email ($user) {
+	global $wpdb;
+	$table_users = $wpdb -> prefix."users";
+	
+	$user_email = $wpdb -> get_var("SELECT user_email FROM $table_users WHERE ID = $user");
+		/* 
+			if (!$user_email) {
+			$user_email = array (
+				'user_email_response' => 'Error'
+			);
+		}	
+	*/
+	return $user_email;
+} // END GET USER EMAIL
+
+
+
 // GENERATE NOTIFICATION
 function generate_notification ($user_list, $period) {
 // IF THERE ARE PEOPLE TO EMAIL
