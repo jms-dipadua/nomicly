@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Nomicly Notifications
+Plugin Name: Nomicly Report Notifications
 Plugin URI: http://jamesdipadua.com/
 Description: Primary notifications plugin for Nomicly 
 Version: 1.0
@@ -27,6 +27,8 @@ Detailed Overview:
 // INITIALIZATION
 register_activation_hook(__FILE__, 'nomicly_note_activation');
 add_action('nomicly_user_report_daily', 'nomicly_reporting');
+add_action( 'user_register', 'set_new_user_note_prefs' ); 
+
 
 // DEACTIVATION
 register_deactivation_hook(__FILE__, 'nomicly_note_deactivation');
@@ -126,15 +128,31 @@ function initialize_user_note_prefs() {
 	if ( $user_ids ) {
 		foreach ( $user_ids as $user_id ) { 	
 		//POPULATE INTO USER_VOTE_CACHE
+		// 0 = NO CONTACT, 1 = DAILY, 2 = WEEKLY
 			$initial_user_data = array (
 				'user_id' => $user_id,
-				'sub_type' => '1',
+				'sub_type' => '2',
 				'updated_at' => $date
 				);
 			$wpdb->insert( $table_user_note_prefs, $initial_user_data );
 		}// END FOR EACH
 	}// USERS EXIST
 }// END USER NOTE PREF SETUP
+
+// add new users to user notifications
+function set_new_user_note_prefs($user_id) {
+// 0 = NO CONTACT, 1 = DAILY, 2 = WEEKLY
+	global $wpdb;
+	$table = $wpdb ->prefix."user_note_prefs";
+	$date = date('Y-m-d H:i:s');
+
+	$initial_user_data = array (
+		'user_id' => $user_id,
+		'sub_type' => '2',
+		'updated_at' => $date
+		);
+	$wpdb->insert( $table, $initial_user_data );
+} // END SETUP NEW USER NOTE PREFS
 
 /*
 // DEACTIVATION
@@ -170,7 +188,7 @@ function get_user_note_list($sub_type) {
 } // END GET LIST
 
 // GET USER EMAIL
-// 	i think this isn't being used. going to deprecate. if anything breaks, will move it to the approriate place
+// 	i think this isn't being used. going to deprecate. if anything breaks, will move it to the appropriate place
 		/*
 		function get_user_email ($user) {
 			global $wpdb;
@@ -224,6 +242,9 @@ function generate_notification ($user_list, $period) {
 /*
 // TOPICS SECTION
 */
+	// TOPICS IS A BIT WONKY ATM SO GOING TO DEPRECATE FOR TIME BEING
+	// IT WILL BE NEEDED IN THE FUTURE THROUGH!
+/*
 	$topics_formatted[0] = "<h2>Activity Summary for Your Topics</h2>";
 	$topics = count_topics_created($user_id, $report_date_range);
 		if($topics == 0) {
@@ -240,6 +261,7 @@ function generate_notification ($user_list, $period) {
 					$counter++;		
 					} // END TOPICS LOOP
 				} // TOPICS EXIST
+*/
 	/*
 	// THEN GET ANY NEW IDEAS OR HIGHLY ACTIVE IDEAS FOR A TOPIC THE USER CREATED
 		// eventually, this will include activity for topics the user is "following"
@@ -412,7 +434,10 @@ function get_idea_activity ($idea, $date_range) {
  return $recent_activity_count;
 }
 
-
+/*
+//	ACTIVE IDEAS SECTION
+	// stuff like most voted-for ideas (for a given reporting period)
+*/
 
 /*
 // GET MOST LIKED IDEAS
