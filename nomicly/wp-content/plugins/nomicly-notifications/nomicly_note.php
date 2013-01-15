@@ -145,6 +145,7 @@ function nomicly_note_deactivation() {
 	// REPORTS
 wp_clear_scheduled_hook('nomicly_user_report_daily');
 
+
 //will need to write a db dump later
 }//END DEACTIVATION 
 
@@ -169,20 +170,23 @@ function get_user_note_list($sub_type) {
 } // END GET LIST
 
 // GET USER EMAIL
-function get_user_email ($user) {
-	global $wpdb;
-	$table_users = $wpdb -> prefix."users";
-	
-	$user_email = $wpdb -> get_var("SELECT user_email FROM $table_users WHERE ID = $user");
-		/* 
-			if (!$user_email) {
-			$user_email = array (
-				'user_email_response' => 'Error'
-			);
-		}	
-	*/
-	return $user_email;
-} // END GET USER EMAIL
+// 	i think this isn't being used. going to deprecate. if anything breaks, will move it to the approriate place
+		/*
+		function get_user_email ($user) {
+			global $wpdb;
+			$table_users = $wpdb -> prefix."users";
+			
+			$user_email = $wpdb -> get_var("SELECT user_email FROM $table_users WHERE ID = $user");
+				/* 
+					if (!$user_email) {
+					$user_email = array (
+						'user_email_response' => 'Error'
+					);
+				}	
+			*/
+		//	return $user_email;
+		//} // END GET USER EMAIL
+
 
 // GENERATE NOTIFICATION
 function generate_notification ($user_list, $period) {
@@ -195,12 +199,12 @@ function generate_notification ($user_list, $period) {
 		$user_data = get_userdata($user_id);
 		$user_email = $user_data -> user_email;
 		$user_name = $user_data -> user_nicename;
-		$content_formatted = "<p><strong>Dear $user_name,</strong></p> <p>Other people find your ideas interesting! Details below.</p>";
+		$content_formatted = "<p><strong>Dear $user_name,</strong></p> <p>Other people find your ideas interesting!</p>";
 	// GET NEW IDEAS
 		$idea_count = count_ideas_created($user_id, $report_date_range);
 		if($idea_count == 0) {
 			 $ideas_formatted[0] = "<h2>Activity Summary for Your Ideas</h2>";		
-			 $ideas_formatted[1] = "<p>No ideas created for this time period.</p>";		
+			 $ideas_formatted[0] .= "<p>No ideas created for this time period.</p>";		
 		} // NO NEW IDEAS
 		else {
 			$ideas_formatted[0] = "<h2>Activity Summary for Your Ideas</h2>";	
@@ -208,21 +212,14 @@ function generate_notification ($user_list, $period) {
 			} // END NEW IDEAS CREATED
 
 	/* After this point, we need to get activity on each of the ideas the person created, regardless of when */
-		/*
-				$counter = 1;
-			foreach ($ideas as $idea) {
-				$idea_id = $idea -> ID;				
-				$idea_title = $idea -> post_title;
-			// get consensus stuff
-				$idea_consensus = get_current_consensus($idea_id);
-				$yes_votes = $idea_consensus['votes_yes'];
-				$no_votes = $idea_consensus['votes_no'];
-				$total_votes = $yes_votes + $no_votes;
-			// format it too				
-				$ideas_formatted[$counter] = "<p><strong>$idea_title</strong>: <br /> Total Votes: $total_votes <br /> Yes Votes: $yes_votes   No Votes: $no_votes</p>";
-				$counter++;		
-				}  // END IDEAS LOOP
-		*/
+		// still on user, get an array of their ideas
+		// iterate through each of the ideas looking for votes 
+		// if votes exist, get the consensus 
+		// should end with
+				// votes this period:  123
+				// current consensus:  a, b, c
+		
+		$ideas_formatted[1] = get_users_ideas_activity($user_id, $report_date_range);
 
 		/*
 		// TOPICS SECTION
@@ -247,6 +244,7 @@ function generate_notification ($user_list, $period) {
 	/*
 	// THEN GET ANY NEW IDEAS OR HIGHLY ACTIVE IDEAS FOR A TOPIC THE USER CREATED
 		// eventually, this will include activity for topics the user is "following"
+		// see : get_user_topics ()
 	*/
 
 
@@ -365,6 +363,60 @@ function count_topics_created ($user,$report_date_range) {
 
 	return $topic_count;
 } // END GET TOPICS CREATED
+
+/* 
+//	GET ACTIVITY FOR IDEAS CREATED BY USER FOR SPECIFIC TIME PERIOD
+*/
+function get_users_ideas_activity ($user, $date_range) {
+	global $wpdb;
+	$query_args = array(
+		'author' => $user
+		);
+	query_posts( $query_args ); 						
+		while ( have_posts() ) : the_post();  
+			$idea_id = the_ID();
+			$activity = get_idea_activity($idea_id, $date_range);
+				if ($activity > 0) {
+					$idea_consensus = get_current_consensus( idea_id );
+					$yes_votes = $idea_consensus['votes_yes'];
+					$no_votes = $idea_consensus['votes_no'];
+					$total_votes = $yes_votes + $no_votes;
+					$recent_votes = $activity['recent_votes'];
+					// format stuff
+						// -- SHOULD BE A TABLE
+						//	  HEADINGS: idea name (as link) Recent votes, Positive Votes, Negative, Total
+						// 		if it's formatted so that each idea is a row then we can collapse them all into one object to return rather than an array
+						//		that'd be preferred.
+					 $ideas_activity[idea_id] = "<p><a href=".the_permalink()." title=".the_title_attribute().">".the_title()."</a></p>";
+					 $ideas_activity[idea_id] .= "<p><b>Recent votes:</b><span>$recent_votes</span></p>";
+					 $ideas_activity[idea_id] .= "<p><b>Positive votes:</b><span>$votes_yes</span></p>";
+					 $ideas_activity[idea_id] .= "<p><b>Negative votes:</b><span>$votes_no</span></p>";
+					 $ideas_activity[idea_id] .= "<p><b>Total votes:</b><span>$total_votes</span></p>";
+				}
+	 <endwhile>
+	 	if ($ideas_activity) {
+	 		$ideas_activity = implode('<br />', $ideas_activity);
+	 		}
+	 return $ideas_activity;
+} // END GET IDEAS CREATED
+
+function get_idea_activity ($idea, $date_range) {
+ global $wpdb;
+ $table = $wpdb -> prefix."user_idea_votes";
+ $start_date = $date_range['start_date'];
+ $end_date = $date_range['end_date'];
+ 
+ $recent_activity_count = $wpdb -> get_var(
+ 	"SELECT count(vote_id) 
+ 	FROM $table 
+ 	WHERE idea_id = $idea 
+ 	AND created_at BETWEEN '$start_date' AND '$end_date'"
+ 	);
+ 
+ return $recent_activity_count;
+}
+
+
 
 /*
 // GET MOST LIKED IDEAS

@@ -256,6 +256,8 @@ function nomicly_new_idea () {
 //	header('Location: http://www.jamesdipadua.com/experimental/nomicly/index.php');
 }// END NEW IDEA
 
+
+
 /*
 ** THE FOLLOWING IS FOR THE HOT OR NOT GAME
 */

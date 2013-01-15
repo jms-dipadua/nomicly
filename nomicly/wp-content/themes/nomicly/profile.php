@@ -161,7 +161,6 @@ get_header();
 			// only get posts from this author and exclude the user profile page
 			$query_args = array(
 					'author' => $user_id,
-					'exclude' => 59,
 					'paged' => get_query_var('paged')
 					);
 				query_posts( $query_args ); 
