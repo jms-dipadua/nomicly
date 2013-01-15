@@ -49,7 +49,7 @@ function nomicly_note_activation() {
 	initialize_user_note_prefs();
 
 // TESTING
-	nomicly_reporting();
+	//nomicly_reporting();
 }//end of nomicly_activiation
 
 function nomicly_create_user_note_pref_db() {
@@ -198,16 +198,16 @@ function generate_notification ($user_list, $period) {
 		// this gets stuff like the actively participated ideas
 		// (that's all it is for v1)
 		// COMMON TO ALL USERS
-		// SO DOING IT HERE.
+		// SO DOING IT HERE (before we dig into individual users).
 	*/
 	$active_ideas = get_active_ideas($report_date_range);
-	if ($active_ideas) {
-		$active_ideas_formatted['intro'] = "<h3>Top Ideas on Nomicly</h3>";
-		foreach($active_ideas as $idea_id) {
-			$idea_data = get_post($idea_id);
-			$active_ideas_formatted[$idea_id] = "<p><a href=".$idea_data -> post_name.">".$idea_data -> post_title."</a></p>";
+	if (!empty($active_ideas)) {
+		$active_ideas_formatted[0] = "<h3>Top Ideas on Nomicly</h3>";
+			foreach($active_ideas as $idea) {
+				$idea_id = $idea[0];
+			$idea_data = get_post($idea_id, ARRAY_A);
+			$active_ideas_formatted[$idea_id] .= "<p><a href=".$idea_data['post_name'].">".$idea_data['post_title']."</a></p>";			
 		}
-		$active_ideas_formated = implode("<br />", $active_ideas_formatted); 
 	}
 
 // loop through each user in the list
@@ -268,9 +268,9 @@ function generate_notification ($user_list, $period) {
 
 
 		// START FORMATTING EMAIL CONTENT
-			$content_formatted .= implode('<br />', $ideas_formatted);
+			$content_formatted = implode('<br />', $ideas_formatted);
 	//		$content_formatted .= implode('<br />', $topics_formatted);
-			$content_formatted .= implode('<br />', $active_ideas_formated);
+			$content_formatted .= implode('<br />', $active_ideas_formatted);
 	
 			$notification_data = array (
 				'user_id' => $user_id,
@@ -451,7 +451,7 @@ function get_active_ideas ($date_range) {
 		WHERE created_at BETWEEN '$end' AND '$start'
 		GROUP BY idea_id
 		ORDER BY count(vote_id) DESC
-		LIMIT 10" );
+		LIMIT 10", ARRAY_N );
 	
 	return $active_ideas;
 } // END GET ACTIVE IDEAS
