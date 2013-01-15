@@ -184,8 +184,6 @@ function get_user_email ($user) {
 	return $user_email;
 } // END GET USER EMAIL
 
-
-
 // GENERATE NOTIFICATION
 function generate_notification ($user_list, $period) {
 // IF THERE ARE PEOPLE TO EMAIL
