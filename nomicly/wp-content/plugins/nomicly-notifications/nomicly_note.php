@@ -176,6 +176,7 @@ function get_user_note_list($sub_type) {
 // USE PERIOD TYPE TO DETERMINE WHAT USERS TO RETURN
 // 0 = NO CONTACT, 1 = DAILY, 2 = WEEKLY
 	global $wpdb;
+	$blog_url= get_bloginfo('wpurl');
 	$table_note_prefs = $wpdb->prefix."user_note_prefs";
 	$user_note_list = $wpdb->get_col("SELECT user_id FROM $table_note_prefs WHERE sub_type = '$sub_type'");
 	/*	if (!$user_note_list) {
@@ -202,11 +203,11 @@ function generate_notification ($user_list, $period) {
 	*/
 	$active_ideas = get_active_ideas($report_date_range);
 	if (!empty($active_ideas)) {
-		$active_ideas_formatted[0] = "<h3>Top Ideas on Nomicly</h3>";
+		$active_ideas_formatted[0] = "<h3 style='padding: 10px; margin:25px 0;background:#eeeeee'>Trending Ideas on Nomicly</h3>";
 			foreach($active_ideas as $idea) {
 				$idea_id = $idea[0];
 			$idea_data = get_post($idea_id, ARRAY_A);
-			$active_ideas_formatted[$idea_id] .= "<p><a href=".$idea_data['post_name'].">".$idea_data['post_title']."</a></p>";			
+			$active_ideas_formatted[$idea_id] .= "<a href=".$blog_url.$idea_data['post_name'].">".$idea_data['post_title']."</a><br />";			
 		}
 	}
 
@@ -215,9 +216,9 @@ function generate_notification ($user_list, $period) {
 		$user_data = get_userdata($user_id);
 		$user_email = $user_data -> user_email;
 		$user_name = $user_data -> user_nicename;
-		$content_formatted = "<p><strong>Dear $user_name,</strong></p> <p>Other people find your ideas interesting!</p>";
+		$content_formatted = "<p><strong>Dear $user_name,</strong></p> <p>Other people find your ideas interesting!<br/><a href='".$blog_url."/user-profile/'>Share</a> your ideas with others to get even more votes.</p>";
 	// IDEA RELATED REPORTING
-		$ideas_formatted[0] = "<h2>Activity Summary for Your Ideas</h2>";		
+		//$ideas_formatted[0] = "<h2>Activity Summary for Your Ideas</h2>";		
 		$idea_count = count_ideas_created($user_id, $report_date_range);
 		if($idea_count == 0) {
 			 $ideas_formatted[0] .= "<p>No ideas created for this time period.</p>";		
@@ -234,7 +235,7 @@ function generate_notification ($user_list, $period) {
 				// votes this period:  123
 				// current consensus:  a, b, c
 	*/
-		$ideas_formatted[1] = "<h4>Interactions With Your Ideas</h4>";
+		$ideas_formatted[1] = "<h3 style='padding: 10px; margin:25px 0;background:#eeeeee'>Activity On Your Ideas</h3>";
 		$ideas_formatted[1] .= get_users_ideas_activity($user_id, $report_date_range);
 
 /*
@@ -265,13 +266,15 @@ function generate_notification ($user_list, $period) {
 		// eventually, this will include activity for topics the user is "following"
 		// see : get_user_topics ()
 	*/
-
+	$content_end = "<p style='font-size:11px;margin-top:25px;'>You can change or unsubscribe from email notifications on your <a href='".$blog_url."/user-profile/'>Nomicly account page.</a></p>";
 
 		// START FORMATTING EMAIL CONTENT
-			$content_formatted = implode('<br />', $ideas_formatted);
+		//the salutation is above so it needs to concatinate
+			$content_formatted .= implode('<br />', $ideas_formatted);
 	//		$content_formatted .= implode('<br />', $topics_formatted);
 			$content_formatted .= implode('<br />', $active_ideas_formatted);
-	
+			$content_formatted .= $content_end;
+			
 			$notification_data = array (
 				'user_id' => $user_id,
 				'user_name' => $user_name,
@@ -407,9 +410,10 @@ function get_users_ideas_activity ($user, $date_range) {
 						// 		if it's formatted so that each idea is a row then we can collapse them all into one object to return rather than an array
 						//		that'd be preferred.
 					 $ideas_activity[$idea_id] = "<p><a href=".get_permalink().">".get_the_title()."</a></p>";
-					 $ideas_activity[$idea_id] .= "<p><b>Recent Votes:</b><span> $activity_count</span></p>";
-					 $ideas_activity[$idea_id] .= "<p><b>Total Positive Votes:</b><span> $yes_votes</span></p>";
-					 $ideas_activity[$idea_id] .= "<p><b>Total Negative Votes:</b><span> $no_votes</span></p>";
+					 $ideas_activity[$idea_id] .= "<table width='600' cellsspacing='0' cellpadding='5'><tr><th><b>Recent Votes:</b></th><th><b>Total Positive Votes:</b></th><th><b>Total Negative Votes:</b></th></tr>";
+					 $ideas_activity[$idea_id] .= "<tr><td>$activity_count</td>";
+					 $ideas_activity[$idea_id] .= "<td>$yes_votes</td>";
+					 $ideas_activity[$idea_id] .= "<td>$no_votes</td></tr></table>";
 				}
 	endwhile;
 	 	if ($ideas_activity) {
