@@ -207,7 +207,7 @@ function generate_notification ($user_list, $period) {
 			foreach($active_ideas as $idea) {
 				$idea_id = $idea[0];
 			$idea_data = get_post($idea_id, ARRAY_A);
-			$active_ideas_formatted[$idea_id] .= "<a href=".$blog_url.$idea_data['post_name'].">".$idea_data['post_title']."</a><br />";			
+			$active_ideas_formatted[$idea_id] .= "<a href=".$blog_url."/".$idea_data['post_name'].">".$idea_data['post_title']."</a><br />";			
 		}
 	}
 
@@ -372,6 +372,8 @@ function count_topics_created ($user,$report_date_range) {
 */
 function get_users_ideas_activity ($user, $date_range) {
 	global $wpdb;
+	$blog_url= get_bloginfo('wpurl');
+
 	$query_args = array(
 		'author' => $user,
 		);
