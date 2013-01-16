@@ -176,7 +176,6 @@ function get_user_note_list($sub_type) {
 // USE PERIOD TYPE TO DETERMINE WHAT USERS TO RETURN
 // 0 = NO CONTACT, 1 = DAILY, 2 = WEEKLY
 	global $wpdb;
-	$blog_url= get_bloginfo('wpurl');
 	$table_note_prefs = $wpdb->prefix."user_note_prefs";
 	$user_note_list = $wpdb->get_col("SELECT user_id FROM $table_note_prefs WHERE sub_type = '$sub_type'");
 	/*	if (!$user_note_list) {
@@ -190,6 +189,7 @@ function get_user_note_list($sub_type) {
 
 // GENERATE NOTIFICATION
 function generate_notification ($user_list, $period) {
+	$blog_url= get_bloginfo('wpurl');
 // IF THERE ARE PEOPLE TO EMAIL
 	if ($user_list) {
 		$report_date_range = get_report_date_range($period);
