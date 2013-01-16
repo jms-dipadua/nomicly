@@ -216,7 +216,7 @@ function generate_notification ($user_list, $period) {
 		$user_data = get_userdata($user_id);
 		$user_email = $user_data -> user_email;
 		$user_name = $user_data -> user_nicename;
-		$content_formatted = "<p><strong>Dear $user_name,</strong></p> <p>Other people find your ideas interesting! <a href='".$blog_url."/user-profile/'>Share</a> your ideas with others to get even more votes.</p>";
+		$content_formatted = "<p><strong>Dear $user_name,</strong></p>";
 	// IDEA RELATED REPORTING
 		$ideas_formatted[1] .= get_users_ideas_activity($user_id, $report_date_range);
 
@@ -380,7 +380,7 @@ function get_users_ideas_activity ($user, $date_range) {
 			$idea_id = get_the_ID();
 			$activity_count = get_idea_activity($idea_id, $date_range);
 				if ($activity_count > 0) {
-				$ideas_activity['intro'] = "<h3 style='padding: 10px; margin:25px 0;background:#eeeeee'>Activity On Your Ideas</h3>";
+				$ideas_activity['intro'] = "<h3 style='padding: 10px; margin:25px 0;background:#eeeeee'>Activity On Your Ideas</h3><p>Other people find your ideas interesting! <a href='".$blog_url."/user-profile/'>Share</a> your ideas with others to get even more votes.</p>";
 					$idea_consensus = get_current_consensus($idea_id);
 					$yes_votes = $idea_consensus['votes_yes'];
 					$no_votes = $idea_consensus['votes_no'];
