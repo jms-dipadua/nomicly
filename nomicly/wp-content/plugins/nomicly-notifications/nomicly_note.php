@@ -203,7 +203,7 @@ function generate_notification ($user_list, $period) {
 	*/
 	$active_ideas = get_active_ideas($report_date_range);
 	if (!empty($active_ideas)) {
-		$active_ideas_formatted[0] = "<h3 style='padding: 10px; margin:25px 0;background:#eeeeee'>Trending Ideas on Nomicly</h3>";
+		$active_ideas_formatted[0] = "<h3 style='padding: 10px; margin:25px 0;background:#eeeeee'>Trending Ideas on Nomicly</h3><p><a href='".$blog_url."/wp-login.php/'>Log in</a> to vote on these trending ideas.</p>";
 			foreach($active_ideas as $idea) {
 				$idea_id = $idea[0];
 			$idea_data = get_post($idea_id, ARRAY_A);
