@@ -218,24 +218,6 @@ function generate_notification ($user_list, $period) {
 		$user_name = $user_data -> user_nicename;
 		$content_formatted = "<p><strong>Dear $user_name,</strong></p> <p>Other people find your ideas interesting!<br/><a href='".$blog_url."/user-profile/'>Share</a> your ideas with others to get even more votes.</p>";
 	// IDEA RELATED REPORTING
-		//$ideas_formatted[0] = "<h2>Activity Summary for Your Ideas</h2>";		
-		$idea_count = count_ideas_created($user_id, $report_date_range);
-		if($idea_count == 0) {
-			 $ideas_formatted[0] .= "<p>No ideas created for this time period.</p>";		
-		} // NO NEW IDEAS
-		else {
-			$ideas_formmatted[0] .= "<p>Total New Ideas: $idea_count</p>";
-			} // END NEW IDEAS CREATED
-	/* 
-	// 	THEN get activity on each of the ideas the person created, regardless of when 
-		// still on user, get an array of their ideas
-		// iterate through each of the ideas looking for votes 
-		// if votes exist, get the consensus 
-		// should end with
-				// votes this period:  123
-				// current consensus:  a, b, c
-	*/
-		$ideas_formatted[1] = "<h3 style='padding: 10px; margin:25px 0;background:#eeeeee'>Activity On Your Ideas</h3>";
 		$ideas_formatted[1] .= get_users_ideas_activity($user_id, $report_date_range);
 
 /*
@@ -362,8 +344,6 @@ function count_ideas_created ($user, $time_period) {
 	global $wpdb;
 	$start_date = $time_period['start_date'];
 	$end_date = $time_period['end_date'];
-// GETTING THE RANGE ONLY
-// poor support in get_posts() so making two roundtrips to server...
 	$idea_count = $wpdb->get_var(
 		"SELECT count(ID) FROM nomicly_posts 
 		WHERE post_date 
@@ -400,6 +380,7 @@ function get_users_ideas_activity ($user, $date_range) {
 			$idea_id = get_the_ID();
 			$activity_count = get_idea_activity($idea_id, $date_range);
 				if ($activity_count > 0) {
+				$ideas_activity['intro'] = "<h3 style='padding: 10px; margin:25px 0;background:#eeeeee'>Activity On Your Ideas</h3>";
 					$idea_consensus = get_current_consensus($idea_id);
 					$yes_votes = $idea_consensus['votes_yes'];
 					$no_votes = $idea_consensus['votes_no'];
