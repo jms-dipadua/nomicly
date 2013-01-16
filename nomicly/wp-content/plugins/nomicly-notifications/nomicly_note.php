@@ -216,7 +216,7 @@ function generate_notification ($user_list, $period) {
 		$user_data = get_userdata($user_id);
 		$user_email = $user_data -> user_email;
 		$user_name = $user_data -> user_nicename;
-		$content_formatted = "<p><strong>Dear $user_name,</strong></p> <p>Other people find your ideas interesting!<br/><a href='".$blog_url."/user-profile/'>Share</a> your ideas with others to get even more votes.</p>";
+		$content_formatted = "<p><strong>Dear $user_name,</strong></p> <p>Other people find your ideas interesting! <a href='".$blog_url."/user-profile/'>Share</a> your ideas with others to get even more votes.</p>";
 	// IDEA RELATED REPORTING
 		//$ideas_formatted[0] = "<h2>Activity Summary for Your Ideas</h2>";		
 		$idea_count = count_ideas_created($user_id, $report_date_range);
@@ -411,7 +411,7 @@ function get_users_ideas_activity ($user, $date_range) {
 						//		that'd be preferred.
 					 $ideas_activity[$idea_id] = "<p><a href=".get_permalink().">".get_the_title()."</a></p>";
 					 $ideas_activity[$idea_id] .= "<table width='600' cellsspacing='0' cellpadding='5'><tr><th><b>Recent Votes:</b></th><th><b>Total Positive Votes:</b></th><th><b>Total Negative Votes:</b></th></tr>";
-					 $ideas_activity[$idea_id] .= "<tr><td>$activity_count</td>";
+					 $ideas_activity[$idea_id] .= "<tr style='text-align:center'><td>$activity_count</td>";
 					 $ideas_activity[$idea_id] .= "<td>$yes_votes</td>";
 					 $ideas_activity[$idea_id] .= "<td>$no_votes</td></tr></table>";
 				}
