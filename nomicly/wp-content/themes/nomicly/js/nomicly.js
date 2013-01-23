@@ -3,6 +3,21 @@
 // 		js/jquery to augment nomicly functionality 
 */
 
+// CURRENTLY WORKING:  GAMIFICATION
+// TO DO NEXT:
+// 1 . GO THROUGH EACH FUNCTION AND SET THE REGISTER_EVENT IN THE APPLICABLE EVENTS (LIKE IDEA CREATING, MODIFYING, ETC)
+// 2.  RECORD THE EVENT (I.E. MAKE REGISTER EVENT WORK)
+// 3.  MAKE SURE FETCHING THE EVENT LIST WORKS (FETCH_EVENT_LIST)
+// 4.  GETTING NOTIFICATIONS FOR ATTAINED ACHIEVEMENTS
+	-- ADD THE ACHIVEMENT CHECK TO FIRE ONCE THERE IS SUCCESS ON THE EVENT (to reduce response latency)
+
+
+// GAMIFICATION WORKFLOW
+// a. page loads and gets a list of events to monitor for
+// b. user creates an idea, votes on an idea, etc and we register the event (in parallel to or after the main event)
+// c. if the register_event fires, then we also check to see if the person has completed a new quest
+// d. if the person has, show them the fun stuff we have for them, bob!
+
 /* onload, get these functions ready */
 jQuery(function() {
 /*
@@ -358,6 +373,9 @@ function get_idea_consensus_data() {
 */
 function register_user_vote() {
 	jQuery('.vote-box').delegate('.idea-vote', 'click', function() {
+	// TO DO
+	// SET EVENT TYPE = 2 (VOTE FOR IDEA)
+	// THEN CALL REGISTER_EVENT(EVENT_TYPE)
 		//set up all the data
 		var vote_data = jQuery(this).attr('id');
 		var vote_array = vote_data.split('_');
@@ -473,6 +491,40 @@ function get_available_user_votes () {
 // 	d. return new ideas and append to top of content
 */
 
+/*
+//	QUEST && ACHIEVEMENT EVENT MONITORING
+*/
+
+/*
+ CONSTANTS
+  Event Types :: event_type :: 
+	- 0 : none :: reserve for deprecation types? 
+	- 1 : create idea
+	- 2 : vote for idea
+	- 3 : share idea
+	- 4 : modify idea
+	- 5 : create topic
+*/
+
+// GET LIST OF EVENTS TO MONITOR
+function get_event_list() {
+	// SET A GLOBAL BY APPENDING EVENT LIST TO THE WINDOW OBJECT
+	window.event_list = fetch_event_list();
+}// END EVENT LIST
+
+// REGISTER AN EVENT 
+function register_event(type) {
+	// is there an event list applicable?
+ if (window.event_list) {
+	// LOOP THROUGH ALL EVENT TYPES
+ 	for(var i = 0; i < window.event_list.length; i++) {
+ 	// RECORD THE USER QUEST EVENT
+		if( type = window.event_list[i]) {
+			post_quest_event(type);
+			}
+ 		}// end of event list
+ 	}
+}
 
 /*
 // this function controls the hot or not voting

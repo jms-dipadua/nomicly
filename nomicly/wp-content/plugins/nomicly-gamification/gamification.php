@@ -301,13 +301,41 @@ function get_user_quest_requisites($user_id, $quest_id){
 	return $quest_requisite_count;
 }
 
+// get event list
+// used by frontend to get event types to listen for
+// returns an array of event types
+function get_event_list() {
+
+
+}
+
 /*
 // 	AJAX HANDLER FUNCTIONS
 */
 
+function fetch_event_list() {
+
+	$event_list = get_event_list();
+		//check for existing list
+		if(empty($event_list)) {
+			$event_list = array (
+				'event_list' => "null"
+				);
+			}	
+	$response_data = json_encode($event_list);
+	die ($response_data);
+}
+
+add_action('wp_ajax_fetch_event_list', 'fetch_event_list');
+// non-logged in user
+add_action('wp_ajax_nopriv_fetch_event_list', 'fetch_event_list' );
+
 function process_interaction_event() {
 	$event_type = $_POST['event_type'];
 	$user_id = get_current_user_id();
+	
+	// UPDATE THE TABLE -- RECORD_STATS()
+	
 	// 1. check to see if the event is worth monitoring
 		$quests = is_event_quest($event_type);
 	// 2. IF SO, THEN RECORD THE EVENT
@@ -316,11 +344,16 @@ function process_interaction_event() {
 			$record_status = record_quest_event($user_id, $quest_id);
 		// 3. CHECK TO SEE IF QUEST COMPLETED 
 			$quest_status = is_user_quest_completed($user_id, $quest_id);
-		// 0 = false, 1 = true (quest completed)
 		// 4. IF SO, AWARD NEW ACHIEVEMENT
+		// 0 = false, 1 = true (quest completed)
 				if($quest_status == 1) {
 					$achievement_id = get_achievement_id($quest_id);
 					$achievment_data = award_achievement($user_id, $achievement_id);
+					// IF DATA, THEN START CREATING RESPONSE DATA
+					//	response data will then be an array of an array...
+					if(!empty($achievement_data)) {
+						$response_data['achievement_id'] = $achievement_data;
+					}
 				}
 			} // END FOR EACH
 		} // NO QUESTS ASSOCIATED WITH EVENT
