@@ -330,19 +330,25 @@ add_action('wp_ajax_fetch_event_list', 'fetch_event_list');
 // non-logged in user
 add_action('wp_ajax_nopriv_fetch_event_list', 'fetch_event_list' );
 
+
+/*
+	// IN PROGRESS REFACTOR
+	// FRONTEND IS GOING TO POST AN EVENT IF IT'S ON A LIST OF EVENTS BEING MONITORED
+*/
 function process_interaction_event() {
 	$event_type = $_POST['event_type'];
 	$user_id = get_current_user_id();
 	
-	// UPDATE THE TABLE -- RECORD_STATS()
-	
-	// 1. check to see if the event is worth monitoring
-		$quests = is_event_quest($event_type);
-	// 2. IF SO, THEN RECORD THE EVENT
-		if(!empty($quests)) {
-			foreach ($quests as $quest_id) {
-			$record_status = record_quest_event($user_id, $quest_id);
-		// 3. CHECK TO SEE IF QUEST COMPLETED 
+	// 1. UPDATE THE quest qualifications TABLE -- RECORD_STATS()
+		// VERIFY THAT QUESTS CAN ONLY HAVE ONE TYPE
+		// OTHERWISE, THE TYPE SHOULD BE PASSED IN AS WELL AS USER & QUEST ID
+	$record_status = record_quest_event($user_id, $quest_id);
+
+	// 2. UPDATE THE USERS QUEST RECORDS (I.E. SEE IF THERE ARE ANY NEW ACHIEVEMENTS TO AWARD)
+			// a. get_active_quests
+			// b. loop through each (foreach)
+				// i. see if user has completed it 
+				// ii. if not, see if user should have it now
 			$quest_status = is_user_quest_completed($user_id, $quest_id);
 		// 4. IF SO, AWARD NEW ACHIEVEMENT
 		// 0 = false, 1 = true (quest completed)
