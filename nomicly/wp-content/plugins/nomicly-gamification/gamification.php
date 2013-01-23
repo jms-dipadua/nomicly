@@ -212,13 +212,30 @@ function is_achievement_permanent(){
 	return $premanent_status;
 }// END ACHIEVEMENT PERMANENCY
 
+// GET ACTIVE QUESTS 
+	// input is event type
+	// output is all active events (ARRAY)
+		// --> INVESTIGATE:  
+		//		 if you also have user_id, can you filter active quests relevant to the user?
+		// 		 cut out a trip or two to the db for status check...
+function get_active_quests($event_type) {
+
+	if(empty($active_quests)) {
+		$active_quests = array (
+			'quest_data' => 'null'
+			);
+	}
+
+	return $active_quests;
+} // END GET ACTIVE QUESTS
+
+
 // GET ACHIEVEMENT ID
 	// GETS IT BASED ON THE QUEST ID
 function get_achievement_id($quest_id) {
 
 	return $achievement_id;
 }
-
 // get achievement data
 	// returns array of data, id, name, description, etc.
 function get_achievement_details($achievement_id) {
@@ -276,29 +293,50 @@ function is_event_quest($event_type){
 
 // RECORD QUEST EVENT
 	// increases qualification_count by 1
-function record_quest_event($user_id, $quest_id){
+function record_event($user_id, $quest_id){
 
-	return $record_quest_response;
+	return $record_response;
 }// END RECORD QUEST EVENT
 
 // CHECK USER QUEST COMPLETION
+	// checks to see if a user has already completed a specific quest
 function is_user_quest_completed($user_id, $quest_id){
 
 	return $completion_status;
 
 } // END CHECK USER QUEST COMPLETION
 
+// IS QUEST COMPLETED (NOW)
+	// checks to see if a user has now completed a quest
+	// i.e. an event was recorded, the quest wasn't previously completed and now we want to see if is now a completed quest 
+function is_quest_completed($user_id, $quest_id) {
+
+	// get the quest requirements
+	$quest_requirements = $get_quest_requirements($quest_id);
+	// set the timeframe
+		$timeframe = $quest_requirements['timeframe'];
+	// get the quest events relevant to the user and the timeframe
+	$relevant_quest_events = get_user_quest_events($user_id, $quest_id, $timeframe);
+	
+	// see if user has completed the quest
+		// compare the count between needed events and what the user has
+		// if ==, then response = 1 (award)
+		// if not, then response = 0 (no-award, no-action)
+	return $completion_status;
+}
 
 function get_quest_requirements($quest_id){
 
 	return $quest_data;
 }
 
-// GET FULFILLED QUEST REQUIREMENTS 
+// GET QUEST EVENTS 
 	// this function gets the counts associated with a particular quest and a particular user
-function get_user_quest_requisites($user_id, $quest_id){
+	// quests have timeframes in which they need to be completed, so the count has to be constrained by the timeframe passed in
+	// note that timeframe is in hours
+function get_user_quest_events($user_id, $quest_id, $timeframe){
 
-	return $quest_requisite_count;
+	return $quest_event_count;
 }
 
 // get event list
@@ -342,23 +380,38 @@ function process_interaction_event() {
 	// 1. UPDATE THE quest qualifications TABLE -- RECORD_STATS()
 		// VERIFY THAT QUESTS CAN ONLY HAVE ONE TYPE
 		// OTHERWISE, THE TYPE SHOULD BE PASSED IN AS WELL AS USER & QUEST ID
-	$record_status = record_quest_event($user_id, $quest_id);
-
+	$record_status = record_event($user_id, $quest_id);
+	// 2. Get Active Quests (Relevant to Event)
+	$active_quests = get_active_quests($event_type);
+		// VERIFY ACTIVE QUESTS, THEN LOOP THROUGH EACH TO VERIFY USER'S QUEST STATUS
+		if(!empty($active_quests)) {
+			foreach($active_quests as $quest_id) {
+				// i. see if user has completed it 
+				$quest_status = is_user_quest_completed($user_id, $quest_id);
+				// ii. if not, see if user should have it now
+					if ($quest_status == 0) {
+						$new_status = is_quest_completed($user_id, $quest_id);
+							// if status = 1, then award; if = 0, then do nothing
+							if ($new_status = 1) {
+								$achievement_id = get_achievement_id($quest_id);
+								$achievment_data = award_achievement($user_id, $achievement_id);
+								// IF DATA, THEN START CREATING RESPONSE DATA
+								//	response data will then be an array of an array...
+							if(!empty($achievement_data)) {
+								$response_data['achievement_id'] = $achievement_data;
+									}
+					}
+			} // END LOOP THROUGH ACTIVE QUESTS
+		
+		} // END HAS ACTIVE QUESTS
 	// 2. UPDATE THE USERS QUEST RECORDS (I.E. SEE IF THERE ARE ANY NEW ACHIEVEMENTS TO AWARD)
 			// a. get_active_quests
 			// b. loop through each (foreach)
-				// i. see if user has completed it 
-				// ii. if not, see if user should have it now
-			$quest_status = is_user_quest_completed($user_id, $quest_id);
+				
 		// 4. IF SO, AWARD NEW ACHIEVEMENT
 		// 0 = false, 1 = true (quest completed)
 				if($quest_status == 1) {
-					$achievement_id = get_achievement_id($quest_id);
-					$achievment_data = award_achievement($user_id, $achievement_id);
-					// IF DATA, THEN START CREATING RESPONSE DATA
-					//	response data will then be an array of an array...
-					if(!empty($achievement_data)) {
-						$response_data['achievement_id'] = $achievement_data;
+					
 					}
 				}
 			} // END FOR EACH
