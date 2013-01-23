@@ -115,6 +115,7 @@ global $wpdb;
 	$sql = "CREATE TABLE IF NOT EXISTS nomicly_user_achievements (
 		  user_id INT NOT NULL,
 		  achievement_id INT NOT NULL,
+		  level_attained INT NOT NULL DEFAULT '1',
 		  attained_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 		  updated_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 		  status BOOLEAN NOT NULL DEFAULT '1',
@@ -151,41 +152,130 @@ function nomicly_gamification_deactivation() {
 // 		MAIN FUNCTIONS
 */
 
+// CALCULATE HOURS TO COMPLETE QUEST
+	// this is a rang in hours
+	// so if person can complete the quest if they create "3 ideas within 7 days"
+	// then the hours to complete == 7 * 24 = 168
+	// etc
 function calc_hours_to_complete() {
+
+	return $num_hours;
 }
-function save_new_quest(){
-}
+
+// SETS EXPIRATION DATE FOR QUESTS (OR ACHIEVEMENTS?)
 function set_expiration_date(){
+
+	return $response;
 }
-function expire_quest(){
-}
-function is_quest_repeatable(){
-}
+
+// TOGGLES A QUEST FROM ACTIVE TO INACTIVE
+function expire_quest($quest_id){
+
+	return $response;
+} // END EXPIRE QUEST
+
+// TOGGLES A QUEST FROM INACTIVE TO ACTIVE
+function enable_quest($quest_id){
+
+	return $response;
+}// END ENABLE QUEST
+
+// IS QUEST REPEATABLE
+function is_quest_repeatable($quest_id){
+
+	return $repeat_status;
+} // END QUEST REPEATABLE
+
+// IS QUEST PERMANENT
 function is_quest_permanent(){
-}
+
+	return $premanent_status;
+} // END QUEST PERMANENCY
+
+// ACHIEVEMENT PERMANENCY
 function is_achievement_permanent(){
+
+	return $premanent_status;
+}// END ACHIEVEMENT PERMANENCY
+
+function award_achievement($user_id, $achievement_id){
+
+	$response =	notify_achievement_completion($achievement_data);
+		if ($response = 0) {
+		 // SEND EMAIL TO JMS
+		}
+	$response = notify_user_ui_quest_complete($achievement_data);
+		if ($response = 0) {
+		 // SEND EMAIL TO JMS
+		}
+	$response = email_quest_completion($user_id, $achievement_data);
+		if ($response = 0) {
+		 // SEND EMAIL TO JMS
+		}
+
+	return $response;
 }
-function award_achievement(){
+
+function notify_achievement_completion($achievement_data){
+
+	return $response;
 }
-function notify_achievement_completion(){
+
+function notify_user_ui_quest_complete($achievement_data){
+
+	return $response;
 }
-function notify_user_ui_quest_complete(){
+
+function email_quest_completion($user_id, $achievement_data){
+
+	return $response;
 }
-function email_quest_completion(){
+
+// GET QUEST DETAILS
+function get_quest_details($quest_id){
+
+	return $quest_data;
+}// END QUEST DETAILS
+
+// IS EVENT QUEST
+// 	queries the quest_meta to see if the event type is qualifying for any quests
+//  if yes, returns the quest_id. otherwise, returns null
+function is_event_quest($event_type){
+
+	return $quest_id;
 }
-function get_quest_details(){
+
+// RECORD QUEST EVENT
+	// increases qualification_count by 1
+function record_quest_event($user_id, $quest_id){
+
+	return $record_quest_response;
+}// END RECORD QUEST EVENT
+
+// CHECK USER QUEST COMPLETION
+function is_user_quest_completed($user_id, $quest_id){
+
+	return $completion_status;
+
+} // END CHECK USER QUEST COMPLETION
+
+
+function get_quest_requirements($quest_id){
+
+	return $quest_data;
 }
-function is_event_quest(){
+
+// GET FULFILLED QUEST REQUIREMENTS 
+	// this function gets the counts associated with a particular quest and a particular user
+function get_user_quest_requisites($user_id, $quest_id){
+
+	return $quest_requisite_count;
 }
-function record_quest_event(){
-}
-function is_user_quest_completed(){
-}
-function get_quest_requirements(){
-}
-function get_user_quest_requisites(){
-}
-function sort_max_quest_level(){
-}
+
+
+/* V2
+	function save_new_quest(){
+	}
+*/
 
 ?>
