@@ -307,13 +307,45 @@ function is_event_quest($event_type){
 // RECORD QUEST EVENT
 	// increases qualification_count by 1
 function record_event($user_id, $quest_id){
+	global $wpdb;
+	$table = $wpdb -> prefix."user_quest_qualifications";
 
+/*
+ // first check that the user is present in the event quest log
+	 $quest_count = get_user_quest_events();
+		 if(!$quest_count) {
+	 // IF NOT, then INSERT			
+		} // END NOT IN TABLE
+		else {
+ // IF YES, then UPDATE
+//	$record_response = wp_update();
+	} // END ELSE
+*/	
+	if(!$record_response) {
+	
+	}
+	
 	return $record_response;
 }// END RECORD QUEST EVENT
 
 // CHECK USER QUEST COMPLETION
 	// checks to see if a user has already completed a specific quest
 function is_user_quest_completed($user_id, $quest_id){
+	global $wpdb;
+	$table = $wpdb -> prefix."user_quests";
+	
+	$completion_status = $wpdb -> get_var(
+		"SELECT status 
+		FROM $table
+		WHERE quest_id = '$quest_id'
+		AND user_id = '$user_id'"
+		);
+
+	if(empty($completion_status)) {
+		$completion_status = array (
+			'status' => 0
+			);
+	}
 
 	return $completion_status;
 
@@ -348,9 +380,16 @@ function get_quest_requirements($quest_id){
 	// this function gets the counts associated with a particular quest and a particular user
 	// quests have timeframes in which they need to be completed, so the count has to be constrained by the timeframe passed in
 	// note that timeframe is in hours
+	
+	// SEEMS LIKE
+	//	need to refactor so that user_quest_qualifications is a normalized table
+	//  therefore there's a single entry for every event
+	// 	then, you're pulling the events that match the time for the specified time period
+	//  THEN, you just count the array to find out the number
+	
 function get_user_quest_events($user_id, $quest_id, $timeframe){
 	$end_date = date('Y-m-d H:i:s');
-	$start_date = date('Y-m-d H:m:s', strtotime('+'.$timeframe.' hours')); 
+	$start_date = date('Y-m-d H:m:s', strtotime('-'.$timeframe.' hours')); 
 	
 	global $wpdb;
 	$table = $wpdb -> prefix."user_quest_qualifications";
@@ -359,7 +398,9 @@ function get_user_quest_events($user_id, $quest_id, $timeframe){
 		"SELECT qualification_count 
 		FROM $table
 		WHERE user_id = '$user_id'
-		AND quest_id = '$quest_id'"
+		AND quest_id = '$quest_id'
+		AND created_at BETWEEN
+			'$end_date' AND '$start_date'"
 		);
 	
 	if(empty($quest_event_count)) {
@@ -367,6 +408,15 @@ function get_user_quest_events($user_id, $quest_id, $timeframe){
 		}
 	
 	return $quest_event_count;
+}
+
+/*
+// GET ACHIEVEMENT DATA
+*/
+
+function get_achievement_data ($quest_id) {
+
+
 }
 
 // GET EVENT LIST
@@ -441,36 +491,25 @@ function process_interaction_event() {
 					if ($quest_status == 0) {
 						$new_status = is_quest_completed($user_id, $quest_id);
 							// if status = 1, then award; if = 0, then do nothing
-							if ($new_status = 1) {
-								$achievement_id = get_achievement_id($quest_id);
-								$achievment_data = award_achievement($user_id, $achievement_id);
+							if ($new_status == 1) {
+								$achievment_data = get_achievement_data($quest_id);
+								$achievement_id = $achievement_data['achievement_id'];
+								$achievment_award = award_achievement($user_id, $achievement_id);
 								// IF DATA, THEN START CREATING RESPONSE DATA
 								//	response data will then be an array of an array...
 							if(!empty($achievement_data)) {
-								$response_data['achievement_id'] = $achievement_data;
-									}
-					}
+								$response_data[] = $achievement_data;
+									}// end response data setup
+					}// END CHECK FOR AWARDING NEW QUESTS
+				} // END HASN'T COMPLETED QUEST
 			} // END LOOP THROUGH ACTIVE QUESTS
-		
 		} // END HAS ACTIVE QUESTS
-	// 2. UPDATE THE USERS QUEST RECORDS (I.E. SEE IF THERE ARE ANY NEW ACHIEVEMENTS TO AWARD)
-			// a. get_active_quests
-			// b. loop through each (foreach)
-				
-		// 4. IF SO, AWARD NEW ACHIEVEMENT
-		// 0 = false, 1 = true (quest completed)
-				if($quest_status == 1) {
-					
-					}
-				}
-			} // END FOR EACH
-		} // NO QUESTS ASSOCIATED WITH EVENT
 
-// CONVERT ARRAY TO JSON
+// CONVERT RESPONSE ARRAY TO JSON
 	$response_data = json_encode($response_data);	
 // response output
 	die($response_data);
- }// END PROCESS HOT NOT VOTE
+ }// END PROCESS USER EVENT 
 
 add_action('wp_ajax_is_quest', 'process_interaction_event');
 // non-logged in user
