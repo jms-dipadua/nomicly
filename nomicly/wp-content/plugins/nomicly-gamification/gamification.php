@@ -145,7 +145,7 @@ global $wpdb;
 // 	7. 	user_quest_qualifications
 	$sql = "CREATE TABLE IF NOT EXISTS nomicly_user_quest_qualifications (
 		  user_id INT NOT NULL,
-		  achievement_id INT NOT NULL,
+		  quest_id INT NOT NULL,
 		  qualification_count INT NOT NULL DEFAULT '0',
 		  created_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 		  updated_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -168,11 +168,13 @@ function nomicly_gamification_deactivation() {
 */
 
 // CALCULATE HOURS TO COMPLETE QUEST
-	// this is a rang in hours
+	// this is a range in hours
 	// so if person can complete the quest if they create "3 ideas within 7 days"
 	// then the hours to complete == 7 * 24 = 168
 	// etc
-function calc_hours_to_complete() {
+function calc_hours_to_complete($number, $period) {
+	// number = integer 
+	// period = day, weeks, etc
 
 	return $num_hours;
 }
@@ -220,13 +222,23 @@ function is_achievement_permanent(){
 		//		 if you also have user_id, can you filter active quests relevant to the user?
 		// 		 cut out a trip or two to the db for status check...
 function get_active_quests($event_type) {
-
+	global $wpdb;
+	$table_quests = $wpdb->prefix."quests";
+	$table_quest_meta = $wpdb->prefix."quest_meta";
+	
+	$active_quests = $wpdb -> get_col(
+		"SELECT quest_id 
+		FROM $table
+		INNER JOIN $table_quest_meta 
+		ON $table_quests.quest_id = $table_quest_meta.quest_id
+		WHERE status = 1
+		AND event_type = '$event_type'",
+		ARRAY_N
+		);
+	
 	if(empty($active_quests)) {
-		$active_quests = array (
-			'quest_data' => 'null'
-			);
+		$active_quests = array ();
 	}
-
 	return $active_quests;
 } // END GET ACTIVE QUESTS
 
@@ -310,10 +322,11 @@ function is_user_quest_completed($user_id, $quest_id){
 // IS QUEST COMPLETED (NOW)
 	// checks to see if a user has now completed a quest
 	// i.e. an event was recorded, the quest wasn't previously completed and now we want to see if is now a completed quest 
+
 function is_quest_completed($user_id, $quest_id) {
 
 	// get the quest requirements
-	$quest_requirements = $get_quest_requirements($quest_id);
+	$quest_requirements = get_quest_requirements($quest_id);
 	// set the timeframe
 		$timeframe = $quest_requirements['timeframe'];
 	// get the quest events relevant to the user and the timeframe
@@ -324,7 +337,7 @@ function is_quest_completed($user_id, $quest_id) {
 		// if ==, then response = 1 (award)
 		// if not, then response = 0 (no-award, no-action)
 	return $completion_status;
-}
+} // END IS QUEST COMPLETED
 
 function get_quest_requirements($quest_id){
 
@@ -336,17 +349,48 @@ function get_quest_requirements($quest_id){
 	// quests have timeframes in which they need to be completed, so the count has to be constrained by the timeframe passed in
 	// note that timeframe is in hours
 function get_user_quest_events($user_id, $quest_id, $timeframe){
-
+	$end_date = date('Y-m-d H:i:s');
+	$start_date = date('Y-m-d H:m:s', strtotime('+'.$timeframe.' hours')); 
+	
+	global $wpdb;
+	$table = $wpdb -> prefix."user_quest_qualifications";
+	
+	$quest_event_count = $wpdb -> get_col( 
+		"SELECT qualification_count 
+		FROM $table
+		WHERE user_id = '$user_id'
+		AND quest_id = '$quest_id'"
+		);
+	
+	if(empty($quest_event_count)) {
+		$quest_event_count = array();
+		}
+	
 	return $quest_event_count;
 }
 
-// get event list
+// GET EVENT LIST
 // used by frontend to get event types to listen for
 // returns an array of event types
 function get_event_list() {
-
-
-}
+	global $wpdb;
+	$table_quests = $wpdb -> prefix."quests";
+	$table_quest_meta = $wpdb -> prefix."quest_meta";
+	
+	$event_list = $wpdb -> get_col(
+		"SELECT DISTINCT event_type 
+		FROM $table_quests
+		INNER JOIN $table_meta
+			ON $table_quests.quest_id = $table_meta.quest_id
+		WHERE status = 1"
+		);
+		
+	if(empty($event_list)) {
+		$event_list = array();
+	}
+	
+	return $event_list;
+} // END GET EVENT LIST
 
 /*
 // 	AJAX HANDLER FUNCTIONS
@@ -371,25 +415,29 @@ add_action('wp_ajax_nopriv_fetch_event_list', 'fetch_event_list' );
 
 
 /*
-	// IN PROGRESS REFACTOR
-	// FRONTEND IS GOING TO POST AN EVENT IF IT'S ON A LIST OF EVENTS BEING MONITORED
+//	PROCESS INTERACTION EVENT
+//		responsible for getting incoming event signal from frontend
+//		determining relevant quest, if any,
+//		seeing if user should get new achievement
+//		if so, returns the achievement data
 */
 function process_interaction_event() {
 	$event_type = $_POST['event_type'];
 	$user_id = get_current_user_id();
 	
 	// 1. UPDATE THE quest qualifications TABLE -- RECORD_STATS()
-		// VERIFY THAT QUESTS CAN ONLY HAVE ONE TYPE
-		// OTHERWISE, THE TYPE SHOULD BE PASSED IN AS WELL AS USER & QUEST ID
+		// QUESTS CAN ONLY HAVE ONE TYPE
+		// so, don't need to pass in event_type 
 	$record_status = record_event($user_id, $quest_id);
+
 	// 2. Get Active Quests (Relevant to Event)
 	$active_quests = get_active_quests($event_type);
 		// VERIFY ACTIVE QUESTS, THEN LOOP THROUGH EACH TO VERIFY USER'S QUEST STATUS
 		if(!empty($active_quests)) {
 			foreach($active_quests as $quest_id) {
-				// i. see if user has completed it 
+					// i. see if user has completed it 
 				$quest_status = is_user_quest_completed($user_id, $quest_id);
-				// ii. if not, see if user should have it now
+					// ii. if not, see if user should have it now
 					if ($quest_status == 0) {
 						$new_status = is_quest_completed($user_id, $quest_id);
 							// if status = 1, then award; if = 0, then do nothing
