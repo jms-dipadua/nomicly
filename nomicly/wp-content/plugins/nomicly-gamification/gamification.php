@@ -18,6 +18,20 @@ Detailed Overview:
 */
 ?>
 <?
+/*
+	** High-Level Workflow (from spec) ** 
+	a) user comes to site
+	b) user votes on an idea (or creates an idea or modifies an idea)
+	c) frontend gets notified of successful vote (or creation, etc)
+		- gets an event_type response (in addition to any other response it normally gets)
+	d) frontend makes new request to backend for whether the event is worth monitoring
+		1) if yes, then backend records the event with the applicable quest
+		2) after recording the event, backend makes a check for whether an achievement needs to be awarded or not
+			- if yes, then backend awards achievement && notifies frontend (and sends an achievement email)
+		3) if NO, then nothing happens on frontend
+*/
+?>
+<?
 // INITIALIZATION
 register_activation_hook(__FILE__, 'nomicly_gamification_activation');
 
@@ -198,6 +212,20 @@ function is_achievement_permanent(){
 	return $premanent_status;
 }// END ACHIEVEMENT PERMANENCY
 
+// GET ACHIEVEMENT ID
+	// GETS IT BASED ON THE QUEST ID
+function get_achievement_id($quest_id) {
+
+	return $achievement_id;
+}
+
+// get achievement data
+	// returns array of data, id, name, description, etc.
+function get_achievement_details($achievement_id) {
+
+	return $achievement_data;
+}
+
 function award_achievement($user_id, $achievement_id){
 
 	$response =	notify_achievement_completion($achievement_data);
@@ -240,9 +268,10 @@ function get_quest_details($quest_id){
 // IS EVENT QUEST
 // 	queries the quest_meta to see if the event type is qualifying for any quests
 //  if yes, returns the quest_id. otherwise, returns null
+//  RETURNS AS ARRAY OF DATA, SO MAY BE MORE THAN ONE QUEST ID
 function is_event_quest($event_type){
 
-	return $quest_id;
+	return $quests;
 }
 
 // RECORD QUEST EVENT
@@ -272,6 +301,39 @@ function get_user_quest_requisites($user_id, $quest_id){
 	return $quest_requisite_count;
 }
 
+/*
+// 	AJAX HANDLER FUNCTIONS
+*/
+
+function process_interaction_event() {
+	$event_type = $_POST['event_type'];
+	$user_id = get_current_user_id();
+	// 1. check to see if the event is worth monitoring
+		$quests = is_event_quest($event_type);
+	// 2. IF SO, THEN RECORD THE EVENT
+		if(!empty($quests)) {
+			foreach ($quests as $quest_id) {
+			$record_status = record_quest_event($user_id, $quest_id);
+		// 3. CHECK TO SEE IF QUEST COMPLETED 
+			$quest_status = is_user_quest_completed($user_id, $quest_id);
+		// 0 = false, 1 = true (quest completed)
+		// 4. IF SO, AWARD NEW ACHIEVEMENT
+				if($quest_status == 1) {
+					$achievement_id = get_achievement_id($quest_id);
+					$achievment_data = award_achievement($user_id, $achievement_id);
+				}
+			} // END FOR EACH
+		} // NO QUESTS ASSOCIATED WITH EVENT
+
+// CONVERT ARRAY TO JSON
+	$response_data = json_encode($response_data);	
+// response output
+	die($response_data);
+ }// END PROCESS HOT NOT VOTE
+
+add_action('wp_ajax_is_quest', 'process_interaction_event');
+// non-logged in user
+add_action('wp_ajax_nopriv_is_quest', 'process_interaction_event' );
 
 /* V2
 	function save_new_quest(){
