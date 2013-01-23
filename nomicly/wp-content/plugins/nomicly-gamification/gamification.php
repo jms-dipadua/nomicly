@@ -98,6 +98,7 @@ global $wpdb;
 	$sql = "CREATE TABLE IF NOT EXISTS nomicly_achievement_meta (
 		  achievement_id INT NOT NULL,
 		  achievement_description TEXT DEFAULT 'No Description Provided',
+		  qualifications VARCHAR DEFAULT '0',
 		  max_level INT DEFAULT '1',
 		  badge_img_url VARCHAR,
 		  permanency ENUM ('0','1'),
