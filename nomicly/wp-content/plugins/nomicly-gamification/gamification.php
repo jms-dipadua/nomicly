@@ -268,14 +268,39 @@ function is_quest_repeatable($quest_id){
 
 // IS QUEST PERMANENT
 function is_quest_permanent(){
+	global $wpdb;
+	$table = $wpdb -> prefix."quest_meta";
+	
+	$premanent_status = $wpdb -> get_var(
+		"SELECT permanency 
+		FROM $table
+		WHERE quest_id = '$quest_id'");
 
-	return $premanent_status;
+// WRAPPING THIS IN AN IF EMPTY FUNCTION
+// SO THAT WE DON'T SEND BACK NULL RESPONSES (FALSE NEGATIVE...)
+	if(!empty($premanent_status)) {
+	// NOTE: 0 = TEMPORAL, 1 = PERMANENT
+		return $premanent_status;
+	}
+	
 } // END QUEST PERMANENCY
 
 // ACHIEVEMENT PERMANENCY
 function is_achievement_permanent(){
+	global $wpdb;
+	$table = $wpdb -> prefix."achievement_meta";
+	
+	$premanent_status = $wpdb -> get_var(
+		"SELECT permanency 
+		FROM $table
+		WHERE quest_id = '$quest_id'");
+	// NOTE: 0 = TEMPORAL, 1 = PERMANENT
 
-	return $premanent_status;
+// WRAPPING THIS IN AN IF EMPTY FUNCTION
+// SO THAT WE DON'T SEND BACK NULL RESPONSES (FALSE NEGATIVE...)
+	if(!empty($premanent_status)) {
+		return $premanent_status;
+	}
 }// END ACHIEVEMENT PERMANENCY
 
 // GET ACTIVE QUESTS 
