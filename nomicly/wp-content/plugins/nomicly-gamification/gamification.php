@@ -175,31 +175,94 @@ function nomicly_gamification_deactivation() {
 function calc_hours_to_complete($number, $period) {
 	// number = integer 
 	// period = day, weeks, etc
-
+	switch ($period) {
+		case 'day': 
+			$num_hours = $number * 24;
+			break;
+		case 'week':
+			$num_hours = $number * 24 * 7;
+			break;
+		case 'month':
+			$num_hours = $number * 24 * 7 * 4.5;
+			break;
+		}
 	return $num_hours;
 }
 
 // SETS EXPIRATION DATE FOR QUESTS (OR ACHIEVEMENTS?)
-function set_expiration_date(){
+	// passes in 'date' which is an expiration date
+	// WHY IS THIS A STANDALONE FUNCTION AND NOT IN THE MAIN INSERT...?
+function set_expiration_date($date){
+
 
 	return $response;
 }
 
 // TOGGLES A QUEST FROM ACTIVE TO INACTIVE
 function expire_quest($quest_id){
-
+	global $wpdb;
+	$table_quests = $wpdb->prefix."quests";
+	
+	$update_data = array (
+		'status' => 0
+		);
+	$where = array (
+		'quest_id' => $quest_id
+		);	
+		
+	$update = $wpdb -> update($table_quests, $update_data, $where, $format = null, $where_format = null );
+	
+	if(!$update) {
+		$response = array ('response_message' => 0);
+	}
+	else {
+		$response = array ('response_message' => 1);
+	}
+	
 	return $response;
 } // END EXPIRE QUEST
 
 // TOGGLES A QUEST FROM INACTIVE TO ACTIVE
 function enable_quest($quest_id){
-
+	global $wpdb;
+	$table_quests = $wpdb->prefix."quests";
+	
+	$update_data = array (
+		'status' => 1
+		);
+	$where = array (
+		'quest_id' => $quest_id
+		);	
+		
+	$update = $wpdb -> update($table_quests, $update_data, $where, $format = null, $where_format = null );
+	
+	if(!$update) {
+		$response = array ('response_message' => 0);
+	}
+	else {
+		$response = array ('response_message' => 1);
+	}
+	
 	return $response;
 }// END ENABLE QUEST
 
 // IS QUEST REPEATABLE
 function is_quest_repeatable($quest_id){
-
+	global $wpdb;
+	$table = $wpdb -> prefix."quest_meta";
+	
+	$max_repeats = $wpdb -> get_var(
+		"SELECT max_repetitions
+		FROM $table
+		WHERE quest_id = '$quest_id'");
+	
+	if($max_reptitions > 0) {
+		$repeat_status = 1;
+	}
+	else {
+		$repeat_status = 0;
+	}
+	
 	return $repeat_status;
 } // END QUEST REPEATABLE
 
@@ -450,7 +513,7 @@ function fetch_event_list() {
 
 	$event_list = get_event_list();
 		//check for existing list
-		if(empty($event_list)) {
+		if($event_list < 1) {
 			$event_list = array (
 				'event_list' => "null"
 				);
