@@ -334,6 +334,18 @@ function get_active_quests($event_type) {
 // GET ACHIEVEMENT ID
 	// GETS IT BASED ON THE QUEST ID
 function get_achievement_id($quest_id) {
+	global $wpdb;
+	$table_achieve_meta = $wpdb -> prefix."achievement_meta";
+	
+	// going to use a LIKE %string% to get the quest ids from the achievements
+	
+	$achievement_ids = $wpdb -> get_col(
+		"SELECT achievement_id 
+		FROM $table_achieve_meta
+		WHERE qualifications 
+		LIKE	%'$quest_id'");
+
+
 
 	return $achievement_id;
 }
