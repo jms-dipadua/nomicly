@@ -343,16 +343,28 @@ function get_achievement_id($quest_id) {
 		"SELECT achievement_id 
 		FROM $table_achieve_meta
 		WHERE qualifications 
-		LIKE	%'$quest_id'");
+			LIKE '%$quest_id%'");
 
+	if(empty($achievement_ids)) {
+		$achievement_ids = array();
+	}
 
-
-	return $achievement_id;
+	return $achievement_ids;
 }
 // get achievement data
 	// returns array of data, id, name, description, etc.
 function get_achievement_details($achievement_id) {
-
+	global $wpdb;
+	$table = $wpdb -> prefix."achievement_meta";
+	
+	$achievement_data = $wpdb -> get_results(
+		"SELECT * from $table
+		WHERE achievement_id = '$achievement_id'");
+	
+	if(empty($achievement_data)) {
+		$achievement_data = array ( 1 => "null" );
+	}
+	
 	return $achievement_data;
 }
 
