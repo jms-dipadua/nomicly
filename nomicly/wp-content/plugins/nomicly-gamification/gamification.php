@@ -166,6 +166,29 @@ function nomicly_gamification_deactivation() {
 /* 
 // 		MAIN FUNCTIONS
 */
+// CREATE NEW QUEST
+function create_new_quest($quest_data) {
+	global $wpdb;
+	$table_quest = $wpdb -> prefix."quests";
+	$table_q_meta = $wpdb -> prefix."quest_meta";
+	
+	// unpack quest data (for insertion into appropriate tables)
+
+	if($new_quest_id) {
+		$response = array(
+			'success' => 1,
+			'quest_id' => $new_quest_id
+			);
+	}
+	else {
+		$response = array (
+			'success' => 0
+			);
+	}
+	
+	return $response;  
+}
+
 
 // CALCULATE HOURS TO COMPLETE QUEST
 	// this is a range in hours
