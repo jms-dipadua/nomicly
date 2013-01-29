@@ -73,9 +73,10 @@ dbDelta($sql);
 // v1.0
 */
 function create_daily_report_cron() {
+// WP_SCHEDULE EXPECTS UNIX TIME
 	$time = '08:45:00';
-//	$time = date('H:i:s');
-		wp_schedule_event($time, 'daily', 'nomicly_user_report_daily');
+	$unix_time = mktime($time);
+		wp_schedule_event($unix_time, 'daily', 'nomicly_user_report_daily');
 }  // DAILY REPORTS
 
 /*
@@ -207,7 +208,7 @@ function generate_notification ($user_list, $period) {
 			foreach($active_ideas as $idea) {
 				$idea_id = $idea[0];
 			$idea_data = get_post($idea_id, ARRAY_A);
-			$active_ideas_formatted[$idea_id] .= "<a href=".$blog_url."/".$idea_data['post_name'].">".$idea_data['post_title']."</a><br />";			
+			$active_ideas_formatted[$idea_id] .= "<a href=".$blog_url."/".$idea_data['post_name'].">".$idea_data['post_title']."</a> <br />";			
 		}
 	}
 
@@ -250,13 +251,22 @@ function generate_notification ($user_list, $period) {
 	*/
 	$content_end = "<p style='font-size:11px;margin-top:25px;'>You can change or unsubscribe from email notifications on your <a href='".$blog_url."/user-profile/'>Nomicly account page.</a></p>";
 
-		// START FORMATTING EMAIL CONTENT
-		//the salutation is above so it needs to concatinate
+	// START FORMATTING EMAIL CONTENT
+	//the salutation is above so it needs to be concatenated
+	// if any one content section is empty, it's not concatenated to the email
+		if(!empty($ideas_formatted)) {
 			$content_formatted .= implode('<br />', $ideas_formatted);
-	//		$content_formatted .= implode('<br />', $topics_formatted);
+		}
+//			$content_formatted .= implode('<br />', $topics_formatted);
+		if(!empty($active_ideas_formatted)){
 			$content_formatted .= implode('<br />', $active_ideas_formatted);
+		}
+		
+	// THEN MAKE SURE THERE'S ACTUALLY AN EMAIL TO SEND BEFORE SENDING IT
+	if(!empty($content_formatted)) {
+		// APPENDING THE END OF THE EMAIL HERE
+		// BECAUSE IT SENDS A FALSE POSITIVE ON "HAVING CONTENT" WHEN IT'S JUST A LINK...
 			$content_formatted .= $content_end;
-			
 			$notification_data = array (
 				'user_id' => $user_id,
 				'user_name' => $user_name,
@@ -264,10 +274,14 @@ function generate_notification ($user_list, $period) {
 				'content' => $content_formatted,
 				'emailed_at' => date('Y-m-d H:i:s')
 				);		
-			send_notification($notification_data); 
-			// because it's a loop, need to unset this for use w/ other users
+			send_notification($notification_data); 		
+// CLEAN UP
+// because it's a loop, need to unset this for use w/ other users
 			unset($ideas_formatted);
 //			unset($topics_formatted);
+			unset($content_formatted);
+
+			}// END HAS CONTENT TO EMAIL
 		} // END LOOP THROUGH EACH USER TO BE EMAILED
 	}// END USER NOTE LIST EXISTS
 } // END GENERATE NOTIFICATION
@@ -324,7 +338,7 @@ function update_user_note_record($user, $date) {
 */
 function get_report_date_range ($period) {
 	$reporting_date = date('Y-m-d');  // what we share w/ the user
-	$start_date = date('Y-m-d H:m:s', strtotime('+8 hours')); // account for GMT... :(
+	$start_date = date('Y-m-d H:m:s', strtotime('+8 hours')); // account for GMT...DOESN'T WORK!!!
 		if ($period == 1) {	
 			$end_date = date('Y-m-d', strtotime('-1 day'));
 			}
