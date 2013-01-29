@@ -167,28 +167,74 @@ function nomicly_gamification_deactivation() {
 // 		MAIN FUNCTIONS
 */
 // CREATE NEW QUEST
+	// 1. unpack data (for insertion into appropriate tables)
+	// 2. insert into quests table
+	// 3. insert into quest_meta table
+	// 4. pass back quest_id (for insertion into achievements)
 function create_new_quest($quest_data) {
 	global $wpdb;
 	$table_quest = $wpdb -> prefix."quests";
 	$table_q_meta = $wpdb -> prefix."quest_meta";
-	
-	// unpack quest data (for insertion into appropriate tables)
 
+// 1. unpack quest data 
+	// a. unpack from the array 
+	$quest_name = $quest_data['quest_name'];
+	$quest_desc = $quest_data['quest_desc'];
+	$qualificadtions = $quest_data['qualifications'];
+	$permanency = $quest_data['permanency'];
+	$may_requalify = $quest_data['may_requalify'];
+	$max_repeat = $quest_data['max_repeat'];
+	$event_type = $quest_data['event_type'];
+	$timeframe = $quest_data['timeframe'];
+	$num_events = $quest_data['num_events'];
+	$created_at = date('Y-m-d H:i:s');
+	$expires_at = $quest_data['expires_at'];
+
+	// b. setup the quest table data (array)
+	$quest_table_data = array (
+		'quest_name' => $quest_name,
+		'status' => 1
+		);
+	
+// 2. INSERT INTO QUESTS
+	$quest_insert = $wpdb -> wp_insert($table_quest, $quest_table_data);
+	if ($quest_insert) {
+		$new_quest_id = $wpdb -> insert_id;
+	}
+
+// 3. INSERT INTO QUEST META (assuming there's a new quest_id to work with...)
+	// a. setup remaining data into array 
 	if($new_quest_id) {
-		$response = array(
+		$meta_data = array (
+			'quest_id' => $new_quest_id,
+			'quest_description' => $quest_desc,
+			'qualifications' => $qualifications,
+			'permanency' => $permanency,
+			'may_requalify' => $may_requalify,
+			'max_repeat' => $max_repeat,
+			'event_type' => $event_type,
+			'timeframe' => $timeframe,
+			'number_events' => $num_events,
+			'created_at' => $created_at,
+			'expires_at' => $expires_at
+			);
+		
+		$meta_insert = $wpdb -> wp_insert($table_q_meta, $meta_data);
+// 4. SETUP RESPONSE DATA W/ QUEST_ID
+		if($meta_insert) {
+			$response = array(
 			'success' => 1,
 			'quest_id' => $new_quest_id
 			);
-	}
+		} // END SUCCESSFUL INSERT INTO QUEST META		
+	}// END SUCCESSFUL INSERT INTO QUESTS
 	else {
 		$response = array (
 			'success' => 0
 			);
-	}
-	
+	} // FAILED TO INSERT QUEST		
 	return $response;  
 }
-
 
 // CALCULATE HOURS TO COMPLETE QUEST
 	// this is a range in hours
