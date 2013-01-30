@@ -380,8 +380,7 @@ function get_active_quests($event_type) {
 		INNER JOIN $table_quest_meta 
 			USING (quest_id) 
 		WHERE $table_quests.status = 1
-		AND $table_quest_meta.event_type = '$event_type'",
-		ARRAY_N
+		AND $table_quest_meta.event_type = '$event_type'"
 		);
 	
 	if(empty($active_quests)) {
@@ -559,45 +558,32 @@ function notify_user_ui_quest_complete($achievement_data){
 	return $response;
 }
 
-function email_quest_completion($user_id, $achievement_data){
-
-	return $response;
-}
-
 // GET QUEST DETAILS
 function get_quest_details($quest_id){
 
 	return $quest_data;
 }// END QUEST DETAILS
 
-// IS EVENT QUEST
-// 	queries the quest_meta to see if the event type is qualifying for any quests
-//  if yes, returns the quest_id. otherwise, returns null
-//  RETURNS AS ARRAY OF DATA, SO MAY BE MORE THAN ONE QUEST ID
-function is_event_quest($event_type){
-
-	return $quests;
-}
-
 // RECORD QUEST EVENT
-	// increases qualification_count by 1
+	// inserts an entry in table for every qualified event 
+	// fairly normalized so that it's one row per user-event
 function record_event($user_id, $quest_id){
 	global $wpdb;
 	$table = $wpdb -> prefix."user_quest_qualifications";
-
-/*
- // first check that the user is present in the event quest log
-	 $quest_count = get_user_quest_events();
-		 if(!$quest_count) {
-	 // IF NOT, then INSERT			
-		} // END NOT IN TABLE
-		else {
- // IF YES, then UPDATE
-//	$record_response = wp_update();
-	} // END ELSE
-*/	
-	if(!$record_response) {
+	$date = date('Y-m-d H:i:s');
+	$event_data = array (
+		'user_id' => $user_id,
+		'quest_id' => $quest_id,
+		'created_at' => $date,
+		);
 	
+	$insert = $wpdb -> wp_insert($table, $event_data);
+	
+	if(!$insert) {
+		$record_response = array( 'response' => 0);
+	}
+	else {
+		$record_response = array( 'response' => 1);
 	}
 	
 	return $record_response;
@@ -722,7 +708,6 @@ function get_event_list() {
 */
 
 function fetch_event_list() {
-
 	$event_list = get_event_list();
 		//check for existing list
 		if($event_list < 1) {
