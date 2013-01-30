@@ -448,28 +448,70 @@ function award_achievement($user_id, $achievement_id){
 	else{
 	// GET THE DETAILS TO SEND TO VIA EMAIL/FRONTEND
 		$achievement_data = get_achievement_details($achievement_id);
+	// APPEND USER ID TO ACHIEVEMENT DATA (FOR NOTIFICATION PURPOSES)
+		$achievement_data .= array (
+			'user_id' = $user_id
+			);
 	// make sure it's a valid achievement before notifiying!
 		if(!$achievement_data[1] == 'null') {
 		$response =	notify_achievement_completion($achievement_data);
 			if ($response = 0) {
 			 // SEND EMAIL TO JMS
+				$to = "james@nomic.ly";
+				$subject = "BUG REPORT - in award achievement - no notification sent";
+				$from = "support@nomic.ly";
+				$content = "in not achievement data... i.e. = null";
+				$headers  = 'MIME-Version: 1.0' . "\r\n";
+				$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+				$headers .= "From: ".$from." \r\n";
+				//$headers .= "From: ".$from." \r\n"."BCC: james@nomic.ly \r\n";
+				$send = wp_mail($to, $subject, $content, $headers);
 			}
-		$response = notify_user_ui_quest_complete($achievement_data);
-			if ($response = 0) {
+//		$response = notify_user_ui_quest_complete($achievement_data);
+//			if ($response = 0) {
 			 // SEND EMAIL TO JMS
-			}
-		$response = email_quest_completion($user_id, $achievement_data);
-			if ($response = 0) {
-			 // SEND EMAIL TO JMS
-			}
+//			}
 		}// END IS NOT NULL ACHIEVEMENT DATA
 	}// END THE AWARD/INSERT WORKED
 	return $response;
 }
 
+// NOTIFY ACHIEVEMENT COMPLETED
+	// sends an email to user re: achievement...
+	// NOTE: achievement data contains user_id
 function notify_achievement_completion($achievement_data){
+	$user_data = get_userdata($user_id);
+	$user_email = $user_data -> user_email;
+	$user_name = $user_data -> user_nicename;
+	$to = $user_email;
+	$subject = "Nomicly Activity Report on Your Ideas";
+	$from = "support@nomic.ly";
+	$content = format_achievement_email($achievement_data, $user_name);
+	$headers  = 'MIME-Version: 1.0' . "\r\n";
+	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+	$headers .= "From: ".$from." \r\n";
+	//$headers .= "From: ".$from." \r\n"."BCC: james@nomic.ly \r\n";
 
+	$send = wp_mail($to, $subject, $content, $headers);
+	if (!$send) {
+		$response = 0;
+		}
+	else {
+		$response = 1;
+		// UPDATE THE USER_NOTE_TABLE WITH MOST RECENT LAST_EMAILED_AT...
+		$update = update_user_note_record($notification_data['user_id'], $notification_data['emailed_at']);		
+			if ($update == 0) {
+				$response = 3;
+			}
+		}
 	return $response;
+}
+
+function format_achievement_email($achievement_data, $user_name) {
+	$formatted_email = "Dear $user_name, <br />";
+	$formatted_email .= "blah blah blah";
+
+	return $formatted_email;
 }
 
 function notify_user_ui_quest_complete($achievement_data){
