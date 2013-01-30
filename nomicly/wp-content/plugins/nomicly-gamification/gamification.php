@@ -455,12 +455,12 @@ function award_achievement($user_id, $achievement_id){
 	// make sure it's a valid achievement before notifiying!
 		if(!$achievement_data[1] == 'null') {
 		$response =	notify_achievement_completion($achievement_data);
-			if ($response = 0) {
+			if ($response = 0 || 3) {
 			 // SEND EMAIL TO JMS
 				$to = "james@nomic.ly";
 				$subject = "BUG REPORT - in award achievement - no notification sent";
 				$from = "support@nomic.ly";
-				$content = "in not achievement data... i.e. = null";
+				$content = "in not achievement data... i.e. = null <br /> Check Response: Response == $response <br />";
 				$headers  = 'MIME-Version: 1.0' . "\r\n";
 				$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 				$headers .= "From: ".$from." \r\n";
@@ -480,7 +480,7 @@ function award_achievement($user_id, $achievement_id){
 	// sends an email to user re: achievement...
 	// NOTE: achievement data contains user_id
 function notify_achievement_completion($achievement_data){
-	$user_data = get_userdata($user_id);
+	$user_data = get_userdata($achievement_data['user_id']);
 	$user_email = $user_data -> user_email;
 	$user_name = $user_data -> user_nicename;
 	$to = $user_email;
@@ -498,8 +498,10 @@ function notify_achievement_completion($achievement_data){
 		}
 	else {
 		$response = 1;
+		$emailed_at = date('Y-m-d H:i:s');
 		// UPDATE THE USER_NOTE_TABLE WITH MOST RECENT LAST_EMAILED_AT...
-		$update = update_user_note_record($notification_data['user_id'], $notification_data['emailed_at']);		
+			// NOTE!!! THIS IS A FUNCTION INSIDE NOMICLY NOTIFICATIONS  !!!
+		$update = update_user_note_record($achievement_data['user_id'], $emailed_at);		
 			if ($update == 0) {
 				$response = 3;
 			}
