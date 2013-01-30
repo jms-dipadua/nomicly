@@ -624,16 +624,29 @@ function is_quest_completed($user_id, $quest_id) {
 		$timeframe = $quest_requirements['timeframe'];
 	// get the quest events relevant to the user and the timeframe
 	$relevant_quest_events = get_user_quest_events($user_id, $quest_id, $timeframe);
-	
-	// see if user has completed the quest
-		// compare the count between needed events and what the user has
-		// if ==, then response = 1 (award)
-		// if not, then response = 0 (no-award, no-action)
+// COMPARE COUNTS AND RETURN 0 OR 1, 0 == FALSE/rec-not-met, 1 == TRUE/recs-met
+	if ($relevant_quest_events == $quest_requirements['number_events']) {
+		$completion_status = 1;
+	}
+	else {
+		$completion_status = 0;
+	}
+
 	return $completion_status;
 } // END IS QUEST COMPLETED
 
 function get_quest_requirements($quest_id){
-
+	global $wpdb;
+// SHOULDN'T NEED TO VERIFY THE QUEST IS ACTIVE
+// THAT CHECK SHOULD HAVE BEEN HANDLED BEFORE GETTING TO THIS POINT
+	$quest_meta = $wpdb -> prefix."quest_meta";
+	
+	$quest_data = $wpdb -> get_var(
+		"SELECT number_events, timeframe 
+		FROM $quest_meta 
+		WHERE quest_id = '$quest_id'"
+		);
+	
 	return $quest_data;
 }
 
@@ -656,7 +669,7 @@ function get_user_quest_events($user_id, $quest_id, $timeframe){
 	$table = $wpdb -> prefix."user_quest_qualifications";
 	
 	$quest_event_count = $wpdb -> get_col( 
-		"SELECT qualification_count 
+		"SELECT count(quest_id) 
 		FROM $table
 		WHERE user_id = '$user_id'
 		AND quest_id = '$quest_id'
@@ -665,7 +678,7 @@ function get_user_quest_events($user_id, $quest_id, $timeframe){
 		);
 	
 	if(empty($quest_event_count)) {
-		$quest_event_count = array();
+		$quest_event_count = array('count' => 0);
 		}
 	
 	return $quest_event_count;
@@ -673,11 +686,25 @@ function get_user_quest_events($user_id, $quest_id, $timeframe){
 
 /*
 // GET ACHIEVEMENT DATA
+	// similar to get_achievement_details 
+	// BUT does not include user-specific information
+	// this is just for returning the details on the achievement (like badge and description)
 */
-
 function get_achievement_data ($quest_id) {
-
-
+	$achieve_table = $wpdb -> prefix."achievements";
+	$meta_table = $wpdb -> prefix."achievement_meta";
+	
+	$achievement_data = $wpdb -> get_results(
+		"SELECT * from $achieve_table
+		INNER JOIN $meta_table 
+			USING (achievement_id)
+		WHERE $achieve_table.achievement_id = '$achievement_id'");
+	
+	if(empty($achievement_data)) {
+		$achievement_data = array ( 1 => "null" );
+	}
+	
+	return $achievement_data;
 }
 
 // GET EVENT LIST
