@@ -378,7 +378,7 @@ function get_active_quests($event_type) {
 		"SELECT quest_id 
 		FROM $table
 		INNER JOIN $table_quest_meta 
-		ON $table_quests.quest_id = $table_quest_meta.quest_id
+			USING (quest_id) 
 		WHERE $table_quests.status = 1
 		AND $table_quest_meta.event_type = '$event_type'",
 		ARRAY_N
@@ -413,15 +413,19 @@ function get_achievement_ids($quest_id) {
 
 // GET ACHIEVEMENT DATA
 	// returns array of data, id, name, description, etc.
+	// also returns the user_id, level attained, etc
 function get_achievement_details($achievement_id) {
 	global $wpdb;
 	$achieve_table = $wpdb -> prefix."achievements";
 	$meta_table = $wpdb -> prefix."achievement_meta";
+	$user_table = $wpdb -> prefix."user_achievements";
 	
 	$achievement_data = $wpdb -> get_results(
 		"SELECT * from $achieve_table
 		INNER JOIN $meta_table 
-			ON $meta_table.achievement_id = $achieve_table.achievement_id
+			USING (achievement_id)
+		INNER JOIN $user_table
+			USING (achievement_id)
 		WHERE $achieve_table.achievement_id = '$achievement_id'");
 	
 	if(empty($achievement_data)) {
@@ -431,6 +435,10 @@ function get_achievement_details($achievement_id) {
 	return $achievement_data;
 }
 
+/*
+// AWARD ACHIEVEMENT
+	// need to make sure we're properly checking for and augmenting levels correctly
+*/
 function award_achievement($user_id, $achievement_id){
 	global $wpdb;
 	$table_achieve = $wpdb -> prefix."user_achievements";
@@ -452,13 +460,15 @@ function award_achievement($user_id, $achievement_id){
 	// GET THE DETAILS TO SEND TO VIA EMAIL/FRONTEND
 		$achievement_data = get_achievement_details($achievement_id);
 	// APPEND USER ID TO ACHIEVEMENT DATA (FOR NOTIFICATION PURPOSES)
-		$achievement_data .= array (
+/*		$achievement_data .= array (
 			'user_id' = $user_id
 			);
+			*/
 	// make sure it's a valid achievement before notifiying!
-		if(!$achievement_data[1] == 'null') {
+		if($achievement_data[1] != 'null') {
 		$response =	notify_achievement_completion($achievement_data);
 			if ($response = 0 || 3) {
+				// 0 == failure to send; 3 == failure to update user record 
 			 // SEND EMAIL TO JMS
 				$to = "james@nomic.ly";
 				$subject = "BUG REPORT - in award achievement - no notification sent";
@@ -510,34 +520,39 @@ function notify_achievement_completion($achievement_data){
 			}
 		}
 	return $response;
-}
+}// END NOTIFY ACHIEVEMENT COMPLETION
 
+// FORMAT ACHIEVEMENT EMAIL
 function format_achievement_email($achievement_data, $user_name) {
-	$formatted_email = "Dear $user_name, <br />";
-	$formatted_email .= "blah blah blah";
-	
+// GET ALL DATA GATHERED FOR EASIER FORMATTING
 	$name = $achievement_data['achievement_name'];
 	$description = $achievement_data['achievement_description'];
 	$permanency = $achievement_data['permanency'];
+		if($permanency == 1) {
+			$perm_message = "<p>This achievement is permanent and has no on-going requirements.</p>";
+		}
+		else {
+			$perm_message = "<p>This achievement is <strong>not</strong> permanent and has on-going requirements.</p>";
+		}
 	$badge_url = $achievement_data['badge_img_url'];
-	
-	// NEED TO GET USER'S CURRENT LEVEL (SEE UP IN GET_ACHIEVEMENT_DETAILS 
-	// --> SHOULD INCLUDE A QUERY TO WHAT WE'RE GRANTING USER AND THEN APPEND TO THE ACHEIVEMENT DATA ARRAY...
-	
- achievement_id		INT, primary key
- achievement_description		TEXT
- qualifications VARCHAR DEFAULT '0',
- max_level			INT
- badge_img_url		varchar
- permanency		ENUM :: 0 (temporal), 1 (permanent)
- may_requalify - BOOL - 0, 1
- max_repetitions - INT Default 100 0
- date_created		DATETIME
- date_updated		DATETIME
+	$level_attained = $achievement_data['level_attained'];
 
+/*
+// 	CONTENT SECTION -- format the email
+*/
+	$formatted_email = "Dear $user_name, <br />";
+	$formatted_email .= "<p>Congratulations! You've just completed the Level $level_attained $name Achievement!</p>";
+	$formatted_email .= "<p><img src='".$badge_ur."' /></p>";
+		// somehow get this badge image to show up nicely in the email
+	$formatted_email .= "<p>Achievement Description: <br /> $description </p>";
+	$formatted_email .= "<p>Your Achievements are available for review on the \"<a href='http://nomic.ly/user-profile/'>Me Page</a>\"</p>";
+	$formatted_email .= $perm_message;
+	$formatted_email .= "<p>If you have any questions, please let us know. We are happy to help.</p>";
+	$formatted_email .= "<p>Sincerely, <br /> Nomicly</p>";
+	$formatted_email .= "<br /><br /><p>You can unsubscribe from email notifications on your <a href='http://nomic.ly/user-profile/'>Account Page</a></p>";
 
 	return $formatted_email;
-}
+}// END FORMAT ACHIEVEMENT EMAIL
 
 function notify_user_ui_quest_complete($achievement_data){
 
@@ -691,7 +706,7 @@ function get_event_list() {
 		"SELECT DISTINCT event_type 
 		FROM $table_quests
 		INNER JOIN $table_meta
-			ON $table_quests.quest_id = $table_meta.quest_id
+			USING (quest_id)
 		WHERE status = 1"
 		);
 		
