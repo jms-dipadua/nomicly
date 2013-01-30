@@ -46,6 +46,7 @@ function nomicly_gamification_activation() {
 // CREATE DBs (IF NOT EXISTS)
 // USER NOTIFICATION PREFERENCES 
 		nomicly_create_gamification_dbs();
+		nomicly_setup_initial_quest_achievements();
 }
 
 /*
@@ -153,6 +154,15 @@ global $wpdb;
 		  );";
 
 	dbDelta($sql);
+	
+	return;
+}
+
+/*
+// INITIAL QEUSTS AND ACHIEVEMENTS 
+	// since there's no UI for creating these...
+*/
+function nomicly_setup_initial_quest_achievements() {
 
 }
 
@@ -464,8 +474,9 @@ function award_achievement($user_id, $achievement_id){
 			);
 			*/
 	// make sure it's a valid achievement before notifiying!
-		if($achievement_data[1] != 'null') {
+		if($achievement_data[0] != 'null') {
 		$response =	notify_achievement_completion($achievement_data);
+			// ERROR HANDLING
 			if ($response = 0 || 3) {
 				// 0 == failure to send; 3 == failure to update user record 
 			 // SEND EMAIL TO JMS
@@ -478,12 +489,11 @@ function award_achievement($user_id, $achievement_id){
 				$headers .= "From: ".$from." \r\n";
 				//$headers .= "From: ".$from." \r\n"."BCC: james@nomic.ly \r\n";
 				$send = wp_mail($to, $subject, $content, $headers);
+			} // END ERROR HANDLING
+			else {
+				return $achievement_data;
 			}
-//		$response = notify_user_ui_quest_complete($achievement_data);
-//			if ($response = 0) {
-			 // SEND EMAIL TO JMS
-//			}
-		}// END IS NOT NULL ACHIEVEMENT DATA
+		}// END HAS ACHIEVEMENT DATA
 	}// END THE AWARD/INSERT WORKED
 	return $response;
 }
@@ -552,11 +562,6 @@ function format_achievement_email($achievement_data, $user_name) {
 
 	return $formatted_email;
 }// END FORMAT ACHIEVEMENT EMAIL
-
-function notify_user_ui_quest_complete($achievement_data){
-
-	return $response;
-}
 
 // GET QUEST DETAILS
 function get_quest_details($quest_id){
@@ -784,8 +789,14 @@ function process_interaction_event() {
 								$achievment_award = award_achievement($user_id, $achievement_id);
 								// IF DATA, THEN START CREATING RESPONSE DATA
 								//	response data will then be an array of an array...
-							if(!empty($achievement_data)) {
-								$response_data[] = $achievement_data;
+							if(!empty($achievment_award)) {
+								// make sure it's not an error message:
+								if (count($acheivement_award) == 1) {
+									$response_data = array ('error' => 1);
+								}// END ERROR
+								else {
+								$response_data = $achievment_award;
+								}
 									}// end response data setup
 					}// END CHECK FOR AWARDING NEW QUESTS
 				} // END HASN'T COMPLETED QUEST
