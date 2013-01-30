@@ -415,11 +415,14 @@ function get_achievement_ids($quest_id) {
 	// returns array of data, id, name, description, etc.
 function get_achievement_details($achievement_id) {
 	global $wpdb;
-	$table = $wpdb -> prefix."achievement_meta";
+	$achieve_table = $wpdb -> prefix."achievements";
+	$meta_table = $wpdb -> prefix."achievement_meta";
 	
 	$achievement_data = $wpdb -> get_results(
-		"SELECT * from $table
-		WHERE achievement_id = '$achievement_id'");
+		"SELECT * from $achieve_table
+		INNER JOIN $meta_table 
+			ON $meta_table.achievement_id = $achieve_table.achievement_id
+		WHERE $achieve_table.achievement_id = '$achievement_id'");
 	
 	if(empty($achievement_data)) {
 		$achievement_data = array ( 1 => "null" );
@@ -512,6 +515,26 @@ function notify_achievement_completion($achievement_data){
 function format_achievement_email($achievement_data, $user_name) {
 	$formatted_email = "Dear $user_name, <br />";
 	$formatted_email .= "blah blah blah";
+	
+	$name = $achievement_data['achievement_name'];
+	$description = $achievement_data['achievement_description'];
+	$permanency = $achievement_data['permanency'];
+	$badge_url = $achievement_data['badge_img_url'];
+	
+	// NEED TO GET USER'S CURRENT LEVEL (SEE UP IN GET_ACHIEVEMENT_DETAILS 
+	// --> SHOULD INCLUDE A QUERY TO WHAT WE'RE GRANTING USER AND THEN APPEND TO THE ACHEIVEMENT DATA ARRAY...
+	
+ achievement_id		INT, primary key
+ achievement_description		TEXT
+ qualifications VARCHAR DEFAULT '0',
+ max_level			INT
+ badge_img_url		varchar
+ permanency		ENUM :: 0 (temporal), 1 (permanent)
+ may_requalify - BOOL - 0, 1
+ max_repetitions - INT Default 100 0
+ date_created		DATETIME
+ date_updated		DATETIME
+
 
 	return $formatted_email;
 }
