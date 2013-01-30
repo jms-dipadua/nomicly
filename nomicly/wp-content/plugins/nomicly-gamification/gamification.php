@@ -258,15 +258,6 @@ function calc_hours_to_complete($number, $period) {
 	return $num_hours;
 }
 
-// SETS EXPIRATION DATE FOR QUESTS (OR ACHIEVEMENTS?)
-	// passes in 'date' which is an expiration date
-	// WHY IS THIS A STANDALONE FUNCTION AND NOT IN THE MAIN INSERT...?
-function set_expiration_date($date){
-
-
-	return $response;
-}
-
 // TOGGLES A QUEST FROM ACTIVE TO INACTIVE
 function expire_quest($quest_id){
 	global $wpdb;
@@ -388,8 +379,8 @@ function get_active_quests($event_type) {
 		FROM $table
 		INNER JOIN $table_quest_meta 
 		ON $table_quests.quest_id = $table_quest_meta.quest_id
-		WHERE status = 1
-		AND event_type = '$event_type'",
+		WHERE $table_quests.status = 1
+		AND $table_quest_meta.event_type = '$event_type'",
 		ARRAY_N
 		);
 	
@@ -399,10 +390,9 @@ function get_active_quests($event_type) {
 	return $active_quests;
 } // END GET ACTIVE QUESTS
 
-
-// GET ACHIEVEMENT ID
-	// GETS IT BASED ON THE QUEST ID
-function get_achievement_id($quest_id) {
+// GET ACHIEVEMENT IDs
+	// GETS BASED ON THE QUEST ID
+function get_achievement_ids($quest_id) {
 	global $wpdb;
 	$table_achieve_meta = $wpdb -> prefix."achievement_meta";
 	
@@ -419,8 +409,9 @@ function get_achievement_id($quest_id) {
 	}
 
 	return $achievement_ids;
-}
-// get achievement data
+} // END GET ACHIEVEMENT IDs
+
+// GET ACHIEVEMENT DATA
 	// returns array of data, id, name, description, etc.
 function get_achievement_details($achievement_id) {
 	global $wpdb;
@@ -438,20 +429,41 @@ function get_achievement_details($achievement_id) {
 }
 
 function award_achievement($user_id, $achievement_id){
-
-	$response =	notify_achievement_completion($achievement_data);
-		if ($response = 0) {
-		 // SEND EMAIL TO JMS
-		}
-	$response = notify_user_ui_quest_complete($achievement_data);
-		if ($response = 0) {
-		 // SEND EMAIL TO JMS
-		}
-	$response = email_quest_completion($user_id, $achievement_data);
-		if ($response = 0) {
-		 // SEND EMAIL TO JMS
-		}
-
+	global $wpdb;
+	$table_achieve = $wpdb -> prefix."user_achievements";
+	$date = date('Y-m-d H:i:s');
+	$award_data = array (
+		'user_id' => $user_id,
+		'achievement_id' => $achievement_id,
+		'attained_at' => $date,
+		'status' => 1
+		);
+	
+	$achievement_award = $wpdb -> wp_insert($table_achieve, $award_data);
+// if not inserted!
+	if(!$achievement_award) {
+		$response = array('success' => 0);
+	} 
+// OTHERWISE....
+	else{
+	// GET THE DETAILS TO SEND TO VIA EMAIL/FRONTEND
+		$achievement_data = get_achievement_details($achievement_id);
+	// make sure it's a valid achievement before notifiying!
+		if(!$achievement_data[1] == 'null') {
+		$response =	notify_achievement_completion($achievement_data);
+			if ($response = 0) {
+			 // SEND EMAIL TO JMS
+			}
+		$response = notify_user_ui_quest_complete($achievement_data);
+			if ($response = 0) {
+			 // SEND EMAIL TO JMS
+			}
+		$response = email_quest_completion($user_id, $achievement_data);
+			if ($response = 0) {
+			 // SEND EMAIL TO JMS
+			}
+		}// END IS NOT NULL ACHIEVEMENT DATA
+	}// END THE AWARD/INSERT WORKED
 	return $response;
 }
 
