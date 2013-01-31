@@ -46,7 +46,7 @@ function nomicly_gamification_activation() {
 // CREATE DBs (IF NOT EXISTS)
 // USER NOTIFICATION PREFERENCES 
 		nomicly_create_gamification_dbs();
-		nomicly_setup_initial_quest_achievements();
+	//	nomicly_setup_initial_quest_achievements();
 }
 
 /*
