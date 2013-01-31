@@ -74,7 +74,7 @@ dbDelta($sql);
 */
 function create_daily_report_cron() {
 // WP_SCHEDULE EXPECTS UNIX TIME
-	$time = '08:45:00';
+	$time = '10:45:00';
 	$unix_time = mktime($time);
 		wp_schedule_event($unix_time, 'daily', 'nomicly_user_report_daily');
 }  // DAILY REPORTS
