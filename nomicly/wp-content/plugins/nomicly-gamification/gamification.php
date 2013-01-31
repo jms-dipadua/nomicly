@@ -55,9 +55,17 @@ function nomicly_gamification_activation() {
 function nomicly_create_gamification_dbs() {
 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 global $wpdb;
+$quest_table = $wpdb->prefix."quests";
+$quest_meta_table = $wpdb->prefix."meta";
+$achievements_table = $wpdb->prefix."achievements";
+$achievement_meta_table = $wpdb->prefix."achievement_meta";
+$user_quests_table = $wpdb->prefix."user_quests";
+$user_achievements_table = $wpdb->prefix."user_achievements";
+$user_quest_qualifications_table = $wpdb->prefix."user_quest_qualifications";
+
 
 //	1.  quests
-	$sql = "CREATE TABLE IF NOT EXISTS nomicly_quests (
+	$sql = "CREATE TABLE IF NOT EXISTS $quest_table (
 		  quest_id INT NOT NULL AUTO_INCREMENT,
 		  quest_name TEXT DEFAULT '  ',
 		  status BOOLEAN NOT NULL DEFAULT '1',
@@ -67,10 +75,10 @@ global $wpdb;
 	dbDelta($sql);
 
 //	2.  quest_meta
-	$sql = "CREATE TABLE IF NOT EXISTS nomicly_quest_meta (
+	$sql = "CREATE TABLE IF NOT EXISTS $quest_meta_table (
 		  quest_id INT NOT NULL,
 		  quest_description TEXT DEFAULT 'No Description Provided',
-		  qualifications VARCHAR DEFAULT '0',
+		  qualifications VARCHAR DEFAULT NULL,
 		  permanency ENUM ('0','1'),
 		  may_requalify BOOLEAN NOT NULL DEFAULT '1',
 		  max_repeat INT NOT NULL DEFAULT '10000',
@@ -79,14 +87,14 @@ global $wpdb;
 		  number_events INT NOT NULL DEFAULT '1',
 		  created_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 		  updated_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-		  expires_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+		  expires_at DATETIME NOT NULL DEFAULT '2025-12-31 23:59:01',
 		  PRIMARY KEY (quest_id) 
 		  );";
 
 	dbDelta($sql);
 	
 // 	3. 	achievements
-	$sql = "CREATE TABLE IF NOT EXISTS nomicly_achievements (
+	$sql = "CREATE TABLE IF NOT EXISTS $achievements_table (
 		  achievement_id INT NOT NULL AUTO_INCREMENT,
 		  achievement_name TEXT DEFAULT '  ',
 		  status BOOLEAN NOT NULL DEFAULT '1',
@@ -96,7 +104,7 @@ global $wpdb;
 	dbDelta($sql);
 
 // 	4. 	achievement_meta
-	$sql = "CREATE TABLE IF NOT EXISTS nomicly_achievement_meta (
+	$sql = "CREATE TABLE IF NOT EXISTS $achievement_meta_table (
 		  achievement_id INT NOT NULL,
 		  achievement_description TEXT DEFAULT 'No Description Provided',
 		  qualifications VARCHAR DEFAULT '0',
@@ -113,7 +121,7 @@ global $wpdb;
 	dbDelta($sql);
 
 // 	5. 	user_quests
-	$sql = "CREATE TABLE IF NOT EXISTS nomicly_user_quests (
+	$sql = "CREATE TABLE IF NOT EXISTS $user_quests_table (
 		  user_id INT NOT NULL,
 		  quest_id INT NOT NULL,
 		  attained_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -124,11 +132,11 @@ global $wpdb;
 
 	dbDelta($sql);
 	
-	$sql = "CREATE INDEX user_quest_index ON nomicly_user_quests (quest_id);";
+	$sql = "CREATE INDEX user_quest_index ON $user_quests_table (quest_id);";
 	dbDelta($sql);
 
 // 	6. 	user_achievements
-	$sql = "CREATE TABLE IF NOT EXISTS nomicly_user_achievements (
+	$sql = "CREATE TABLE IF NOT EXISTS $user_achievements_table (
 		  user_id INT NOT NULL,
 		  achievement_id INT NOT NULL,
 		  level_attained INT NOT NULL DEFAULT '1',
@@ -140,11 +148,11 @@ global $wpdb;
 
 	dbDelta($sql);
 	
-	$sql = "CREATE INDEX user_achievement_index ON nomicly_user_quests (achievement_id);";
+	$sql = "CREATE INDEX user_achievement_index ON $user_achievements_table (achievement_id);";
 	dbDelta($sql);
 
 // 	7. 	user_quest_qualifications
-	$sql = "CREATE TABLE IF NOT EXISTS nomicly_user_quest_qualifications (
+	$sql = "CREATE TABLE IF NOT EXISTS $user_quest_qualifications_table (
 		  user_id INT NOT NULL,
 		  quest_id INT NOT NULL,
 		  qualification_count INT NOT NULL DEFAULT '0',
@@ -245,6 +253,22 @@ function create_new_quest($quest_data) {
 	} // FAILED TO INSERT QUEST		
 	return $response;  
 }
+
+// CREATE NEW ACHIEVEMENT
+	// 1. unpack data (like quests)
+		// note: includes quest_id in qualifications
+	// 2. insert into achievements table
+	// 3. insert into achievement_meta table
+	// 4. return achievement_id
+function create_new_achievement($achievement_data) {
+	global $wpdb;
+	$achievement_table = $wpdb -> prefix."achievements";
+	$meta_table - $wpdb -> prefix."achievement_meta";
+
+	
+
+	return $achievement_id;
+}  // END CREATE NEW ACHIEVEMENT
 
 // CALCULATE HOURS TO COMPLETE QUEST
 	// this is a range in hours
