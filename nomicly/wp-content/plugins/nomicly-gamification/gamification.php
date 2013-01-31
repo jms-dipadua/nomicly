@@ -250,7 +250,7 @@ function create_new_quest($quest_data) {
 		$response = array (
 			'success' => 0
 			);
-	} // FAILED TO INSERT QUEST		
+	} // END FAILED TO INSERT QUEST		
 	return $response;  
 }
 
@@ -265,9 +265,64 @@ function create_new_achievement($achievement_data) {
 	$achievement_table = $wpdb -> prefix."achievements";
 	$meta_table - $wpdb -> prefix."achievement_meta";
 
-	
+	// 1. unpack quest data 
+	// a. unpack from the array 
+	$achieve_name = $achievement_data['achievement_name'];
+	$achievement_description = $achievement_data['achievement_desc'];
+	$qualificadtions = $achievement_data['qualifications'];
+	$max_level = $achievement_data['max_level'];
+	$badge_img_url = $achievement_data['badge_img_url'];
+	$permanency = $achievement_data['permanency'];
+	$may_requalify = $achievement_data['may_requalify'];
+	$max_repeat = $achievement_data['max_repeat'];
+	$created_at = date('Y-m-d H:i:s');
+	$updated_at = $created_at;
 
-	return $achievement_id;
+
+	// b. setup the quest table data (array)
+	$achievement_table_data = array (
+		'achievement_name' => $achievement_name,
+		'status' => 1
+		);
+	
+// 2. INSERT INTO QUESTS
+	$achieve_insert = $wpdb -> wp_insert($achievement_table, $achievement_table_data);
+	if ($achieve_insert) {
+		$new_achieve_id = $wpdb -> insert_id;
+	}
+
+// 3. INSERT INTO QUEST META (assuming there's a new quest_id to work with...)
+	// a. setup remaining data into array 
+	if($new_achieve_id) {
+		$meta_data = array (
+			'achievement_id' => $new_achieve_id,
+			'achievement_description' => $quest_desc,
+			'qualifications' => $qualifications,
+			'max_level' => $max_level,
+			'badge_img_url' => $badge_img_url,
+			'permanency' => $permanency,
+			'may_requalify' => $may_requalify,
+			'max_repeat' => $max_repeat,
+			'created_at' => $created_at,
+			'updated_at' => $updated_at
+			);
+		
+		$meta_insert = $wpdb -> wp_insert($meta_table, $meta_data);
+// 4. SETUP RESPONSE DATA W/ QUEST_ID
+		if($meta_insert) {
+			$response = array(
+			'success' => 1,
+			'achievement_id' => $new_achieve_id
+			);
+		} // END SUCCESSFUL INSERT INTO QUEST META		
+	}// END SUCCESSFUL INSERT INTO QUESTS
+	else {
+		$response = array (
+			'success' => 0
+			);
+	} // FAILED TO INSERT QUEST		
+	return $response;  
+	
 }  // END CREATE NEW ACHIEVEMENT
 
 // CALCULATE HOURS TO COMPLETE QUEST
