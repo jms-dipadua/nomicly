@@ -239,21 +239,23 @@ function nomicly_setup_initial_quest_achievements() {
 		'name' => 'I Voted',
 		'qualifications' => $quest['voted_today'] 
 	);
+	// LEVEL ACHIEVEMENTS
+		// -- it may make sense to prioritize the alpha levels so that creating an idea = 1, modifying ideas = level 2 (if level 1 completed...)
 	// MEDIATOR - someone who modifed two ideas in any 7 day period
 	$achievement['mediator'] = array (
 		'may_repeat' => 1,
-		'qualifications' => $quest['mediator_l1'] 
+		'quest_qualifications' => $quest['mediator_l1'] 
 	);
 	// CITIZEN - voted on 3 ideas (lvl 1)...see spec
 	$achievement['citizen_1'] = array (
 		'may_repeat' => 1,
-		'qualifications' => $quest['citizen_l1'] 
+		'quest_qualifications' => $quest['citizen_l1'] 
 	
 	);
 	// INNOVATOR - Creates ideas (lvl 1 = 1)
 	$achievement['innovator'] = array (
 		'may_repeat' => 1,
-		'qualifications' => $quest['innovator_l1'] 
+		'quest_qualifications' => $quest['innovator_l1'] 
 	
 	);
 	// ALPHA TESTER - FOR EARLY ADOPTERS ONLY
@@ -261,7 +263,8 @@ function nomicly_setup_initial_quest_achievements() {
 		// how to reference that an achievement can be awarded multiple times
 	$achievement['alpha_tester'] = array (
 		'may_repeat' => 1,
-		'qualifications' => $quest['mediator_l1'],
+		'quest_qualifications' => $quest['alpha_t_create_ideas'],
+		'achievement_qualifications' => $quest['mediator_l1'],
 		'all_qualifications' => 0
 
 	);
