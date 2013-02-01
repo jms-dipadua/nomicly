@@ -59,6 +59,7 @@ $quest_table = $wpdb->prefix."quests";
 $quest_meta_table = $wpdb->prefix."meta";
 $achievements_table = $wpdb->prefix."achievements";
 $achievement_meta_table = $wpdb->prefix."achievement_meta";
+$achievement_levels_table = $wpdb->prefix."achievement_levels";
 $user_quests_table = $wpdb->prefix."user_quests";
 $user_achievements_table = $wpdb->prefix."user_achievements";
 $user_quest_qualifications_table = $wpdb->prefix."user_quest_qualifications";
@@ -107,11 +108,11 @@ $user_quest_qualifications_table = $wpdb->prefix."user_quest_qualifications";
 	$sql = "CREATE TABLE IF NOT EXISTS $achievement_meta_table (
 		  achievement_id INT NOT NULL,
 		  achievement_description TEXT DEFAULT 'No Description Provided',
-		  qualifications VARCHAR DEFAULT '0',
 		  max_level INT DEFAULT '1',
 		  badge_img_url VARCHAR,
 		  permanency ENUM ('0','1'),
 		  may_requalify BOOLEAN NOT NULL DEFAULT '1',
+		  may_repeat BOOLEAN NOT NULL DEFAULT '0',
 		  max_repeat INT NOT NULL DEFAULT '10000',
 		  created_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 		  updated_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -119,6 +120,23 @@ $user_quest_qualifications_table = $wpdb->prefix."user_quest_qualifications";
 		  );";
 
 	dbDelta($sql);
+
+	$sql = "CREATE TABLE IF NOT EXISTS $achievement_levels_table (
+		  achievement_id INT NOT NULL,
+		  level INT DEFAULT '1',
+		  quest_qualifications VARCHAR DEFAULT '0',
+		  achievement_qualifications VARCHAR DEFAULT '0',
+		  permanency ENUM ('0','1'),
+		  may_requalify BOOLEAN NOT NULL DEFAULT '1',
+		  may_repeat BOOLEAN NOT NULL DEFAULT '0',
+		  max_repeat INT NOT NULL DEFAULT '10000',
+		  created_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+		  updated_at DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+		  PRIMARY KEY (achievement_id) 
+		  );";
+
+	dbDelta($sql);
+
 
 // 	5. 	user_quests
 	$sql = "CREATE TABLE IF NOT EXISTS $user_quests_table (
@@ -203,40 +221,49 @@ function nomicly_setup_initial_quest_achievements() {
 		'name' => 'Innovator Level 1'
 	);
 	$quest['alpha_t_create_ideas'] = array(
-		'name' => 'Alpha Tester'
+		'name' => 'Alpha Tester Create Ideas'
 	);
 	$quest['alpha_t_modified'] = array(
-		'name' => 'Alpha Tester'
+		'name' => 'Alpha Tester Modify Ideas'
 	);
 	$quest['alpha_t_create_topics'] = array(
-		'name' => 'Alpha Tester'
+		'name' => 'Alpha Tester Topics Ideas'
 	);
 	$quest['alpha_t_votes'] = array(
-		'name' => 'Alpha Tester'
+		'name' => 'Alpha Tester Votes'
 	);
 	
 // ACHIEVEMENTS
 	// I voted
 	$achievement['i_voted'] = array (
+		'name' => 'I Voted',
 		'qualifications' => $quest['voted_today'] 
 	);
 	// MEDIATOR - someone who modifed two ideas in any 7 day period
 	$achievement['mediator'] = array (
-	
+		'may_repeat' => 1,
+		'qualifications' => $quest['mediator_l1'] 
 	);
 	// CITIZEN - voted on 3 ideas (lvl 1)...see spec
 	$achievement['citizen_1'] = array (
+		'may_repeat' => 1,
+		'qualifications' => $quest['citizen_l1'] 
 	
 	);
 	// INNOVATOR - Creates ideas (lvl 1 = 1)
 	$achievement['innovator'] = array (
+		'may_repeat' => 1,
+		'qualifications' => $quest['innovator_l1'] 
 	
 	);
 	// ALPHA TESTER - FOR EARLY ADOPTERS ONLY
 		// may be issues with how table is structured
 		// how to reference that an achievement can be awarded multiple times
 	$achievement['alpha_tester'] = array (
-	
+		'may_repeat' => 1,
+		'qualifications' => $quest['mediator_l1'],
+		'all_qualifications' => 0
+
 	);
 
 
