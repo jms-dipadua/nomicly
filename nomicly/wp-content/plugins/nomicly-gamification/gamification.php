@@ -169,9 +169,80 @@ $user_quest_qualifications_table = $wpdb->prefix."user_quest_qualifications";
 /*
 // INITIAL QEUSTS AND ACHIEVEMENTS 
 	// since there's no UI for creating these...
+	// 1. create arrays of achievements and quests
+		// a. have to hard-code in the qualifications
+		// b. qualifications (within achievements) are an array of quests (by name)
+		// c. quests are an array w/ all their info
+		// d. unless the quest has a pre-requisite (CSV-list of quests_ids), it's NULL
+	// 2. call a create achievement function (below)
+		// a. this function calls a create quests for each qualification
+		// b. quests passes back the id associated w/ the quest
+		// c. these ids gather in an array that gets passed back (to create achievement)
+		// d. create achievement then continues processing (inserting data into db)
+	// 3. get the returned achievement ids and a response (success = 0 || 1)
 */
 function nomicly_setup_initial_quest_achievements() {
+	// PATTERN WILL BE TO CREATE QEUSTS (AS ARRAYS)
+	// THEN CREATE ACHIEVEMENTS AND SOURCE THE QUALIFICATIONS AS POINTING TO THE APPROPRIATE QUEST
+	// QUESTS AND ACHIEVEMENTS SHOULD BE FAIRLY WELL NAMESPACED...
 
+// QUESTS	
+	// voted today
+	$quest['voted_today'] = array (
+		'name' => 'I Voted'
+	);
+	// modified ideas
+	$quest['mediator_l1'] = array(
+		'name' => 'Mediator Level 1'
+	);
+	// voted on any 3 ideas
+	$quest['citizen_l1'] = array (
+		'name' => 'Citizen Level 1'	
+	);
+	$quest['innovator_l1'] = array (
+		'name' => 'Innovator Level 1'
+	);
+	$quest['alpha_t_create_ideas'] = array(
+		'name' => 'Alpha Tester'
+	);
+	$quest['alpha_t_modified'] = array(
+		'name' => 'Alpha Tester'
+	);
+	$quest['alpha_t_create_topics'] = array(
+		'name' => 'Alpha Tester'
+	);
+	$quest['alpha_t_votes'] = array(
+		'name' => 'Alpha Tester'
+	);
+	
+// ACHIEVEMENTS
+	// I voted
+	$achievement['i_voted'] = array (
+		'qualifications' => $quest['voted_today'] 
+	);
+	// MEDIATOR - someone who modifed two ideas in any 7 day period
+	$achievement['mediator'] = array (
+	
+	);
+	// CITIZEN - voted on 3 ideas (lvl 1)...see spec
+	$achievement['citizen_1'] = array (
+	
+	);
+	// INNOVATOR - Creates ideas (lvl 1 = 1)
+	$achievement['innovator'] = array (
+	
+	);
+	// ALPHA TESTER - FOR EARLY ADOPTERS ONLY
+		// may be issues with how table is structured
+		// how to reference that an achievement can be awarded multiple times
+	$achievement['alpha_tester'] = array (
+	
+	);
+
+
+
+// CREATE ACHIEVEMENTS & QUESTS
+	return $response;
 }
 
 /*
@@ -184,6 +255,95 @@ function nomicly_gamification_deactivation() {
 /* 
 // 		MAIN FUNCTIONS
 */
+// CREATE NEW ACHIEVEMENT
+	// 1. unpack data (like quests)
+		// note: includes quest_id in qualifications
+	// 2. insert into achievements table
+	// 3. insert into achievement_meta table
+	// 4. return achievement_id
+function create_new_achievement($achievement_data) {
+	global $wpdb;
+	$achievement_table = $wpdb -> prefix."achievements";
+	$meta_table - $wpdb -> prefix."achievement_meta";
+
+	// 1. unpack quest data 
+	// a. unpack from the array 
+	$achieve_name = $achievement_data['achievement_name'];
+	$achievement_description = $achievement_data['achievement_desc'];
+	$qualificadtions = $achievement_data['qualifications'];
+		// ARRAY OF QUEST NAMES w/ ARRAY OF QUEST META
+		// UNPACK QUALIFICATIONS --> essentially converting from a name-base array to a list of quest_ids
+		// V1 REQUIRES CALLING CREATE QUEST FROM HERE (FOR EACH QUALIFICATION)
+		// make sure there *is* a qualification
+		// should do something better than set it to zero...
+			if(count($qualifications < 1)) {
+				$qualification = 0;
+			}
+			else{
+				foreach($qualifications as $qualification_data) {
+				// append the new id's as an array
+					$qualification_ids .= create_quest($qualification_data);
+				} // END LOOP THROUGH ALL QUALIFICATIONS
+				// convert from array to comma-list
+					$qualification_ids = implode(',', $qualification_ids);
+					$qualifications = $qualification_ids;
+			}// END QUALIFICATION + QUEST CREATION
+	$max_level = $achievement_data['max_level'];
+	$badge_img_url = $achievement_data['badge_img_url'];
+	$permanency = $achievement_data['permanency'];
+	$may_requalify = $achievement_data['may_requalify'];
+	$max_repeat = $achievement_data['max_repeat'];
+	$created_at = date('Y-m-d H:i:s');
+	$updated_at = $created_at;
+
+
+	// b. setup the quest table data (array)
+	$achievement_table_data = array (
+		'achievement_name' => $achievement_name,
+		'status' => 1
+		);
+	
+// 2. INSERT INTO QUESTS
+	$achieve_insert = $wpdb -> wp_insert($achievement_table, $achievement_table_data);
+	if ($achieve_insert) {
+		$new_achieve_id = $wpdb -> insert_id;
+	}
+
+// 3. INSERT INTO QUEST META (assuming there's a new quest_id to work with...)
+	// a. setup remaining data into array 
+	if($new_achieve_id) {
+		$meta_data = array (
+			'achievement_id' => $new_achieve_id,
+			'achievement_description' => $achievement_description,
+			'qualifications' => $qualifications,
+			'max_level' => $max_level,
+			'badge_img_url' => $badge_img_url,
+			'permanency' => $permanency,
+			'may_requalify' => $may_requalify,
+			'max_repeat' => $max_repeat,
+			'created_at' => $created_at,
+			'updated_at' => $updated_at
+			);
+		
+		$meta_insert = $wpdb -> wp_insert($meta_table, $meta_data);
+// 4. SETUP RESPONSE DATA W/ QUEST_ID
+		if($meta_insert) {
+			$response = array(
+			'success' => 1,
+			'achievement_id' => $new_achieve_id
+			);
+		} // END SUCCESSFUL INSERT INTO QUEST META		
+	}// END SUCCESSFUL INSERT INTO QUESTS
+	else {
+		$response = array (
+			'success' => 0
+			);
+	} // FAILED TO INSERT QUEST		
+	return $response;  
+	
+}  // END CREATE NEW ACHIEVEMENT
+
+
 // CREATE NEW QUEST
 	// 1. unpack data (for insertion into appropriate tables)
 	// 2. insert into quests table
@@ -253,77 +413,6 @@ function create_new_quest($quest_data) {
 	} // END FAILED TO INSERT QUEST		
 	return $response;  
 }
-
-// CREATE NEW ACHIEVEMENT
-	// 1. unpack data (like quests)
-		// note: includes quest_id in qualifications
-	// 2. insert into achievements table
-	// 3. insert into achievement_meta table
-	// 4. return achievement_id
-function create_new_achievement($achievement_data) {
-	global $wpdb;
-	$achievement_table = $wpdb -> prefix."achievements";
-	$meta_table - $wpdb -> prefix."achievement_meta";
-
-	// 1. unpack quest data 
-	// a. unpack from the array 
-	$achieve_name = $achievement_data['achievement_name'];
-	$achievement_description = $achievement_data['achievement_desc'];
-	$qualificadtions = $achievement_data['qualifications'];
-	$max_level = $achievement_data['max_level'];
-	$badge_img_url = $achievement_data['badge_img_url'];
-	$permanency = $achievement_data['permanency'];
-	$may_requalify = $achievement_data['may_requalify'];
-	$max_repeat = $achievement_data['max_repeat'];
-	$created_at = date('Y-m-d H:i:s');
-	$updated_at = $created_at;
-
-
-	// b. setup the quest table data (array)
-	$achievement_table_data = array (
-		'achievement_name' => $achievement_name,
-		'status' => 1
-		);
-	
-// 2. INSERT INTO QUESTS
-	$achieve_insert = $wpdb -> wp_insert($achievement_table, $achievement_table_data);
-	if ($achieve_insert) {
-		$new_achieve_id = $wpdb -> insert_id;
-	}
-
-// 3. INSERT INTO QUEST META (assuming there's a new quest_id to work with...)
-	// a. setup remaining data into array 
-	if($new_achieve_id) {
-		$meta_data = array (
-			'achievement_id' => $new_achieve_id,
-			'achievement_description' => $quest_desc,
-			'qualifications' => $qualifications,
-			'max_level' => $max_level,
-			'badge_img_url' => $badge_img_url,
-			'permanency' => $permanency,
-			'may_requalify' => $may_requalify,
-			'max_repeat' => $max_repeat,
-			'created_at' => $created_at,
-			'updated_at' => $updated_at
-			);
-		
-		$meta_insert = $wpdb -> wp_insert($meta_table, $meta_data);
-// 4. SETUP RESPONSE DATA W/ QUEST_ID
-		if($meta_insert) {
-			$response = array(
-			'success' => 1,
-			'achievement_id' => $new_achieve_id
-			);
-		} // END SUCCESSFUL INSERT INTO QUEST META		
-	}// END SUCCESSFUL INSERT INTO QUESTS
-	else {
-		$response = array (
-			'success' => 0
-			);
-	} // FAILED TO INSERT QUEST		
-	return $response;  
-	
-}  // END CREATE NEW ACHIEVEMENT
 
 // CALCULATE HOURS TO COMPLETE QUEST
 	// this is a range in hours
